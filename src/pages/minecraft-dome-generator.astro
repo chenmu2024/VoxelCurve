@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'; import ToolApp from '../components/ToolApp.astro';
+const title='Minecraft Dome Generator – Layer-by-Layer Block Blueprint | VoxelCurve';
+const description='Generate Minecraft domes layer by layer with exact row segments, material counts and guided build progress. Create low, hemispherical or tall domes.';
+---
+<BaseLayout {title} {description} canonical="https://voxelcurve.com/minecraft-dome-generator">
+<section class="hero"><div class="container"><span class="eyebrow">Layer-by-layer builder</span><h1>Minecraft Dome Generator</h1><p>Generate a hollow or filled dome and build it one layer, row and segment at a time.</p></div></section>
+<ToolApp shape="dome" />
+<section class="section"><div class="container prose"><h2>Build a Minecraft dome without losing your layer</h2><p>VoxelCurve represents a dome as an upper ellipsoid. Each horizontal layer is broken into rows and exact block segments, so the same blueprint can guide both small roofs and large survival builds.</p><h2>Hemisphere, low dome or tall dome</h2><p>Width and depth define the footprint. Height controls the profile. Use the hemisphere shortcut for a classic half-sphere, reduce height for a flatter roof, or increase it for a taller elliptical dome.</p><h2>Hollow domes are true shells</h2><p>The hollow mode subtracts an inner ellipsoid from the outer structure instead of simply drawing a thin circle on every layer. That keeps the cap and upper layers structurally consistent.</p><h2>Layer navigation</h2><p>The guided builder tracks the current layer, row and segment. Complete a segment and VoxelCurve moves to the next instruction while keeping progress in your current browser.</p></div></section>
+<section class="section"><div class="container"><h2>Related tools</h2><div class="cards"><a class="card" href="/"><h3>Circle Generator</h3><p>Plan the footprint of circular towers and roofs.</p></a><a class="card" href="/minecraft-oval-generator"><h3>Oval Generator</h3><p>Create elliptical footprints for elongated domes.</p></a><a class="card" href="/how-to-make-a-circle-in-minecraft"><h3>Circle Guide</h3><p>Learn the row and segment construction method.</p></a></div></div></section>
+</BaseLayout>
