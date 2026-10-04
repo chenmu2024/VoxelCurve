@@ -130,6 +130,36 @@ else {
   if (!/Sitemap:\s*https:\/\/voxelcurve\.com\//i.test(text)) errors.push('robots.txt missing production sitemap URL');
 }
 
+const redirectsFile=path.join(dist,'_redirects');
+if(!exists(redirectsFile)) errors.push('Missing Cloudflare _redirects');
+else {
+  const redirects=fs.readFileSync(redirectsFile,'utf8');
+  if(!redirects.includes('https://voxelcurve.pages.dev/* https://voxelcurve.com/:splat 301')) errors.push('Missing pages.dev canonical host redirect');
+  if(!redirects.includes('https://www.voxelcurve.com/* https://voxelcurve.com/:splat 301')) errors.push('Missing www canonical host redirect');
+}
+
+const headersFile=path.join(dist,'_headers');
+if(!exists(headersFile)) errors.push('Missing Cloudflare _headers');
+else {
+  const headers=fs.readFileSync(headersFile,'utf8');
+  if(!headers.includes('Content-Security-Policy:')) errors.push('Missing Content-Security-Policy header');
+  if(!headers.includes('Strict-Transport-Security:')) errors.push('Missing HSTS header');
+  if(!headers.includes('X-Robots-Tag: noindex')) errors.push('Missing pages.dev noindex header');
+}
+
+const ogFile=path.join(dist,'og.png');
+if(!exists(ogFile)) errors.push('Missing generated og.png');
+else {
+  const png=fs.readFileSync(ogFile);
+  const signature='89504e470d0a1a0a';
+  if(png.subarray(0,8).toString('hex')!==signature) errors.push('og.png is not a valid PNG');
+  else {
+    const width=png.readUInt32BE(16),height=png.readUInt32BE(20);
+    if(width!==1200||height!==630) errors.push(`og.png must be 1200x630, got ${width}x${height}`);
+    if(png.length>300*1024) errors.push(`og.png exceeds 300KB: ${Math.round(png.length/1024)}KB`);
+  }
+}
+
 const assetDir = path.join(dist, '_astro');
 let totalJsGzip = 0;
 let totalCssGzip = 0;
