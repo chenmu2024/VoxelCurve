@@ -115,7 +115,7 @@ Test:
 
 ## 6. Litematic manual import gate
 
-Automated tests validate NBT metadata and occupied palette counts, but **do not claim full real-world compatibility until these files have been imported into a supported Litematica workflow**.
+Automated tests validate NBT metadata, V6/3700 version pairing, metadata tag types and occupied palette counts, but **do not claim full real-world compatibility until these files have been imported into a supported Litematica workflow**.
 
 Manual gate:
 
