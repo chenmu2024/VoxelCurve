@@ -86,14 +86,15 @@ src/
 │   ├── litematic.ts
 │   ├── progress.ts
 │   ├── schema.ts
-│   └── state.ts
+│   ├── state.ts
+│   └── world.ts
 ├── pages/
 └── styles/
 ```
 
 Geometry is generated once as compact row/layer spans.
 
-Canvas, material counts, TXT plans, print output and Litematic export must consume the same `ShapeResult`.
+Canvas, material counts, PNG/SVG output, TXT plans, print output and Litematic export must consume the same `ShapeResult`. Optional world coordinates are a display/instruction transform and never change geometry.
 
 ## Development
 
