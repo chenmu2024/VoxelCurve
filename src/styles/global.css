@@ -655,3 +655,58 @@ tr:last-child td{border-bottom:0}
   .footer-brand-block{grid-column:1/-1}
   .footer-bottom{display:grid;gap:6px}
 }
+
+
+/* ===== Mobile navigation ===== */
+.mobile-menu{display:none;position:relative}
+.mobile-menu summary{
+  list-style:none;
+  width:40px;height:40px;
+  display:grid;
+  place-content:center;
+  gap:4px;
+  cursor:pointer;
+  border:1px solid #303430;
+  border-radius:6px;
+  background:#171a18
+}
+.mobile-menu summary::-webkit-details-marker{display:none}
+.mobile-menu summary span{
+  display:block;
+  width:16px;height:1px;
+  background:#d9ddda
+}
+.mobile-menu nav{
+  position:absolute;
+  right:0;
+  top:48px;
+  width:min(280px,calc(100vw - 28px));
+  background:#141714;
+  border:1px solid #303430;
+  border-radius:10px;
+  box-shadow:0 12px 30px rgba(0,0,0,.28);
+  padding:8px;
+  z-index:100
+}
+.mobile-menu nav a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  min-height:44px;
+  padding:0 12px;
+  border-radius:6px;
+  color:#aeb4b0;
+  font-size:13px
+}
+.mobile-menu nav a:hover,
+.mobile-menu nav a[aria-current="page"]{
+  background:#1f231f;
+  color:#fff
+}
+.mobile-menu nav a span{
+  color:var(--accent);
+  font-size:12px
+}
+@media(max-width:800px){
+  .mobile-menu{display:block}
+}
