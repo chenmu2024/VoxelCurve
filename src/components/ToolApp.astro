@@ -192,7 +192,7 @@ if (root) {
 
   function regenerate(resetView=false){
     result=makeResult();normalizeInputs();steps=createSteps();loadProgress();if(resetView){zoom=1;panX=0;panY=0}renderStats();renderInstruction();
-    q('[data-thickness-wrap]').style.display=result.style==='filled'?'none':'';
+    q('[data-thickness-wrap]').style.display=result.style==='thick'?'':'none';
     qa('[data-style]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.style===text('style'))));
     if(shape==='circle'){
       const d=String(params().diameter);
