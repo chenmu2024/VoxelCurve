@@ -126,9 +126,17 @@ if (root) {
   function pruneProgressStorage(limit=40){
     try{
       const items=[];
+      const currentPrefix=`vc-progress-v${result.geometryVersion}-`;
+      const keys=[];
       for(let i=0;i<localStorage.length;i++){
         const key=localStorage.key(i);
-        if(!key?.startsWith('vc-progress-v'))continue;
+        if(key?.startsWith('vc-progress-v'))keys.push(key);
+      }
+      for(const key of keys){
+        if(!key.startsWith(currentPrefix)){
+          localStorage.removeItem(key);
+          continue;
+        }
         let updatedAt=0;
         try{updatedAt=Number(JSON.parse(localStorage.getItem(key)||'{}').updatedAt)||0}catch{}
         items.push({key,updatedAt});
@@ -151,6 +159,7 @@ if (root) {
   }
   function loadProgress(){
     try{
+      pruneProgressStorage();
       const restored=decodeProgress(localStorage.getItem(stateKey()),steps);
       completed=restored.completed;
       stepIndex=restored.stepIndex;
