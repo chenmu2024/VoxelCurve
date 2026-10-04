@@ -1,4 +1,17 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'; const title='Page Not Found | VoxelCurve'; const description='The requested VoxelCurve page could not be found.';
+import BaseLayout from '../layouts/BaseLayout.astro';
+const title='Page Not Found | VoxelCurve';
+const description='The requested VoxelCurve page could not be found.';
 ---
-<BaseLayout {title} {description} canonical="https://voxelcurve.com/404" noindex={true}><section class="hero"><div class="container"><span class="eyebrow">404</span><h1>That block is missing.</h1><p>Try one of the main building tools instead.</p><div class="cards"><a class="card" href="/"><h3>Circle Generator</h3></a><a class="card" href="/minecraft-dome-generator"><h3>Dome Generator</h3></a><a class="card" href="/minecraft-oval-generator"><h3>Oval Generator</h3></a></div></div></section></BaseLayout>
+<BaseLayout {title} {description} canonical="https://voxelcurve.com/404" noindex={true}>
+  <section class="resource-hero error-hero"><div class="container"><div class="resource-hero-grid">
+    <div><span class="eyebrow">404 / Missing block</span><h1>That block is not in this plan.</h1><p>The URL may be outdated or mistyped. Continue with one of the main building tools.</p></div>
+    <div class="resource-meta"><span>RECOVERY</span><strong>Return to a canonical tool</strong><small>No progress data was changed.</small></div>
+  </div></div></section>
+  <section class="section related-section"><div class="container"><div class="section-kicker">Continue building</div><h2>Main VoxelCurve tools</h2><div class="related-list">
+    <a href="/"><span class="related-index">01</span><div><h3>Circle Generator</h3><p>Generate and build exact Minecraft circles.</p></div><span class="related-arrow">↗</span></a>
+    <a href="/minecraft-dome-generator"><span class="related-index">02</span><div><h3>Dome Generator</h3><p>Build a dome layer by layer with guided segments.</p></div><span class="related-arrow">↗</span></a>
+    <a href="/minecraft-oval-generator"><span class="related-index">03</span><div><h3>Oval Generator</h3><p>Create rectangular-bound ellipse blueprints.</p></div><span class="related-arrow">↗</span></a>
+    <a href="/minecraft-circle-chart"><span class="related-index">04</span><div><h3>Circle Chart</h3><p>Browse common Minecraft circle sizes.</p></div><span class="related-arrow">↗</span></a>
+  </div></div></section>
+</BaseLayout>
