@@ -32,7 +32,12 @@ const { shape } = Astro.props;
     <div class="instruction" role="status" aria-live="polite" aria-atomic="true"><strong data-instruction-title>Generating…</strong><span data-instruction-body></span></div>
     <div class="progress" aria-label="Build progress"><i data-progress-bar></i></div><div class="notice"><span data-progress-label aria-live="polite">0% complete</span></div>
     {shape==='dome' && <div class="notice layer-progress-note" data-layer-progress>Layer 1: 0% complete</div>}
-    <div class="builder-actions build-actions"><button class="btn" type="button" data-prev>← Previous</button><button class="btn accent" type="button" data-complete>Complete</button><button class="btn" type="button" data-next>Next →</button><button class="btn" type="button" data-undo>Undo</button></div>
+    <div class="builder-actions build-actions"><button class="btn" type="button" data-prev>← Previous</button><button class="btn accent" type="button" data-complete>Complete segment</button><button class="btn" type="button" data-next>Next →</button><button class="btn" type="button" data-undo>Undo</button></div>
+    <div class="bulk-actions">
+      <button class="btn" type="button" data-complete-row>Complete row</button>
+      {shape==='dome' && <button class="btn" type="button" data-complete-layer>Complete layer</button>}
+      <button class="btn danger-quiet" type="button" data-reset-progress>Reset progress</button>
+    </div>
     <div class="nav-separator"></div>
     <div class="export-heading"><span>EXPORT</span><small>Share or save this plan</small></div>
     <div class="builder-actions export-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" style="grid-column:1/-1" type="button" data-litematic>.litematic</button></div>
@@ -163,7 +168,7 @@ if (root) {
       const layerPct=layerSteps.length?Math.round(layerDone/layerSteps.length*100):0;
       setText('[data-layer-progress]',`Layer ${currentLayer+1}: ${layerPct}% · ${layerDone}/${layerSteps.length} segments`);
     }
-    q('[data-complete]').textContent=completed.has(s.key)?'Completed ✓':'Complete';
+    q('[data-complete]').textContent=completed.has(s.key)?'Completed ✓':'Complete segment';
     draw();
   }
 
@@ -302,6 +307,26 @@ if (root) {
   q('[data-next]').addEventListener('click',()=>{stepIndex=Math.min(steps.length-1,stepIndex+1);saveProgress();renderInstruction()});
   q('[data-complete]').addEventListener('click',()=>{const s=steps[stepIndex];if(!s)return;if(completed.has(s.key))completed.delete(s.key);else{completed.add(s.key);if(stepIndex<steps.length-1)stepIndex++}saveProgress();renderInstruction()});
   q('[data-undo]').addEventListener('click',()=>{if(!completed.size)return;const arr=[...completed];const key=arr[arr.length-1];completed.delete(key);const idx=steps.findIndex(s=>s.key===key);if(idx>=0)stepIndex=idx;saveProgress();renderInstruction()});
+  q('[data-complete-row]').addEventListener('click',()=>{
+    const current=steps[stepIndex]; if(!current)return;
+    const rowSteps=steps.filter(step=>step.layer===current.layer&&step.row.y===current.row.y);
+    rowSteps.forEach(step=>completed.add(step.key));
+    const next=steps.findIndex((step,index)=>index>stepIndex&&(step.layer!==current.layer||step.row.y!==current.row.y));
+    if(next>=0) stepIndex=next; else stepIndex=steps.length-1;
+    saveProgress();renderInstruction();
+  });
+  q('[data-complete-layer]')?.addEventListener('click',()=>{
+    const current=steps[stepIndex]; if(!current)return;
+    steps.filter(step=>step.layer===current.layer).forEach(step=>completed.add(step.key));
+    const next=steps.findIndex((step,index)=>index>stepIndex&&step.layer!==current.layer);
+    if(next>=0) stepIndex=next; else stepIndex=steps.length-1;
+    saveProgress();renderInstruction();
+  });
+  q('[data-reset-progress]').addEventListener('click',()=>{
+    if(!completed.size&&stepIndex===0)return;
+    if(!confirm('Reset all saved progress for this blueprint?'))return;
+    completed.clear();stepIndex=0;saveProgress();renderInstruction();
+  });
   q('[data-share]').addEventListener('click',async()=>{const url=updateFragment();try{await navigator.clipboard.writeText(url);q('[data-share]').textContent='Copied ✓';setTimeout(()=>q('[data-share]').textContent='Copy link',1200)}catch{prompt('Copy this link:',url)}});
   q('[data-qr]').addEventListener('click',async()=>{const url=updateFragment();const QRCode=(await import('qrcode')).default;const qc=q('[data-qr-canvas]');await QRCode.toCanvas(qc,url,{width:240,margin:1});q('[data-qr-dialog]').showModal()});q('[data-qr-close]').addEventListener('click',()=>q('[data-qr-dialog]').close());
   q('[data-png]').addEventListener('click',()=>{const exportCanvas=createPngExportCanvas();const a=document.createElement('a');const suffix=shape==='dome'?'-layer-'+(currentLayer+1):'';a.download=`voxelcurve-${shape}${suffix}.png`;a.href=exportCanvas.toDataURL('image/png');a.click()});
