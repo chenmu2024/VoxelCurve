@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'; import { generateCircle } from '../lib/geometry';
+const sizes=[5,7,9,11,15,21,31,41,51,64,75,100];
+const rows=sizes.map(size=>{const thin=generateCircle(size,'thin',1);const filled=generateCircle(size,'filled',1);return{size,thin:thin.blockCount,filled:filled.blockCount}});
+const title='Minecraft Circle Chart – Block Templates from 5×5 to 100×100 | VoxelCurve';
+const description='Use this Minecraft circle chart for common block-circle sizes from 5×5 to 100×100, with outline counts, filled counts and direct links to editable blueprints.';
+---
+<BaseLayout {title} {description} canonical="https://voxelcurve.com/minecraft-circle-chart">
+<section class="hero"><div class="container"><span class="eyebrow">Quick reference</span><h1>Minecraft Circle Chart</h1><p>Common Minecraft circle templates with block counts and one-click links to the interactive generator.</p></div></section>
+<section class="section" style="padding-top:10px"><div class="container"><div class="table-wrap"><table><thead><tr><th>Size</th><th>Outline blocks</th><th>Filled blocks</th><th>Open blueprint</th></tr></thead><tbody>{rows.map(r=><tr><td><strong>{r.size}×{r.size}</strong></td><td>{r.thin}</td><td>{r.filled}</td><td><a style="color:var(--accent);font-weight:800" href={`/#c-${r.size}-thin-1`}>Open {r.size}×{r.size} →</a></td></tr>)}</tbody></table></div></div></section>
+<section class="section"><div class="container"><h2>Which circle size should you use?</h2><div class="cards"><article class="card"><h3>5–15 blocks</h3><p>Useful for wells, compact towers, tree bases and decorative circular details.</p></article><article class="card"><h3>21–41 blocks</h3><p>A practical range for towers, rooms, arenas, observatories and dome foundations.</p></article><article class="card"><h3>51–100 blocks</h3><p>Large builds benefit most from guided row segments because manual counting errors become expensive.</p></article></div></div></section>
+<section class="section"><div class="container prose"><h2>How to read a Minecraft circle chart</h2><p>Every chart size is the outside width of the circle in blocks. Odd sizes have one center block; even sizes are centered between four blocks. The outline count is the number of blocks in a one-block-thick boundary, while the filled count includes the entire disk.</p><h2>Need a different size?</h2><p>The chart is a shortcut, not a limit. The <a style="color:var(--accent);font-weight:800" href="/">Minecraft Circle Generator</a> supports custom diameters and produces exact row and segment instructions for the size you need.</p></div></section>
+</BaseLayout>
