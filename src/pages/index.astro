@@ -30,9 +30,71 @@ const appSchema={ '@context':'https://schema.org','@type':'SoftwareApplication',
       <div><b>EXACT SEGMENTS</b><span>Follow rows and runs instead of recounting pixels.</span></div>
     </div>
   </section>
-  <section class="section"><div class="container"><h2>Build the circle, not the spreadsheet.</h2><p class="section-intro">VoxelCurve converts each row into exact segments, so you can work from the center or from the edge. Your progress stays in this browser and the blueprint can be shared to your phone.</p><div class="cards"><article class="card"><h3>Exact row segments</h3><p>See where every run starts, how many blocks to place, and how large the gap is before the next run.</p></article><article class="card"><h3>Materials before building</h3><p>Know the total block count, full stacks and loose blocks before you start a survival build.</p></article><article class="card"><h3>Java build export</h3><p>Download a PNG, a text build plan, or a Litematica file for supported Java Edition workflows.</p></article></div></div></section>
-  <section class="section"><div class="container"><h2>Common Minecraft circle sizes</h2><p class="section-intro">Need a quick reference instead of a custom size? Open the full <a style="color:var(--accent);font-weight:800" href="/minecraft-circle-chart">Minecraft Circle Chart</a> for common templates from 5×5 to 100×100.</p><div class="cards">{[11,21,31].map(n=><article class="card"><h3>{n}×{n} circle</h3><p>A practical size for {n<15?'small towers and wells':n<30?'rooms, towers and compact arenas':'large towers, domes and arena foundations'}.</p><a href={`/#c-${n}-thin-1`} style="color:var(--accent);font-weight:800">Open {n}×{n} →</a></article>)}</div></div></section>
-  <section class="section"><div class="container prose"><h2>What is a Minecraft circle generator?</h2><p>A Minecraft circle generator converts a mathematical circle into a block grid that can be built in a voxel world. Because Minecraft blocks are square, a circle is represented as symmetric horizontal and vertical runs rather than a perfectly smooth curve.</p><h2>Odd vs. even circle sizes</h2><p>Odd sizes such as 21×21 have one center block. Even sizes such as 20×20 are centered between four blocks. VoxelCurve keeps this convention consistent across the blueprint, row instructions, material count and export files.</p><h2>Thin, thick or filled?</h2><p><strong>Thin</strong> creates a one-block outline. <strong>Thick</strong> expands the wall inward while keeping the same outside dimensions. <strong>Filled</strong> creates a solid disk, useful for floors and platforms.</p><h2>Java and Bedrock</h2><p>The visual blueprint and text instructions work for both Java and Bedrock Edition because they describe block placement rather than game-specific commands. The optional <code>.litematic</code> export is intended for Java Edition workflows using Litematica-compatible tools.</p></div></section>
-  <section class="section"><div class="container"><h2>Related Minecraft building tools</h2><div class="cards"><a class="card" href="/minecraft-dome-generator"><h3>Dome Generator</h3><p>Build a dome layer by layer with exact row segments.</p></a><a class="card" href="/minecraft-oval-generator"><h3>Oval Generator</h3><p>Create rectangular-bound ellipse blueprints for arenas and layouts.</p></a><a class="card" href="/how-to-make-a-circle-in-minecraft"><h3>Circle Building Guide</h3><p>Learn anchors, symmetry and practical large-circle construction.</p></a></div></div></section>
+  <section class="section capability-section">
+    <div class="container">
+      <div class="section-kicker">01 / Why VoxelCurve</div>
+      <div class="section-split">
+        <div>
+          <h2>Build the circle, not the spreadsheet.</h2>
+          <p class="section-intro">VoxelCurve converts geometry into exact build steps, so the plan remains useful while you are actually placing blocks.</p>
+        </div>
+        <div class="capability-list">
+          <article><span>01</span><div><h3>Exact row segments</h3><p>See where every run starts, how many blocks to place, and how large the gap is before the next run.</p></div></article>
+          <article><span>02</span><div><h3>Materials before building</h3><p>Know the total block count, full stacks and loose blocks before you start a survival build.</p></div></article>
+          <article><span>03</span><div><h3>Java build export</h3><p>Download a PNG, a text build plan, or a Litematica file for supported Java Edition workflows.</p></div></article>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section size-section">
+    <div class="container">
+      <div class="section-kicker">02 / Quick sizes</div>
+      <div class="section-split">
+        <div>
+          <h2>Common Minecraft circle sizes</h2>
+          <p class="section-intro">Use a proven starting size, or open the full <a class="text-link" href="/minecraft-circle-chart">Minecraft Circle Chart</a> for templates from 5×5 to 100×100.</p>
+        </div>
+        <div class="size-list">
+          {[11,21,31].map(n=><a class="size-row" href={`/#c-${n}-thin-1`}>
+            <span class="size-value">{n}×{n}</span>
+            <span class="size-use">{n<15?'Small towers / wells':n<30?'Rooms / towers / arenas':'Large towers / dome bases'}</span>
+            <span class="size-action">Open →</span>
+          </a>)}
+          <a class="size-row all-sizes" href="/minecraft-circle-chart">
+            <span class="size-value">5–100</span>
+            <span class="size-use">Browse the complete circle chart</span>
+            <span class="size-action">View chart →</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section explainer-section">
+    <div class="container editorial-grid">
+      <aside class="editorial-aside">
+        <div class="section-kicker">03 / Circle geometry</div>
+        <p>How VoxelCurve turns mathematical curves into buildable block plans.</p>
+      </aside>
+      <div class="prose editorial-prose">
+        <h2>What is a Minecraft circle generator?</h2>
+        <p>A Minecraft circle generator converts a mathematical circle into a block grid that can be built in a voxel world. Because Minecraft blocks are square, a circle is represented as symmetric horizontal and vertical runs rather than a perfectly smooth curve.</p>
+        <h2>Odd vs. even circle sizes</h2>
+        <p>Odd sizes such as 21×21 have one center block. Even sizes such as 20×20 are centered between four blocks. VoxelCurve keeps this convention consistent across the blueprint, row instructions, material count and export files.</p>
+        <h2>Thin, thick or filled?</h2>
+        <p><strong>Thin</strong> creates a one-block outline. <strong>Thick</strong> expands the wall inward while keeping the same outside dimensions. <strong>Filled</strong> creates a solid disk, useful for floors and platforms.</p>
+        <h2>Java and Bedrock</h2>
+        <p>The visual blueprint and text instructions work for both Java and Bedrock Edition because they describe block placement rather than game-specific commands. The optional <code>.litematic</code> export is intended for Java Edition workflows using Litematica-compatible tools.</p>
+      </div>
+    </div>
+  </section>
+  <section class="section related-section"><div class="container">
+    <div class="section-kicker">04 / Keep building</div>
+    <h2>Related Minecraft building tools</h2>
+    <div class="related-list">
+      <a href="/minecraft-dome-generator"><span class="related-index">01</span><div><h3>Dome Generator</h3><p>Build a dome layer by layer with exact row segments.</p></div><span class="related-arrow">↗</span></a>
+      <a href="/minecraft-oval-generator"><span class="related-index">02</span><div><h3>Oval Generator</h3><p>Create rectangular-bound ellipse blueprints for arenas and layouts.</p></div><span class="related-arrow">↗</span></a>
+      <a href="/how-to-make-a-circle-in-minecraft"><span class="related-index">03</span><div><h3>Circle Building Guide</h3><p>Learn anchors, symmetry and practical large-circle construction.</p></div><span class="related-arrow">↗</span></a>
+    </div>
+  </div></section>
   <section class="section"><div class="container"><h2>Frequently asked questions</h2><div class="faq"><details><summary>How do I make a perfect circle in Minecraft?</summary><p>Choose the outside diameter, generate the blueprint, mark the four cardinal edges and then place each row segment symmetrically. The guided builder shows the exact runs so you do not need to count from an image.</p></details><details><summary>Can I make even-sized circles?</summary><p>Yes. Even circles are centered between the middle four blocks, while odd circles have one center block.</p></details><details><summary>Does the tool work on mobile?</summary><p>Yes. The blueprint supports touch dragging and pinch zoom, and the Send to Phone button creates a QR code for the current dimensions.</p></details></div></div></section>
 </BaseLayout>
