@@ -81,20 +81,27 @@ const schemas=[breadcrumbSchema([{name:'Minecraft Circle Generator',url:'https:/
         <p>How VoxelCurve turns mathematical curves into buildable block plans.</p>
       </aside>
       <div class="prose editorial-prose">
+        <h2>Choose the outside diameter</h2>
+        <p>The Minecraft circle maker uses the full width of your build, including both edge blocks. MC is short for Minecraft: the MC circle generator takes the same measurement. Whether you arrived through a “circle generator Minecraft” search or already have a footprint in mind, enter the diameter rather than the radius.</p>
         <h2>What is a Minecraft circle generator?</h2>
         <p>A Minecraft circle generator converts a mathematical circle into a block grid that can be built in a voxel world. Because Minecraft blocks are square, a circle is represented as symmetric horizontal and vertical runs rather than a perfectly smooth curve.</p>
         <h2>From a pixel circle to a block blueprint</h2>
-        <p>A pixel circle maker draws a curve with square cells. A Minecraft pixel circle generator treats each occupied cell as one block, so a preview becomes a placement plan. VoxelCurve keeps the preview, material count and row instructions tied to the same layout.</p>
+        <p>A pixel circle generator draws a curve with square cells. Each occupied cell in this Minecraft pixel circle generator represents one block. A pixel circle maker gives you the shape; the row instructions tell you where each run starts and how many blocks to place.</p>
         <h2>Count materials before placing blocks</h2>
-        <p>The Minecraft circle calculator shows the total blocks for your chosen style, split into stacks and loose blocks. Thin outlines use fewer blocks than filled floors. Change the style before gathering materials, and use the remaining count to plan the rest of your build.</p>
+        <p>The Minecraft circle calculator counts the blocks in your chosen layout and splits them into full stacks and loose blocks. A “circle calculator Minecraft” query can refer to block counts rather than a mathematical circumference. Here the total comes from the actual blueprint, including interior blocks when you choose Filled.</p>
+        <p>The Minecraft circle calc excludes temporary center markers and scaffolding. Change the style before gathering supplies, and check the remaining count as you complete the build.</p>
         <h2>Save a schematic or a manual build plan</h2>
-        <p>Use VoxelCurve as a Minecraft circle schematic maker when you need a Litematic file for a compatible Java workflow. For manual construction, save a PNG reference or a TXT plan with the exact row segments. These exports describe the same blueprint shown above.</p>
+        <p>Use VoxelCurve as a Minecraft circle schematic maker to download a <code>.litematic</code> file for a compatible Java workflow. This export is not a WorldEdit <code>.schem</code> file. For manual construction, save a PNG reference or a TXT plan with exact row segments; both describe the blueprint shown above.</p>
         <h2>Odd vs. even circle sizes</h2>
         <p>Odd sizes such as 21×21 have one center block. Even sizes such as 20×20 are centered between four blocks. VoxelCurve keeps this convention consistent across the blueprint, row instructions, material count and export files.</p>
         <h2>Thin, thick or filled?</h2>
         <p><strong>Thin</strong> creates a one-block outline. <strong>Thick</strong> expands the wall inward while keeping the same outside dimensions. <strong>Filled</strong> creates a solid disk, useful for floors and platforms.</p>
+        <p>An MC circle maker plans the footprint of a wall, not its height. Repeat the same outline vertically in-game for a straight tower, or use Filled to build the floor inside it.</p>
+        <h2>Follow the plan and save your place</h2>
+        <p>A Minecraft circle creator supplies a blueprint, while you place the blocks. If you need a “circle builder Minecraft” workflow, use Build Mode to follow each starting offset and run length. Mark a segment complete only after placing it; Undo reverses a mistaken completion.</p>
         <h2>Java and Bedrock</h2>
         <p>The visual blueprint and text instructions work for both Java and Bedrock Edition because they describe block placement rather than game-specific commands. The optional <code>.litematic</code> export is intended for Java Edition workflows using Litematica-compatible tools.</p>
+        <p>If you searched for “circle Minecraft generator” or “circle generator MC”, choose PNG or TXT for a manual Bedrock build. Choose Litematic only when your Java tools can read that format.</p>
       </div>
     </div>
   </section>
@@ -115,14 +122,9 @@ const schemas=[breadcrumbSchema([{name:'Minecraft Circle Generator',url:'https:/
         <p class="section-intro">Short answers to the questions builders usually have before starting a circle.</p>
       </div>
       <div class="faq">
-        <details><summary>How do I choose a size in the MC circle generator?</summary><p>Enter the full outside diameter, including both edge blocks. For a 21×21 room, start with diameter 21, then choose an outline for walls or Filled for the floor. If you arrived looking for a “circle generator Minecraft”, this diameter is the measurement to use.</p></details>
-        <details><summary>Can the Minecraft circle maker plan a tower wall?</summary><p>Yes. Choose Thin for a one-block outline or Thick for a wider wall that grows inward. An MC circle maker plans the footprint; repeat that footprint vertically in-game for a straight tower.</p></details>
-        <details><summary>Can a pixel circle generator help with a survival build?</summary><p>Yes. Each occupied square represents one block. Use the material total to gather supplies, then follow the highlighted row segments rather than counting pixels from a screenshot.</p></details>
-        <details><summary>Does the circle builder Minecraft players use place blocks automatically?</summary><p>No. VoxelCurve shows the starting offset and length of each run. Mark a segment complete after placing it. A Minecraft circle creator supplies the plan; you control the construction.</p></details>
-        <details><summary>What is the difference between a “circle maker Minecraft” tool and a calculator?</summary><p>The maker provides a layout, while the calculator counts its blocks. Here they share one result. If you are looking for a “circle calculator Minecraft”, generate a layout and read its block, stack and loose-block totals.</p></details>
-        <details><summary>What does the Minecraft circle calc include?</summary><p>It counts the blocks occupied by the selected outline, thick wall or filled disk. Temporary center markers and scaffolding are not included, so gather those separately.</p></details>
-        <details><summary>Can the Minecraft circle gen handle a large arena?</summary><p>The diameter supports 3–512 blocks. For larger builds, mark the center axes, use Build Mode and complete one row at a time. The abbreviated “MC circle gen” refers to the same generator and size controls.</p></details>
-        <details><summary>Can I use a “circle Minecraft generator” plan in Bedrock?</summary><p>Yes. The PNG blueprint and row instructions describe ordinary block placement and work in Java or Bedrock. When choosing a “circle generator MC” workflow, reserve Litematic export for compatible Java tools.</p></details>
+        <details><summary>Do I need a layout or just a material count?</summary><p>A “circle maker Minecraft” search points to a placement layout. To plan a survival build, you also need its block count. VoxelCurve calculates both from one blueprint, so changing the size or style updates the instructions and materials together.</p></details>
+        <details><summary>Does VoxelCurve place blocks automatically?</summary><p>No. The tool gives you a blueprint and construction instructions. Place blocks in-game, then mark the corresponding segment complete. A downloaded Litematic file needs a compatible Java tool and does not run as an in-game command.</p></details>
+        <details><summary>How large can I build?</summary><p>The Minecraft circle gen supports outside diameters from 3 to 512 blocks. The abbreviation “MC circle gen” names the same tool. For a large arena, mark the center axes, work through rows in Build Mode and keep temporary markers separate from your material total.</p></details>
         <details><summary>How do I make a perfect circle in Minecraft?</summary><p>Choose the outside diameter, generate the blueprint, mark the four cardinal edges and then place each row segment symmetrically. The guided builder shows the exact runs so you do not need to count from an image. For the full construction method, use the <a class="text-link" href="/how-to-make-a-circle-in-minecraft">step-by-step Minecraft circle guide</a>.</p></details>
         <details><summary>Can I make even-sized circles?</summary><p>Yes. Even circles are centered between the middle four blocks, while odd circles have one center block.</p></details>
         <details><summary>Does the tool work on mobile?</summary><p>Yes. The blueprint supports touch dragging and pinch zoom, and the Send to Phone button creates a QR code for the current dimensions.</p></details>
