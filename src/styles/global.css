@@ -1063,3 +1063,33 @@ tr:last-child td{border-bottom:0}
 @media(max-width:800px){
   .layer-nav .btn{min-height:44px;font-size:11px}
 }
+
+
+.layer-jump{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:8px;
+  color:#858c87;
+  font-size:10px
+}
+.layer-jump input{
+  width:64px;
+  height:34px;
+  border:1px solid #353936;
+  border-radius:6px;
+  background:#1b1e1c;
+  color:#f3f5f3;
+  text-align:center;
+  font:600 11px/1 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace
+}
+.layer-jump span{
+  margin-left:auto;
+  color:#686f6a;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace
+}
+@media(max-width:800px){
+  .layer-jump{font-size:11px}
+  .layer-jump input{height:44px;width:72px}
+}
