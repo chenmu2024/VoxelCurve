@@ -954,3 +954,34 @@ tr:last-child td{border-bottom:0}
     margin:0
   }
 }
+
+
+/* ===== Bulk build progress controls ===== */
+.bulk-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:8px
+}
+.bulk-actions .btn{
+  min-height:36px;
+  font-size:11px
+}
+.bulk-actions .danger-quiet{
+  grid-column:1/-1;
+  color:#9a9f9b;
+  background:transparent;
+  border-color:#303430
+}
+.bulk-actions .danger-quiet:hover{
+  color:#fff;
+  background:#251f1f;
+  border-color:#5a3a3a
+}
+.layer-progress-note{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  color:#8c948f
+}
+@media(max-width:800px){
+  .bulk-actions .btn{min-height:44px}
+}
