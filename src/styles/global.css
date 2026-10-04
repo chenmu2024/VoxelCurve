@@ -1351,3 +1351,21 @@ body.vc-build-mode .tool-shell .wake-toggle{
     padding-right:8px
   }
 }
+
+
+@media(max-width:800px){
+  .workspace-topbar{height:44px}
+  .workspace-build-toggle{min-height:34px;padding:6px 10px}
+  body.vc-build-mode .tool-shell{
+    grid-template-rows:44px minmax(280px,1fr) minmax(245px,42vh)!important
+  }
+  body.vc-build-mode .workspace-build-toggle{
+    min-height:34px
+  }
+}
+@media(max-width:480px){
+  .workspace-build-toggle{min-height:34px!important}
+  body.vc-build-mode .tool-shell{
+    grid-template-rows:44px minmax(250px,1fr) minmax(270px,46vh)!important
+  }
+}
