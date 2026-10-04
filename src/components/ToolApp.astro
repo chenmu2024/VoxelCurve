@@ -16,6 +16,7 @@ const { shape } = Astro.props;
     <div class="field" data-thickness-wrap><label for="thickness">Thickness <small>blocks inward</small></label><input id="thickness" data-input="thickness" type="number" min="1" max="32" value="1" /></div>
     <div class="field"><label for="material">Material <small>optional</small></label><input id="material" data-input="material" type="text" value="Stone Bricks" maxlength="60" /></div>
     <div class="field"><label>Display</label><div class="toggle-row"><button type="button" class="toggle" data-toggle="grid" aria-pressed="true">Grid</button><button type="button" class="toggle" data-toggle="center" aria-pressed="true">Center</button><button type="button" class="toggle" data-toggle="labels" aria-pressed="true">Labels</button></div></div>
+    <div class="field"><label>Instructions</label><div class="segment-control" role="group" aria-label="Instruction coordinate mode"><button type="button" class="segment-option" data-instruction-mode="center" aria-pressed="true">Center</button><button type="button" class="segment-option" data-instruction-mode="edge" aria-pressed="false">Edge</button></div></div>
     {shape === 'dome' && <button type="button" class="btn" data-hemisphere>Use hemisphere height</button>}
   </aside>
 
@@ -58,6 +59,7 @@ if (root) {
   let zoom = 1, panX = 0, panY = 0;
   let pointers = new Map(), dragStart = null, pinchStart = null;
   const display = { grid:true, center:true, labels:true };
+  let instructionMode = 'center';
 
   const num = (name, fallback) => Number(q(`[data-input="${name}"]`)?.value ?? fallback);
   const text = (name, fallback='') => String(q(`[data-input="${name}"]`)?.value ?? fallback);
@@ -124,7 +126,8 @@ if (root) {
     const inst=rowInstruction(s.row,result.width)[s.si];
     const title=shape==='dome'?`Layer ${s.layer+1} · Row ${s.row.y+1} · Segment ${s.si+1}`:`Row ${s.row.y+1} · Segment ${s.si+1}`;
     const gap= s.si<s.row.spans.length-1 ? s.row.spans[s.si+1].start-s.span.end-1 : 0;
-    const body=`${inst.center}. ${inst.edge}. ${gap>0?`Then skip ${gap} block${gap===1?'':'s'}.`:''}`;
+    const primary=instructionMode==='edge'?inst.edge:inst.center;
+    const body=`${primary}. ${gap>0?`Then skip ${gap} block${gap===1?'':'s'}.`:''}`;
     setText('[data-instruction-title]',title);setText('[data-instruction-body]',body);
     const done=completed.size; const pct=steps.length?Math.round(done/steps.length*100):0; q('[data-progress-bar]').style.width=`${pct}%`;setText('[data-progress-label]',`${pct}% complete · ${done}/${steps.length} segments`);
     if(shape==='dome'){setText('[data-layer]',`${currentLayer+1}/${result.layers.length}`);setText('[data-layer-blocks]',result.layers[currentLayer]?.count||0)}
@@ -219,6 +222,7 @@ if (root) {
   qa('[data-style]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="style"]').value=el.dataset.style;regenerate(false)}));
   qa('[data-preset]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="diameter"]').value=el.dataset.preset;regenerate(true)}));
   qa('[data-toggle]').forEach(el=>el.addEventListener('click',()=>{const k=el.dataset.toggle;display[k]=!display[k];el.setAttribute('aria-pressed',String(display[k]));draw()}));
+  qa('[data-instruction-mode]').forEach(el=>el.addEventListener('click',()=>{instructionMode=el.dataset.instructionMode;qa('[data-instruction-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn===el)));renderInstruction()}));
   q('[data-hemisphere]')?.addEventListener('click',()=>{const w=num('width',31);q('[data-input="depth"]').value=String(w);q('[data-input="height"]').value=String(Math.ceil(w/2));regenerate(true)});
   q('[data-fit]').addEventListener('click',fit);q('[data-zoom-in]').addEventListener('click',()=>{zoom=Math.min(8,zoom*1.2);draw()});q('[data-zoom-out]').addEventListener('click',()=>{zoom=Math.max(.25,zoom/1.2);draw()});q('[data-print]').addEventListener('click',()=>{fit();requestAnimationFrame(()=>window.print())});
   q('[data-prev]').addEventListener('click',()=>{stepIndex=Math.max(0,stepIndex-1);saveProgress();renderInstruction()});
