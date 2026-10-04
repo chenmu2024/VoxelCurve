@@ -52,8 +52,8 @@ Do not introduce a new geometry convention, design language or synonym landing p
 
 ## Stack
 
-- Astro
-- TypeScript
+- Astro 7.2.8
+- TypeScript 5.9.3
 - static output
 - client-side geometry engine
 - Canvas blueprint renderer
@@ -62,6 +62,7 @@ Do not introduce a new geometry convention, design language or synonym landing p
 - localStorage for compact build progress
 - Cloudflare Pages
 - GitHub Actions
+- npm 11.21.0 + committed package-lock
 
 No database, server API or paid runtime service is required.
 
@@ -94,7 +95,7 @@ Canvas, material counts, TXT plans, print output and Litematic export must consu
 
 ## Development
 
-Use Node.js 22.
+Use Node.js 22 with npm 11.21.0.
 
 ```bash
 npm ci
