@@ -1,4 +1,31 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'; const title='About VoxelCurve'; const description='About VoxelCurve, an independent browser-based geometry and guided building utility for Minecraft builders.';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbSchema } from '../lib/schema';
+const title='About VoxelCurve';
+const description='About VoxelCurve, a local-first Minecraft building geometry workspace for circles, ovals and domes.';
+const canonical='https://voxelcurve.com/about';
+const schemas=[breadcrumbSchema([{name:'VoxelCurve',url:'https://voxelcurve.com/'},{name:'About',url:canonical}])];
 ---
-<BaseLayout {title} {description} canonical="https://voxelcurve.com/about"><section class="hero"><div class="container prose"><h1>About VoxelCurve</h1><p>VoxelCurve is an independent browser-based building utility that turns block geometry into practical construction plans. The project focuses on circles, ovals and domes, with exact row and layer instructions instead of decorative 3D previews.</p><h2>Built for practical construction</h2><p>The core geometry runs locally in your browser. No account is required, and build progress is stored only on the current device.</p><h2>Independent project</h2><p>VoxelCurve is not affiliated with Mojang Studios or Microsoft.</p></div></section></BaseLayout>
+<BaseLayout {title} {description} {canonical} {schemas}>
+  <section class="resource-hero"><div class="container"><div class="resource-hero-grid">
+    <div><span class="eyebrow">About the project</span><h1>Built for precise block construction.</h1><p>VoxelCurve turns Minecraft building geometry into exact, practical construction plans that can be followed while you are in-game.</p></div>
+    <div class="resource-meta"><span>LOCAL-FIRST</span><strong>No account · No server geometry</strong><small>Blueprint math runs in your browser.</small></div>
+  </div></div></section>
+  <section class="section"><div class="container editorial-grid">
+    <aside class="editorial-aside"><div class="section-kicker">01 / Purpose</div><p>A small, focused builder utility instead of a general Minecraft portal.</p></aside>
+    <div class="prose editorial-prose">
+      <h2>What VoxelCurve does</h2>
+      <p>VoxelCurve focuses on circles, ovals and domes. It converts dimensions into deterministic block geometry, exact row or layer segments, material counts and guided build progress.</p>
+      <p>The project deliberately avoids unrelated Minecraft content such as news, skins, seeds, servers and general wiki pages. The goal is to solve one construction problem well.</p>
+      <h2>Local-first by design</h2>
+      <p>Geometry generation, build instructions, PNG creation, TXT plans, QR generation and supported Litematic exports are created in your browser. No VoxelCurve account is required.</p>
+      <p>Build progress is stored locally on the current device and browser. Shared blueprint links contain shape settings in the URL fragment, but they do not include completion progress.</p>
+      <h2>One geometry source</h2>
+      <p>The blueprint, material count, guided instructions and exports all derive from the same geometry result. This reduces the chance that one part of the site reports a different shape or block count from another.</p>
+      <h2>Open maintenance</h2>
+      <p>Technical issues can be reported through the <a class="text-link" href="https://github.com/chenmu2024/VoxelCurve/issues" rel="noopener noreferrer">VoxelCurve GitHub issue tracker</a>. Please avoid posting personal, confidential or security-sensitive information in a public issue.</p>
+      <h2>Independent project</h2>
+      <p>VoxelCurve is an independent fan-made building utility and is not affiliated with Mojang Studios or Microsoft.</p>
+    </div>
+  </div></section>
+</BaseLayout>
