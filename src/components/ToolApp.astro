@@ -187,7 +187,23 @@ if (root) {
       setText('[data-layer-progress]',`Layer ${currentLayer+1}: ${layerPct}% · ${layerDone}/${layerSteps.length} segments`);
       const currentCount=result.layers[currentLayer]?.count||0;
       const previousCount=currentLayer>0?(result.layers[currentLayer-1]?.count||0):null;
-      setText('[data-layer-delta]',previousCount===null?'Base layer':`vs previous layer: ${currentCount-previousCount>=0?'+':''}${currentCount-previousCount} blocks`);
+      let deltaText=previousCount===null?'Base layer':`Layer total: ${currentCount-previousCount>=0?'+':''}${currentCount-previousCount} blocks`;
+      if(currentLayer>0){
+        const prevRow=result.layers[currentLayer-1]?.rows.find(row=>row.y===s.row.y);
+        if(prevRow?.spans.length&&s.row.spans.length){
+          const currentLeft=Math.min(...s.row.spans.map(span=>span.start));
+          const currentRight=Math.max(...s.row.spans.map(span=>span.end));
+          const previousLeft=Math.min(...prevRow.spans.map(span=>span.start));
+          const previousRight=Math.max(...prevRow.spans.map(span=>span.end));
+          const left=currentLeft-previousLeft;
+          const right=currentRight-previousRight;
+          deltaText=`Row delta · left ${left>=0?'+':''}${left} · right ${right>=0?'+':''}${right}`;
+        }
+      }
+      setText('[data-layer-delta]',deltaText);
+      const prevLayerBtn=q('[data-layer-prev]'),nextLayerBtn=q('[data-layer-next]');
+      if(prevLayerBtn) prevLayerBtn.disabled=currentLayer===0;
+      if(nextLayerBtn) nextLayerBtn.disabled=currentLayer===result.layers.length-1;
     }
     const volume=result.type==='dome'?result.width*result.depth*result.height:result.width*result.height;
     const blocked=volume>20_000_000||result.blockCount>5_000_000;
