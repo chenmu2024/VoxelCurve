@@ -322,7 +322,9 @@ tr:last-child td{border-bottom:0}
   .product-stage + .section .card:last-child{border-bottom:0}
 }
 @media(max-width:480px){
-  .workspace-meta{display:none}
+  .workspace-meta{gap:0}
+  .workspace-meta>span{display:none}
+  .workspace-build-toggle{min-height:30px;padding:5px 8px}
   .product-stage .hero h1{font-size:36px}
   .product-stage .canvas-panel{min-height:540px}
   .product-stage .canvas-wrap{min-height:488px}
