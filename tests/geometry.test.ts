@@ -88,6 +88,9 @@ describe('geometry',()=>{
     const plan=buildTextPlan(r,'Stone Bricks');
     expect(plan).toContain(`Total Blocks: ${r.blockCount}`);
     expect(plan).toContain('Layer 1');
+    expect(plan).toContain('Segment 1:');
+    expect(plan).toContain('Columns ');
+    expect(plan).toContain('Instruction key:');
   });
   it('litematic export is gzipped NBT with expected metadata',()=>{
     const circle=generateCircle(11,'thin',1);
