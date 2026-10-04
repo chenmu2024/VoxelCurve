@@ -50,6 +50,9 @@ Test:
 - [ ] common preset buttons;
 - [ ] Center instructions;
 - [ ] Edge instructions;
+- [ ] optional world coordinates for odd dimensions;
+- [ ] optional world coordinates for even dimensions using .5 centers;
+- [ ] world coordinates are absent from shared URLs;
 - [ ] progress save after refresh;
 - [ ] Complete Segment;
 - [ ] Complete Row;
@@ -107,6 +110,7 @@ Test:
 - [ ] SVG exports current layer;
 - [ ] Print includes blueprint + full plan;
 - [ ] TXT includes Layer / Row / Segment instructions;
+- [ ] TXT includes world X/Y/Z when enabled;
 - [ ] Litematic.
 
 ## 6. Litematic manual import gate
