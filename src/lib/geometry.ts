@@ -127,7 +127,10 @@ function layerMask(width: number, depth: number, height: number, layer: number, 
       if (shell !== 'filled') {
         const ix = (x - cx) / innerRx;
         const iz = (z - cz) / innerRz;
-        const iy = Math.max(0, yPos - thickness) / innerRy;
+        // Keep the inner ellipsoid on the same base plane as the outer dome.
+        // Reducing Ry naturally creates a solid cap near the top instead of
+        // shifting the cavity upward and hollowing out the pole.
+        const iy = yPos / innerRy;
         inner[z][x] = ix * ix + iz * iz + iy * iy <= 1 + 1e-9;
       }
     }
@@ -146,7 +149,7 @@ export function generateDome(width: number, depth: number, height: number, style
     const grid = enforceSymmetry(layerMask(w, d, h, y, style, t));
     const rows = gridToRows(grid);
     const count = rows.reduce((n, r) => n + r.count, 0);
-    if (count === 0 && y === h - 1) continue;
+    if (count === 0) continue;
     layers.push({ index: y, rows, count });
     total += count;
   }
