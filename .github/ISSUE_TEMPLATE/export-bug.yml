@@ -12,6 +12,7 @@ body:
       label: Export type
       options:
         - PNG
+        - SVG
         - Print
         - TXT build plan
         - QR / Send to phone
