@@ -101,41 +101,42 @@ export function generateOval(width: number, height: number, style: BuildStyle='t
   return generate2D('oval', width, height, style, thickness);
 }
 
-function layerMask(width: number, depth: number, height: number, layer: number, shell: BuildStyle, thickness: number): boolean[][] {
-  const w = clampInt(width, 3, 256);
-  const d = clampInt(depth, 3, 256);
-  const h = clampInt(height, 2, 256);
-  const y = clampInt(layer, 0, h - 1);
-  const cx = (w - 1) / 2;
-  const cz = (d - 1) / 2;
-  const rx = w / 2;
-  const rz = d / 2;
-  const ry = Math.max(1, h - 0.5);
-  const yPos = y;
-  const outer = Array.from({ length: d }, () => Array<boolean>(w).fill(false));
-  const inner = Array.from({ length: d }, () => Array<boolean>(w).fill(false));
-  const innerRx = Math.max(0.0001, rx - thickness);
-  const innerRz = Math.max(0.0001, rz - thickness);
-  const innerRy = Math.max(0.0001, ry - thickness);
-  for (let z = 0; z < d; z++) {
-    for (let x = 0; x < w; x++) {
-      const ox = (x - cx) / rx;
-      const oz = (z - cz) / rz;
-      const oy = yPos / ry;
-      const o = ox * ox + oz * oz + oy * oy <= 1 + 1e-9;
-      outer[z][x] = o;
-      if (shell !== 'filled') {
-        const ix = (x - cx) / innerRx;
-        const iz = (z - cz) / innerRz;
-        // Keep the inner ellipsoid on the same base plane as the outer dome.
-        // Reducing Ry naturally creates a solid cap near the top instead of
-        // shifting the cavity upward and hollowing out the pole.
-        const iy = yPos / innerRy;
-        inner[z][x] = ix * ix + iz * iz + iy * iy <= 1 + 1e-9;
-      }
-    }
-  }
-  return shell === 'filled' ? outer : subtract(outer, inner);
+function rowSpanForEllipsoid(
+  width: number,
+  depth: number,
+  height: number,
+  y: number,
+  z: number,
+  inset: number
+): Span | null {
+  const cx = (width - 1) / 2;
+  const cz = (depth - 1) / 2;
+  const rx = width / 2 - inset;
+  const rz = depth / 2 - inset;
+  const ry = Math.max(0.0001, height - 0.5 - inset);
+
+  if (rx <= 0 || rz <= 0 || ry <= 0) return null;
+
+  const nz = (z - cz) / rz;
+  const ny = y / ry;
+  const remaining = 1 - nz * nz - ny * ny;
+  if (remaining < -1e-9) return null;
+
+  const extent = rx * Math.sqrt(Math.max(0, remaining));
+  const minX = Math.max(0, Math.ceil(cx - extent - 1e-9));
+  const maxX = Math.min(width - 1, Math.floor(cx + extent + 1e-9));
+  if (minX > maxX) return null;
+  return { start: minX, end: maxX };
+}
+
+function subtractSpan(outer: Span | null, inner: Span | null): Span[] {
+  if (!outer) return [];
+  if (!inner) return [outer];
+
+  const spans: Span[] = [];
+  if (inner.start > outer.start) spans.push({ start: outer.start, end: Math.min(outer.end, inner.start - 1) });
+  if (inner.end < outer.end) spans.push({ start: Math.max(outer.start, inner.end + 1), end: outer.end });
+  return spans.filter(span => span.start <= span.end);
 }
 
 export function generateDome(width: number, depth: number, height: number, style: BuildStyle='thin', thickness=1): ShapeResult {
@@ -145,15 +146,37 @@ export function generateDome(width: number, depth: number, height: number, style
   const t = clampInt(thickness, 1, Math.max(1, Math.floor(Math.min(w, d, h) / 2)));
   const layers: LayerPlan[] = [];
   let total = 0;
+
   for (let y = 0; y < h; y++) {
-    const grid = enforceSymmetry(layerMask(w, d, h, y, style, t));
-    const rows = gridToRows(grid);
-    const count = rows.reduce((n, r) => n + r.count, 0);
-    if (count === 0) continue;
-    layers.push({ index: y, rows, count });
-    total += count;
+    const rows: RowPlan[] = [];
+    let layerCount = 0;
+
+    for (let z = 0; z < d; z++) {
+      const outer = rowSpanForEllipsoid(w, d, h, y, z, 0);
+      const inner = style === 'filled' ? null : rowSpanForEllipsoid(w, d, h, y, z, t);
+      const spans = style === 'filled' ? (outer ? [outer] : []) : subtractSpan(outer, inner);
+      const count = spans.reduce((sum, span) => sum + span.end - span.start + 1, 0);
+      rows.push({ y: z, spans, count });
+      layerCount += count;
+    }
+
+    if (layerCount === 0) continue;
+    layers.push({ index: y, rows, count: layerCount });
+    total += layerCount;
   }
-  return { type: 'dome', width: w, height: h, depth: d, style, thickness: t, rows: [], layers, blockCount: total, geometryVersion: GEOMETRY_VERSION };
+
+  return {
+    type: 'dome',
+    width: w,
+    height: h,
+    depth: d,
+    style,
+    thickness: t,
+    rows: [],
+    layers,
+    blockCount: total,
+    geometryVersion: GEOMETRY_VERSION
+  };
 }
 
 export function resultToCells(result: ShapeResult): Array<{x:number;y:number;z:number}> {
