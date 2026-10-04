@@ -156,8 +156,9 @@ const redirectsFile=path.join(dist,'_redirects');
 if(!exists(redirectsFile)) errors.push('Missing Cloudflare _redirects');
 else {
   const redirects=fs.readFileSync(redirectsFile,'utf8');
-  if(!redirects.includes('https://voxelcurve.pages.dev/* https://voxelcurve.com/:splat 301')) errors.push('Missing pages.dev canonical host redirect');
-  if(!redirects.includes('https://www.voxelcurve.com/* https://voxelcurve.com/:splat 301')) errors.push('Missing www canonical host redirect');
+  if(/https?:\/\/[^\s]+\s+https?:\/\//i.test(redirects)) {
+    errors.push('Host-level redirects must not be declared in Pages _redirects; use Cloudflare Bulk Redirects');
+  }
 }
 
 const headersFile=path.join(dist,'_headers');
