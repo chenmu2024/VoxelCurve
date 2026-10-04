@@ -8,9 +8,9 @@ export type BlueprintState =
 const STYLES = new Set<BuildStyleState>(['thin','thick','filled']);
 
 function finiteInt(value:string | undefined): number | null {
-  if (value === undefined || value.trim() === '') return null;
+  if (value === undefined || !/^\d+$/.test(value)) return null;
   const n = Number(value);
-  return Number.isFinite(n) ? Math.round(n) : null;
+  return Number.isSafeInteger(n) ? n : null;
 }
 
 function style(value:string | undefined): BuildStyleState | null {
@@ -36,7 +36,7 @@ export function parseBlueprintFragment(fragment:string): BlueprintState | null {
     const diameter=finiteInt(parts[1]);
     const buildStyle=style(parts[2]);
     const thickness=finiteInt(parts[3]);
-    if (diameter === null || buildStyle === null || thickness === null) return null;
+    if (diameter === null || diameter<3 || diameter>512 || buildStyle === null || thickness === null || thickness<1 || thickness>32) return null;
     return {shape:'circle',diameter,style:buildStyle,thickness};
   }
 
@@ -45,7 +45,7 @@ export function parseBlueprintFragment(fragment:string): BlueprintState | null {
     const height=finiteInt(parts[2]);
     const buildStyle=style(parts[3]);
     const thickness=finiteInt(parts[4]);
-    if (width === null || height === null || buildStyle === null || thickness === null) return null;
+    if (width === null || width<3 || width>512 || height === null || height<3 || height>512 || buildStyle === null || thickness === null || thickness<1 || thickness>32) return null;
     return {shape:'oval',width,height,style:buildStyle,thickness};
   }
 
@@ -55,7 +55,7 @@ export function parseBlueprintFragment(fragment:string): BlueprintState | null {
     const height=finiteInt(parts[3]);
     const buildStyle=style(parts[4]);
     const thickness=finiteInt(parts[5]);
-    if (width === null || depth === null || height === null || buildStyle === null || thickness === null) return null;
+    if (width === null || width<3 || width>256 || depth === null || depth<3 || depth>256 || height === null || height<2 || height>256 || buildStyle === null || thickness === null || thickness<1 || thickness>32) return null;
     return {shape:'dome',width,depth,height,style:buildStyle,thickness};
   }
 

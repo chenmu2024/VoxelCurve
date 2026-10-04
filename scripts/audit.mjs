@@ -53,6 +53,14 @@ for (const file of htmlFiles) {
   if (/TODO|COMING SOON|Lorem ipsum|localhost:/i.test(html)) {
     errors.push(`Placeholder/development text found in ${rel}`);
   }
+  if (/data-world-toggle|data-wake-toggle|data-svg|manifest\.webmanifest|minecraft-sphere-generator/i.test(html)) {
+    errors.push(`Out-of-scope feature found in ${rel}`);
+  }
+  const schemas=[];
+  for(const match of html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>(.*?)<\/script>/gis)){
+    try{schemas.push(JSON.parse(match[1]))}catch{errors.push(`Invalid structured-data JSON in ${rel}`)}
+  }
+  if(!schemas.some(schema=>schema['@type']==='BreadcrumbList')&&!rel.startsWith('404'))errors.push(`Missing breadcrumb schema in ${rel}`);
 
   const title = html.match(/<title>(.*?)<\/title>/is)?.[1]?.trim();
   if (!title) errors.push(`Missing title in ${rel}`);
@@ -77,13 +85,16 @@ for (const file of htmlFiles) {
   if (!canonical) errors.push(`Missing canonical in ${rel}`);
   else if (!canonical.startsWith('https://voxelcurve.com/')) errors.push(`Canonical uses unexpected host in ${rel}: ${canonical}`);
   else if (!rel.startsWith('404')) {
+    const pagePath=rel.replaceAll(path.sep,'/').replace(/\/index\.html$/,'').replace(/^index\.html$/,'');
+    const expectedCanonical=`https://voxelcurve.com/${pagePath}`;
+    if(canonical!==expectedCanonical)errors.push(`Canonical is not self-referencing in ${rel}: ${canonical}`);
     if (canonicals.has(canonical)) errors.push(`Duplicate canonical in ${rel} and ${canonicals.get(canonical)}: ${canonical}`);
     canonicals.set(canonical, rel);
   }
 
   for (const match of html.matchAll(/src=["']([^"']+)["']/gi)) {
     const src = match[1];
-    if (!src.startsWith('/') || src.startsWith('//') || src.startsWith('/_astro/')) continue;
+    if (!src.startsWith('/') || src.startsWith('//')) continue;
     const local = path.join(dist, src.replace(/^\//, ''));
     if (!exists(local)) errors.push(`Missing local asset in ${rel}: ${src}`);
   }
@@ -210,7 +221,7 @@ if (exists(assetDir)) {
     if (name.endsWith('.css')) totalCssGzip += gz;
   }
 }
-if (totalJsGzip > 300 * 1024) errors.push(`Total built JavaScript exceeds 300KB gzip: ${Math.round(totalJsGzip/1024)}KB`);
+if (totalJsGzip > 150 * 1024) errors.push(`Total built JavaScript exceeds 150KB gzip: ${Math.round(totalJsGzip/1024)}KB`);
 if (totalCssGzip > 100 * 1024) errors.push(`Total built CSS exceeds 100KB gzip: ${Math.round(totalCssGzip/1024)}KB`);
 
 if (errors.length) {

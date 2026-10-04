@@ -33,4 +33,7 @@ describe('blueprint URL state',()=>{
     expect(canonicalBlueprintUrl('/minecraft-dome-generator',state))
       .toBe('https://voxelcurve.com/minecraft-dome-generator#c-21-thin-1');
   });
+  it('rejects out-of-range, fractional and nondecimal shared inputs',()=>{
+    for(const fragment of ['c-2-thin-1','c-513-thin-1','c-31-thick-0','c-31-thick-33','c-3.5-thin-1','c-0x20-thin-1','c-1e2-thin-1','o-512-513-thin-1','d-257-31-16-thin-1','d-31-31-1-thin-1'])expect(parseBlueprintFragment(fragment)).toBeNull();
+  });
 });

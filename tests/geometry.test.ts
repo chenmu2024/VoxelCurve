@@ -1,5 +1,5 @@
 import { describe,it,expect } from 'vitest';
-import { generateCircle,generateOval,generateDome } from '../src/lib/geometry';
+import { generateCircle,generateOval,generateDome } from '../src/core/geometry';
 import { exportLitematic, LITEMATIC_FORMAT_VERSION, LITEMATIC_SUB_VERSION, LITEMATIC_MINECRAFT_DATA_VERSION } from '../src/lib/litematic';
 import { buildTextPlan, spanInstruction } from '../src/lib/buildPlan';
 import { gunzipSync } from 'fflate';
@@ -62,10 +62,10 @@ function countPaletteIndexOne(longs:bigint[], volume:number, bitsPerEntry=2){
 }
 
 describe('geometry',()=>{
-  it('geometry version is pinned after the dome shell correction',()=>{
-    expect(generateCircle(21,'thin').geometryVersion).toBe(2);
-    expect(generateOval(31,21,'thin').geometryVersion).toBe(2);
-    expect(generateDome(31,31,16,'thin').geometryVersion).toBe(2);
+  it('geometry version is pinned after the minimum-size thin outline correction',()=>{
+    expect(generateCircle(21,'thin').geometryVersion).toBe(3);
+    expect(generateOval(31,21,'thin').geometryVersion).toBe(3);
+    expect(generateDome(31,31,16,'thin').geometryVersion).toBe(3);
   });
   it('locks common community-compatible circle counts',()=>{
     expect(generateCircle(11,'thin',1).blockCount).toBe(28);
@@ -142,13 +142,6 @@ describe('geometry',()=>{
     expect(spanInstruction({start:9,end:11},31).center).toBe('Start 6 blocks left of center · place 3 right');
     expect(spanInstruction({start:19,end:21},31).center).toBe('Start 4 blocks right of center · place 3 right');
     expect(spanInstruction({start:8,end:11},20).center).toContain('center gap');
-  });
-  it('includes world coordinates in TXT when an anchor is enabled',()=>{
-    const r=generateCircle(11,'thin',1);
-    const plan=buildTextPlan(r,'Stone Bricks',{centerX:100,baseY:64,centerZ:-30});
-    expect(plan).toContain('World Anchor: Center X 100 · Base Y 64 · Center Z -30');
-    expect(plan).toContain('World · X ');
-    expect(plan).toContain('World Axes: +X = blueprint right');
   });
   it('text plan uses the same total block count as geometry',()=>{
     const r=generateDome(21,21,11,'thin',1);
