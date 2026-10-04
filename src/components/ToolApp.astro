@@ -559,6 +559,7 @@ if (root) {
   q('[data-zoom-in]').addEventListener('click',()=>{zoom=Math.min(8,zoom*1.2);draw()});
   q('[data-zoom-out]').addEventListener('click',()=>{zoom=Math.max(.25,zoom/1.2);draw()});
   q('[data-print]').addEventListener('click',()=>{
+    if(buildMode)setBuildMode(false);
     const exportCanvas=createPngExportCanvas();
     const printImage=q('[data-print-image]');
     if(printImage) printImage.src=exportCanvas.toDataURL('image/png');
