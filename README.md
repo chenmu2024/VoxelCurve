@@ -16,11 +16,12 @@ Core tools:
 - Minecraft Circle Chart
 - How to Make a Circle in Minecraft guide
 - Guided row / segment / layer building
+- immersive Build Mode for focused desktop/mobile construction
 - Browser-local build progress
 - Material and stack counts
 - optional Center X / Base Y / Center Z world-coordinate guidance
 - Share URL + QR
-- progressive screen Wake Lock during build mode
+- progressive screen Wake Lock during Build Mode
 - PNG export
 - SVG vector export
 - Printable build plan
