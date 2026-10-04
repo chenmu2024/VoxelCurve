@@ -103,6 +103,7 @@ if (root) {
   let pointers = new Map(), dragStart = null, pinchStart = null;
   const display = { grid:true, center:true, labels:true, ghost:true };
   let instructionMode = 'center';
+  let worldEnabled = false;
   const mobileControls = window.matchMedia('(max-width: 800px)');
   const settingsButton = q('[data-settings-toggle]');
   const setMobileControlsState = (collapsed) => {
@@ -120,6 +121,50 @@ if (root) {
   const text = (name, fallback='') => String(q(`[data-input="${name}"]`)?.value ?? fallback);
   const setText = (sel, value) => { const el=q(sel); if(el) el.textContent=String(value); };
   const clamp = (n,min,max) => Math.max(min, Math.min(max, Math.round(Number.isFinite(n)?n:min)));
+
+  function worldAnchor(){
+    if(!worldEnabled)return null;
+    const centerX=Number(q('[data-world="centerX"]')?.value);
+    const baseY=Number(q('[data-world="baseY"]')?.value);
+    const centerZ=Number(q('[data-world="centerZ"]')?.value);
+    if(![centerX,baseY,centerZ].every(Number.isFinite))return null;
+    return {centerX,baseY,centerZ};
+  }
+
+  function setDefaultWorldAnchor(){
+    const width=result?.width??params().width??params().diameter??31;
+    const depth=result?.type==='dome'?result.depth:(result?.height??params().height??width);
+    const x=q('[data-world="centerX"]'),y=q('[data-world="baseY"]'),z=q('[data-world="centerZ"]');
+    if(x&&!x.value)x.value=width%2===0?'0.5':'0';
+    if(y&&!y.value)y.value='64';
+    if(z&&!z.value)z.value=depth%2===0?'0.5':'0';
+  }
+
+  function renderWorldInstruction(step){
+    const line=q('[data-world-instruction]');
+    const note=q('[data-world-note]');
+    if(!line)return;
+    const anchor=worldAnchor();
+    if(!worldEnabled){
+      line.hidden=true;
+      return;
+    }
+    if(!anchor||!step){
+      line.hidden=false;
+      line.textContent='Enter Center X, Base Y and Center Z to show world block coordinates.';
+      if(note)note.textContent='+X right · +Z rows down · +Y layers up. Not saved or shared.';
+      return;
+    }
+    const depth=shape==='dome'?result.depth:result.height;
+    const mapped=worldSegment(anchor,step.span,step.row.y,result.width,depth,step.layer);
+    line.hidden=false;
+    line.textContent=formatWorldSegment(mapped);
+    if(note){
+      note.textContent=mapped.aligned
+        ? '+X right · +Z rows down · +Y layers up. Not saved or shared.'
+        : 'Anchor is between block coordinates. Odd dimensions use whole-number centers; even dimensions use .5 centers. Base Y must be whole.';
+    }
+  }
 
   function params(){
     const rawStyle=text('style','thin');
@@ -260,7 +305,7 @@ if (root) {
     const gap= s.si<s.row.spans.length-1 ? s.row.spans[s.si+1].start-s.span.end-1 : 0;
     const primary=instructionMode==='edge'?inst.edge:inst.center;
     const body=`${primary}. ${gap>0?`Then skip ${gap} block${gap===1?'':'s'}.`:''}`;
-    setText('[data-instruction-title]',title);setText('[data-instruction-body]',body);
+    setText('[data-instruction-title]',title);setText('[data-instruction-body]',body);renderWorldInstruction(s);
     const done=completed.size; const pct=steps.length?Math.round(done/steps.length*100):0; q('[data-progress-bar]').style.width=`${pct}%`;setText('[data-progress-label]',`${pct}% complete · ${done}/${steps.length} segments`);
     if(shape==='dome'){
       setText('[data-layer]',`${currentLayer+1}/${result.layers.length}`);
@@ -472,6 +517,17 @@ if (root) {
   qa('[data-preset]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="diameter"]').value=el.dataset.preset;regenerate(true)}));
   qa('[data-toggle]').forEach(el=>el.addEventListener('click',()=>{const k=el.dataset.toggle;display[k]=!display[k];el.setAttribute('aria-pressed',String(display[k]));draw()}));
   qa('[data-instruction-mode]').forEach(el=>el.addEventListener('click',()=>{instructionMode=el.dataset.instructionMode;qa('[data-instruction-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn===el)));renderInstruction()}));
+  q('[data-world-toggle]')?.addEventListener('click',(event)=>{
+    worldEnabled=!worldEnabled;
+    const btn=event.currentTarget;
+    btn.setAttribute('aria-pressed',String(worldEnabled));
+    btn.textContent=worldEnabled?'World coords on':'Enable world coords';
+    const controls=q('[data-world-controls]');
+    if(controls)controls.hidden=!worldEnabled;
+    if(worldEnabled)setDefaultWorldAnchor();
+    renderInstruction();
+  });
+  qa('[data-world]').forEach(el=>el.addEventListener('input',()=>renderInstruction()));
   q('[data-hemisphere]')?.addEventListener('click',()=>{const w=num('width',31);q('[data-input="depth"]').value=String(w);q('[data-input="height"]').value=String(Math.ceil(w/2));regenerate(true)});
   q('[data-fit]').addEventListener('click',fit);
   q('[data-zoom-in]').addEventListener('click',()=>{zoom=Math.min(8,zoom*1.2);draw()});
@@ -483,7 +539,7 @@ if (root) {
     setText('[data-print-sheet-title]',q('[data-blueprint-title]')?.textContent||'VoxelCurve Blueprint');
     const stacks=Math.floor(result.blockCount/64),loose=result.blockCount%64;
     setText('[data-print-sheet-meta]',`${result.blockCount.toLocaleString()} blocks · ${stacks} stack${stacks===1?'':'s'}${loose?` + ${loose} blocks`:''} · ${text('material','Blocks')}`);
-    const plan=q('[data-print-plan]'); if(plan) plan.textContent=buildTextPlan(result,text('material','Blocks'));
+    const plan=q('[data-print-plan]'); if(plan) plan.textContent=buildTextPlan(result,text('material','Blocks'),worldAnchor());
     document.body.classList.add('vc-printing');
     requestAnimationFrame(()=>window.print());
   });
@@ -633,7 +689,7 @@ if (root) {
   });
   q('[data-txt]').addEventListener('click',()=>{
     try{
-      const blob=new Blob([buildTextPlan(result,text('material','Blocks'))],{type:'text/plain;charset=utf-8'});
+      const blob=new Blob([buildTextPlan(result,text('material','Blocks'),worldAnchor())],{type:'text/plain;charset=utf-8'});
       downloadBlob(blob,`voxelcurve-${shape}-build-plan.txt`);
       showStatus('TXT build plan downloaded.');
     }catch{showStatus('Could not create TXT plan.','error')}
