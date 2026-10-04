@@ -2,15 +2,40 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-interface Props { title:string; description:string; canonical:string; image?:string; type?:'website'|'article'; }
-const { title, description, canonical, image='https://voxelcurve.com/og.svg', type='website' } = Astro.props;
-const schema = {
-  '@context':'https://schema.org',
-  '@type':'WebSite',
-  name:'VoxelCurve',
-  url:'https://voxelcurve.com/',
-  description:'Guided block-by-block geometry tools for Minecraft builders.'
-};
+interface Props {
+  title:string;
+  description:string;
+  canonical:string;
+  image?:string;
+  type?:'website'|'article';
+  schemas?:Record<string, unknown>[];
+  noindex?:boolean;
+}
+const {
+  title,
+  description,
+  canonical,
+  image='https://voxelcurve.com/og.svg',
+  type='website',
+  schemas=[],
+  noindex=false
+} = Astro.props;
+const baseSchemas = [
+  {
+    '@context':'https://schema.org',
+    '@type':'WebSite',
+    name:'VoxelCurve',
+    url:'https://voxelcurve.com/',
+    description:'Guided block-by-block geometry tools for Minecraft builders.'
+  },
+  {
+    '@context':'https://schema.org',
+    '@type':'Organization',
+    name:'VoxelCurve',
+    url:'https://voxelcurve.com/',
+    logo:'https://voxelcurve.com/favicon.svg'
+  }
+];
 ---
 <!doctype html>
 <html lang="en">
@@ -19,6 +44,7 @@ const schema = {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content={description} />
+  {noindex && <meta name="robots" content="noindex,follow" />}
   <link rel="canonical" href={canonical} />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#0c1712" />
@@ -29,7 +55,7 @@ const schema = {
   <meta property="og:url" content={canonical} />
   <meta property="og:image" content={image} />
   <meta name="twitter:card" content="summary_large_image" />
-  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  {[...baseSchemas, ...schemas].map(schema => <script type="application/ld+json" set:html={JSON.stringify(schema)} />)}
 </head>
 <body>
   <Header />
