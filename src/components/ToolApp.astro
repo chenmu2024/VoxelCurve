@@ -701,6 +701,11 @@ if (root) {
   wrap.addEventListener('pointermove',(e)=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===2&&pinchStart){const a=[...pointers.values()];const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);zoom=Math.max(.25,Math.min(8,pinchStart.zoom*d/pinchStart.dist));draw();return}if(pointers.size===1&&dragStart){const dx=e.clientX-dragStart.x,dy=e.clientY-dragStart.y;if(Math.hypot(dx,dy)>5)dragStart.moved=true;panX=dragStart.px+dx;panY=dragStart.py+dy;draw()}});
   const pointerEnd=(e)=>{pointers.delete(e.pointerId);if(pointers.size<2)pinchStart=null;if(!pointers.size)dragStart=null};wrap.addEventListener('pointerup',pointerEnd);wrap.addEventListener('pointercancel',pointerEnd);
 
+  window.addEventListener('hashchange',()=>{
+    parseFragment();
+    regenerate(true);
+    root.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  });
   new ResizeObserver(resize).observe(wrap);parseFragment();regenerate(true);resize();
 }
 </script>
