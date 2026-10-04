@@ -130,9 +130,13 @@ Current regression coverage includes:
 ## Production build
 
 ```bash
+npm run security:audit
+npm test
 npm run build
 npm run audit
 ```
+
+Production dependency security is a release gate: `npm audit --omit=dev --audit-level=moderate` must pass before deployment.
 
 The production audit fails CI if it detects problems such as:
 
