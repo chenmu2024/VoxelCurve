@@ -17,7 +17,7 @@ export interface ShapeResult {
   geometryVersion: number;
 }
 
-export const GEOMETRY_VERSION = 1;
+export const GEOMETRY_VERSION = 2;
 
 const clampInt = (n: number, min: number, max: number) => Math.max(min, Math.min(max, Math.round(Number.isFinite(n) ? n : min)));
 
