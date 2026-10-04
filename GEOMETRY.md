@@ -306,7 +306,7 @@ Current UI limits:
 | Oval | 3–512 width/height |
 | Dome | 3–256 width/depth, 2–256 height |
 
-Litematic export rejects structures above 20,000,000 bounding-volume cells.
+Litematic export rejects structures above 20,000,000 bounding-volume cells or above 5,000,000 occupied blocks.
 
 These limits are engineering limits, not SEO content claims, and may only be raised after performance testing.
 
