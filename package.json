@@ -8,14 +8,15 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "vitest run",
-    "audit": "node scripts/audit.mjs"
+    "audit": "node scripts/audit.mjs",
+    "security:audit": "npm audit --omit=dev --audit-level=high"
   },
   "dependencies": {
-    "astro": "^5.15.0",
     "fflate": "^0.8.2",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
+    "astro": "^5.15.0",
     "@types/qrcode": "^1.5.5",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
