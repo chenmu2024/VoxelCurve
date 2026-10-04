@@ -64,5 +64,6 @@ export function parseBlueprintFragment(fragment:string): BlueprintState | null {
 
 export function canonicalBlueprintUrl(pathname:string,state:BlueprintState): string {
   const path = pathname.startsWith('/') ? pathname : `/${pathname}`;
-  return `https://voxelcurve.com${path}#${serializeBlueprintState(state)}`;
+  const canonicalPath = path.replace(/\/+$/, '') || '/';
+  return `https://voxelcurve.com${canonicalPath}#${serializeBlueprintState(state)}`;
 }
