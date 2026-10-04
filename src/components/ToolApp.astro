@@ -1,66 +1,68 @@
 ---
-import { GEOMETRY_VERSION } from '../lib/geometry';
+import { GEOMETRY_VERSION, generateCircle, generateOval, generateDome } from '../core/geometry';
+import { spanInstruction } from '../lib/buildPlan';
+import { materials } from '../lib/materials';
 interface Props { shape:'circle'|'oval'|'dome'; }
 const { shape } = Astro.props;
+const initial = shape==='circle'?generateCircle(31):shape==='oval'?generateOval(31,21):generateDome(31,31,16);
+const initialRows = shape==='dome'?initial.layers[0].rows:initial.rows;
+const firstRow = initialRows.find(row=>row.count)!;
+const firstInstruction = spanInstruction(firstRow.spans[0],initial.width).center;
+const initialTitle = shape==='circle'?'31×31 Circle':shape==='oval'?'31×21 Oval':'31×31×16 Dome';
 ---
 <section class="tool-shell container" data-tool data-shape={shape}>
   <div class="workspace-topbar">
     <div class="workspace-id"><span class="workspace-dot"></span><span>VOXELCURVE / BUILD WORKSPACE</span></div>
     <div class="workspace-meta"><span>LOCAL ENGINE</span><span>GEOMETRY V{GEOMETRY_VERSION}</span><button class="workspace-build-toggle" type="button" data-build-mode aria-pressed="false">Build mode</button></div>
   </div>
-  <aside class="panel controls" aria-label="Generator controls">
+  <aside class="panel controls mobile-collapsed" aria-label="Generator controls">
     <div class="panel-heading"><p class="panel-title">01 / Controls</p><span>Shape setup</span></div>
     <button class="mobile-settings-toggle" type="button" data-settings-toggle aria-expanded="false"><span>Shape settings</span><span data-settings-icon>+</span></button>
     {shape === 'circle' && <div class="field"><label for="diameter">Diameter <small>3–512 blocks</small></label><input id="diameter" data-input="diameter" type="number" min="3" max="512" value="31" /><div class="preset-row" style="margin-top:8px">{[7,9,11,15,21,31,41,51,64,100].map(n=><button class="chip" type="button" data-preset={n}>{n}</button>)}</div></div>}
     {shape === 'oval' && <><div class="field"><label for="width">Width <small>3–512</small></label><input id="width" data-input="width" type="number" min="3" max="512" value="31" /></div><div class="field"><label for="height">Height <small>3–512</small></label><input id="height" data-input="height" type="number" min="3" max="512" value="21" /></div></>}
     {shape === 'dome' && <><div class="field"><label for="width">Width <small>3–256</small></label><input id="width" data-input="width" type="number" min="3" max="256" value="31" /></div><div class="field"><label for="depth">Depth <small>3–256</small></label><input id="depth" data-input="depth" type="number" min="3" max="256" value="31" /></div><div class="field"><label for="height">Height <small>2–256</small></label><input id="height" data-input="height" type="number" min="2" max="256" value="16" /></div></>}
     <div class="field"><label>Build style</label><input data-input="style" type="hidden" value="thin" /><div class="segment-control" role="group" aria-label="Build style"><button type="button" class="segment-option" data-style="thin" aria-pressed="true">Thin</button><button type="button" class="segment-option" data-style="thick" aria-pressed="false">Thick</button><button type="button" class="segment-option" data-style="filled" aria-pressed="false">Filled</button></div></div>
-    <div class="field" data-thickness-wrap><label for="thickness">Thickness <small>blocks inward</small></label><input id="thickness" data-input="thickness" type="number" min="1" max="32" value="1" /></div>
-    <div class="field"><label for="material">Material <small>optional</small></label><input id="material" data-input="material" type="text" value="Stone Bricks" maxlength="60" /></div>
-    <div class="field"><label>Display</label><div class="toggle-row"><button type="button" class="toggle" data-toggle="grid" aria-pressed="true">Grid</button><button type="button" class="toggle" data-toggle="center" aria-pressed="true">Center</button><button type="button" class="toggle" data-toggle="labels" aria-pressed="true">Labels</button>{shape==='dome' && <button type="button" class="toggle" data-toggle="ghost" aria-pressed="true">Ghost layer</button>}</div></div>
+    <div class="field" data-thickness-wrap style="display:none"><label for="thickness">Thickness <small>blocks inward</small></label><input id="thickness" data-input="thickness" type="number" min="1" max="32" value="1" /></div>
+    <div class="field"><label for="material">Material <small>choose or type</small></label><input id="material" data-input="material" type="text" value="Stone Bricks" maxlength="60" list="materials" aria-describedby="material-export-note" /><datalist id="materials">{materials.map(([name])=><option value={name} />)}</datalist><p class="notice" id="material-export-note" data-material-note>Litematic material: minecraft:stone_bricks.</p></div>
+    <div class="field"><label>Display</label><div class="toggle-row"><button type="button" class="toggle" data-toggle="grid" aria-pressed="true">Grid</button><button type="button" class="toggle" data-toggle="center" aria-pressed="true">Center</button><button type="button" class="toggle" data-toggle="labels" aria-pressed="true">Row numbers</button><button type="button" class="toggle" data-toggle="axis" aria-pressed="true">Axis</button><button type="button" class="toggle" data-toggle="segments" aria-pressed="true">Segment labels</button>{shape==='dome' && <button type="button" class="toggle" data-toggle="ghost" aria-pressed="true">Ghost layer</button>}</div></div>
     <div class="field"><label>Instructions</label><div class="segment-control" role="group" aria-label="Instruction coordinate mode"><button type="button" class="segment-option" data-instruction-mode="center" aria-pressed="true">Center</button><button type="button" class="segment-option" data-instruction-mode="edge" aria-pressed="false">Edge</button></div></div>
-    <div class="field world-field">
-      <label>World coordinates <small>optional</small></label>
-      <button class="toggle world-toggle" type="button" data-world-toggle aria-pressed="false">Enable world coords</button>
-      <div class="world-controls" data-world-controls hidden>
-        <div class="world-grid">
-          <label><span>Center X</span><input type="number" step="0.5" data-world="centerX" /></label>
-          <label><span>Base Y</span><input type="number" step="1" data-world="baseY" /></label>
-          <label><span>Center Z</span><input type="number" step="0.5" data-world="centerZ" /></label>
-        </div>
-        <div class="notice world-note" data-world-note>+X right · +Z rows down · +Y layers up. Not saved or shared.</div>
-      </div>
-    </div>
     {shape === 'dome' && <button type="button" class="btn" data-hemisphere>Use hemisphere height</button>}
   </aside>
 
   <section class="panel canvas-panel" aria-label="Blueprint">
-    <div class="canvas-toolbar"><div class="blueprint-heading"><span>02 / BLUEPRINT</span><strong data-blueprint-title>Blueprint</strong></div><div class="actions"><button class="btn" type="button" data-fit>Fit</button><button class="btn" type="button" data-zoom-out aria-label="Zoom out">−</button><button class="btn" type="button" data-zoom-in aria-label="Zoom in">+</button><button class="btn" type="button" data-print>Print</button></div></div>
+    <div class="canvas-toolbar"><div class="blueprint-heading"><span>02 / BLUEPRINT</span><strong data-blueprint-title>{initialTitle}</strong></div><div class="actions"><button class="btn" type="button" data-fit>Fit</button><button class="btn" type="button" data-zoom-out aria-label="Zoom out">−</button><button class="btn" type="button" data-zoom-in aria-label="Zoom in">+</button><button class="btn" type="button" data-print>Print</button></div></div>
     <div class="canvas-wrap" data-canvas-wrap><canvas data-canvas aria-label="Generated block blueprint">Generated block blueprint. Use the guided build instructions beside the canvas for an accessible text version.</canvas></div>
   </section>
 
   <aside class="panel stats">
     <div class="panel-heading"><p class="panel-title">03 / Build</p><span>Guided placement</span></div>
-    <div class="stat-grid"><div class="stat"><b data-blocks>0</b><span>Blocks</span></div><div class="stat"><b data-stacks>0</b><span>Stacks + loose</span></div>{shape==='dome' && <><div class="stat"><b data-layer>1</b><span>Layer</span></div><div class="stat"><b data-layer-blocks>0</b><span>Layer blocks</span></div></>}</div>
-    <div class="instruction" role="status" aria-live="polite" aria-atomic="true"><strong data-instruction-title>Generating…</strong><span data-instruction-body></span><span class="world-instruction" data-world-instruction hidden></span></div>
-    <div class="progress" aria-label="Build progress"><i data-progress-bar></i></div><div class="notice progress-note"><span data-progress-label aria-live="polite">0% complete</span></div>
+    <div class="stat-grid"><div class="stat"><b data-blocks>{initial.blockCount.toLocaleString('en-US')}</b><span>Blocks</span></div><div class="stat"><b data-stacks>{Math.floor(initial.blockCount/64)} + {initial.blockCount%64}</b><span>Stacks + loose</span></div>{shape==='dome' && <><div class="stat"><b data-layer>1/{initial.layers.length}</b><span>Layer</span></div><div class="stat"><b data-layer-blocks>{initial.layers[0].count}</b><span>Layer blocks</span></div></>}</div>
+    <div class="instruction" role="status" aria-live="polite" aria-atomic="true"><strong data-instruction-title>{shape==='dome'?'Layer 1 / 16 · ':''}Row {firstRow.y+1} / {initialRows.length} · Segment 1 / {firstRow.spans.length}</strong><span data-instruction-body>{firstInstruction}.</span></div>
+    <div class="progress" role="progressbar" aria-label="Build progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i data-progress-bar></i></div><div class="notice progress-note"><span data-progress-label aria-live="polite">0% complete</span></div>
+    <div class="notice progress-note" data-remaining>Materials remaining</div>
+    <div class="notice progress-note" data-save-status role="status" aria-live="polite">Checking local progress storage…</div>
     {shape==='dome' && <>
       <div class="notice layer-progress-note" data-layer-progress>Layer 1: 0% complete</div>
       <div class="notice layer-delta-note" data-layer-delta>Base layer</div>
       <div class="layer-nav"><button class="btn" type="button" data-layer-prev>← Previous layer</button><button class="btn" type="button" data-layer-next>Next layer →</button></div>
-      <label class="layer-jump">Go to layer <input type="number" min="1" value="1" data-layer-jump-input /> <span>/ <span data-layer-total>1</span></span></label>
+      <label class="layer-jump">Go to layer <input type="number" min="1" value="1" data-layer-jump-input inputmode="numeric" /> <span>/ <span data-layer-total>1</span></span></label>
     </>}
-    <div class="builder-actions build-actions"><button class="btn" type="button" data-prev>← Previous</button><button class="btn accent" type="button" data-complete>Complete segment</button><button class="btn" type="button" data-next>Next →</button><button class="btn" type="button" data-undo>Undo</button></div>
+    <div class="builder-actions build-actions"><button class="btn" type="button" data-prev>← Previous segment</button>{shape==='dome'?<button class="btn accent" type="button" data-complete-row>Complete row</button>:<button class="btn accent" type="button" data-complete>Complete segment</button>}<button class="btn" type="button" data-next>Next segment →</button><button class="btn" type="button" data-undo>Undo</button></div>
+    <div class="layer-nav"><button class="btn" type="button" data-row-prev>← Previous row</button><button class="btn" type="button" data-row-next>Next row →</button></div>
+    <label class="layer-jump">Go to row <input type="number" min="1" value="1" data-row-jump-input inputmode="numeric" /> <span>/ <span data-row-total>{initialRows.length}</span></span></label>
+    <button class="btn next-unfinished" type="button" data-unfinished>Next unfinished segment</button>
     <div class="bulk-actions">
-      <button class="btn" type="button" data-complete-row>Complete row</button>
+      {shape==='dome'?<button class="btn" type="button" data-complete>Complete segment</button>:<button class="btn" type="button" data-complete-row>Complete row</button>}
       {shape==='dome' && <button class="btn" type="button" data-complete-layer>Complete layer</button>}
       <button class="btn danger-quiet" type="button" data-reset-progress>Reset progress</button>
     </div>
-    <button class="btn wake-toggle" type="button" data-wake-toggle aria-pressed="false" hidden>Keep screen awake</button>
     <div class="nav-separator"></div>
     <div class="export-heading"><span>EXPORT</span><small>Share or save this plan</small></div>
-    <div class="builder-actions export-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-svg>SVG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" type="button" data-litematic>.litematic</button></div>
-    <div class="notice">Progress is stored only in this browser. Shared links carry blueprint settings, not completion state. Litematic export targets V6 / Java 1.20.4-compatible data and falls back to Stone when a custom material label is not recognized.</div>
+    <div class="field png-options"><label for="png-options">PNG layout</label><select id="png-options" data-png-options><option value="plain">Blueprint only</option><option value="grid">Blueprint + grid</option><option value="rows" selected>Blueprint + row numbers</option></select></div>
+    <div class="builder-actions export-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" type="button" data-litematic>.litematic</button></div>
+    <button class="btn" type="button" data-cancel-export hidden>Cancel Litematic export</button>
+    <details class="export-help"><summary>How to use the Litematic file</summary><ol><li>Use Minecraft Java with a compatible Litematica installation. The file uses V6 / Java 1.20.4 data; Bedrock cannot import it directly.</li><li>Put the downloaded file in your Minecraft instance's <code>schematics</code> folder.</li><li>Open Litematica's menu (default: M), choose Load Schematics and create a placement.</li><li>Compare the material list and block count with this blueprint before building. The file's origin is (0, 0, 0); blueprint right is +X, rows run along +Z and dome layers rise along +Y. Move the placement to your build site.</li></ol><p class="notice">Automated file checks pass. In-game compatibility still needs a real import test for your installed versions. <a href="https://github.com/maruohon/litematica/wiki/Basic-Operations" target="_blank" rel="noopener noreferrer">Litematica instructions →</a></p></details>
+    <div class="notice">Progress is stored only in this browser. Shared links carry blueprint settings, not completion state. Custom material labels remain in TXT and print plans; unknown Litematic materials require confirmation before using Stone.</div>
     <div class="size-warning" data-size-warning hidden></div>
     <div class="action-status" data-action-status role="status" aria-live="polite"></div>
   </aside>
@@ -72,45 +74,58 @@ const { shape } = Astro.props;
     <h2>Build instructions</h2>
     <pre data-print-plan></pre>
   </section>
-  <dialog class="qr-dialog" data-qr-dialog aria-labelledby="qr-dialog-title"><button class="btn" style="float:right" data-qr-close aria-label="Close QR dialog">Close</button><h3 id="qr-dialog-title">Send blueprint to phone</h3><canvas data-qr-canvas role="img" aria-label="QR code for the current VoxelCurve blueprint"></canvas><p class="notice">Scan to open the same dimensions on your phone.</p><p class="qr-link-row"><a class="text-link" data-qr-link href="/" rel="noopener">Open blueprint link →</a></p></dialog>
+  <dialog class="qr-dialog" data-qr-dialog aria-labelledby="qr-dialog-title"><button class="btn" style="float:right" data-qr-close aria-label="Close QR dialog">Close</button><h3 id="qr-dialog-title">Send blueprint to phone</h3><canvas data-qr-canvas role="img" aria-label="QR code for this blueprint"></canvas><p class="notice">Scan to open the same dimensions on your phone. Build progress stays on this device.</p><p class="qr-link-row"><a class="text-link" data-qr-link href="/" rel="noopener">Open blueprint link →</a></p></dialog>
 </section>
 
 <script>
-import { generateCircle, generateOval, generateDome } from '../lib/geometry';
+import type { ShapeResult, RowPlan, Span, ShapeType, BuildStyle } from '../core/geometry';
+import type { BlueprintState } from '../lib/state';
+import { generateCircle, generateOval, generateDome } from '../core/geometry';
 import { buildTextPlan, rowInstruction } from '../lib/buildPlan';
 import { canonicalBlueprintUrl, parseBlueprintFragment, serializeBlueprintState } from '../lib/state';
 import { decodeProgress, encodeProgress } from '../lib/progress';
-import { buildBlueprintSvg } from '../lib/svg';
-import { formatWorldSegment, worldSegment } from '../lib/world';
+import { resolveMaterial } from '../lib/materials';
+import LitematicWorker from '../lib/litematic.worker?worker';
 
-const root = document.querySelector('[data-tool]');
+const root = document.querySelector<HTMLElement>('[data-tool]');
 if (root) {
-  const shape = root.dataset.shape;
-  const q = (s) => root.querySelector(s);
-  const qa = (s) => [...root.querySelectorAll(s)];
-  const canvas = q('[data-canvas]');
+  const shape = root.dataset.shape as ShapeType;
+  interface Step { key:string; layer:number; row:RowPlan; span:Span; si:number; }
+  const q = <T extends HTMLElement = HTMLElement>(selector:string):T => {
+    const element=root.querySelector<T>(selector);
+    if(!element)throw new Error(`Missing tool element: ${selector}`);
+    return element;
+  };
+  const qa = <T extends HTMLElement = HTMLButtonElement>(selector:string) => [...root.querySelectorAll<T>(selector)];
+  const canvas = q<HTMLCanvasElement>('[data-canvas]');
   const wrap = q('[data-canvas-wrap]');
-  const ctx = canvas.getContext('2d');
-  let result;
+  const ctx = canvas.getContext('2d')!;
+  let result:ShapeResult;
   let currentLayer = 0;
-  let steps = [];
-  let stepsByLayer = new Map();
-  let stepsByRow = new Map();
-  let stepKeysByLayer = new Map();
-  let stepIndexByKey = new Map();
+  let steps:Step[] = [];
+  let stepsByLayer = new Map<number,Step[]>();
+  let stepsByRow = new Map<string,Step[]>();
+  let stepKeysByLayer = new Map<number,Map<string,string>>();
+  let stepIndexByKey = new Map<string,number>();
   let stepIndex = 0;
-  let completed = new Set();
+  let completed = new Set<string>();
+  let undoHistory:{added:string[];removed:string[];stepIndex:number}[] = [];
   let zoom = 1, panX = 0, panY = 0;
-  let pointers = new Map(), dragStart = null, pinchStart = null;
-  let lastTapAt = 0, lastTapX = 0, lastTapY = 0;
-  const display = { grid:true, center:true, labels:true, ghost:true };
+  const pointers = new Map<number,{x:number;y:number}>();
+  let dragStart:{x:number;y:number;px:number;py:number;moved:boolean}|null = null;
+  let pinchStart:{dist:number;zoom:number}|null = null;
+  const display = { grid:true, center:true, axis:true, labels:true, segments:true, ghost:true };
   let instructionMode = 'center';
-  let worldEnabled = false;
   let buildMode = false;
   let buildModeScrollY = 0;
+  let exporting=false;
+  let cancelExport:(()=>void)|null=null;
+  function usage(name:string){
+    window.dispatchEvent(new CustomEvent('voxelcurve:usage',{detail:{name,shape}}));
+  }
   const mobileControls = window.matchMedia('(max-width: 800px)');
   const settingsButton = q('[data-settings-toggle]');
-  const setMobileControlsState = (collapsed) => {
+  const setMobileControlsState = (collapsed:boolean) => {
     root.querySelector('.controls')?.classList.toggle('mobile-collapsed', collapsed);
     if(settingsButton){
       settingsButton.setAttribute('aria-expanded', String(!collapsed));
@@ -121,12 +136,13 @@ if (root) {
   if(mobileControls.matches) setMobileControlsState(true);
 
   const buildModeButton=q('[data-build-mode]');
-  function setBuildMode(enabled){
+  function setBuildMode(enabled:boolean){
     buildMode=enabled;
     buildModeButton?.setAttribute('aria-pressed',String(enabled));
     if(buildModeButton) buildModeButton.textContent=enabled?'Exit build mode':'Build mode';
 
     if(enabled){
+      usage('enter_build_mode');
       buildModeScrollY=window.scrollY;
       document.body.classList.add('vc-build-mode');
     }else{
@@ -141,61 +157,17 @@ if (root) {
   }
   buildModeButton?.addEventListener('click',()=>setBuildMode(!buildMode));
   document.addEventListener('keydown',(event)=>{
-    if(event.key==='Escape'&&buildMode&&!q('[data-qr-dialog]')?.open)setBuildMode(false);
+    if(event.key==='Escape'&&buildMode&&!q<HTMLDialogElement>('[data-qr-dialog]').open)setBuildMode(false);
   });
 
-  const num = (name, fallback) => Number(q(`[data-input="${name}"]`)?.value ?? fallback);
-  const text = (name, fallback='') => String(q(`[data-input="${name}"]`)?.value ?? fallback);
-  const setText = (sel, value) => { const el=q(sel); if(el) el.textContent=String(value); };
-  const clamp = (n,min,max) => Math.max(min, Math.min(max, Math.round(Number.isFinite(n)?n:min)));
+  const num = (name:string, fallback:number) => Number(q<HTMLInputElement>(`[data-input="${name}"]`)?.value ?? fallback);
+  const text = (name:string, fallback='') => String(q<HTMLInputElement>(`[data-input="${name}"]`)?.value ?? fallback);
+  const setText = (sel:string, value:string|number) => { const el=q(sel); if(el) el.textContent=String(value); };
+  const clamp = (n:number,min:number,max:number) => Math.max(min, Math.min(max, Math.round(Number.isFinite(n)?n:min)));
 
-  function worldAnchor(){
-    if(!worldEnabled)return null;
-    const centerX=Number(q('[data-world="centerX"]')?.value);
-    const baseY=Number(q('[data-world="baseY"]')?.value);
-    const centerZ=Number(q('[data-world="centerZ"]')?.value);
-    if(![centerX,baseY,centerZ].every(Number.isFinite))return null;
-    return {centerX,baseY,centerZ};
-  }
-
-  function setDefaultWorldAnchor(){
-    const width=result?.width??params().width??params().diameter??31;
-    const depth=result?.type==='dome'?result.depth:(result?.height??params().height??width);
-    const x=q('[data-world="centerX"]'),y=q('[data-world="baseY"]'),z=q('[data-world="centerZ"]');
-    if(x&&!x.value)x.value=width%2===0?'0.5':'0';
-    if(y&&!y.value)y.value='64';
-    if(z&&!z.value)z.value=depth%2===0?'0.5':'0';
-  }
-
-  function renderWorldInstruction(step){
-    const line=q('[data-world-instruction]');
-    const note=q('[data-world-note]');
-    if(!line)return;
-    const anchor=worldAnchor();
-    if(!worldEnabled){
-      line.hidden=true;
-      return;
-    }
-    if(!anchor||!step){
-      line.hidden=false;
-      line.textContent='Enter Center X, Base Y and Center Z to show world block coordinates.';
-      if(note)note.textContent='+X right · +Z rows down · +Y layers up. Not saved or shared.';
-      return;
-    }
-    const depth=shape==='dome'?result.depth:result.height;
-    const mapped=worldSegment(anchor,step.span,step.row.y,result.width,depth,step.layer);
-    line.hidden=false;
-    line.textContent=formatWorldSegment(mapped);
-    if(note){
-      note.textContent=mapped.aligned
-        ? '+X right · +Z rows down · +Y layers up. Not saved or shared.'
-        : 'Anchor is between block coordinates. Odd dimensions use whole-number centers; even dimensions use .5 centers. Base Y must be whole.';
-    }
-  }
-
-  function params(){
+  function params():BlueprintState{
     const rawStyle=text('style','thin');
-    const style=['thin','thick','filled'].includes(rawStyle)?rawStyle:'thin';
+    const style=['thin','thick','filled'].includes(rawStyle)?rawStyle as BuildStyle:'thin';
     const rawThickness=clamp(num('thickness',1),1,32);
     const thickness=style==='thin'||style==='filled'?1:Math.max(2,rawThickness);
     if(shape==='circle') return {shape, diameter:clamp(num('diameter',31),3,512), style, thickness};
@@ -205,21 +177,20 @@ if (root) {
   function blueprintSlug(){
     const p=params();
     const style=p.style==='thick'?`thick-${p.thickness}`:p.style;
-    if(shape==='circle') return `voxelcurve-circle-${p.diameter}-${style}`;
-    if(shape==='oval') return `voxelcurve-oval-${p.width}x${p.height}-${style}`;
+    if(p.shape==='circle') return `voxelcurve-circle-${p.diameter}-${style}`;
+    if(p.shape==='oval') return `voxelcurve-oval-${p.width}x${p.height}-${style}`;
     return `voxelcurve-dome-${p.width}x${p.depth}x${p.height}-${style}`;
   }
-
   function makeResult(){
     const p=params();
-    if(shape==='circle') return generateCircle(p.diameter,p.style,p.thickness);
-    if(shape==='oval') return generateOval(p.width,p.height,p.style,p.thickness);
+    if(p.shape==='circle') return generateCircle(p.diameter,p.style,p.thickness);
+    if(p.shape==='oval') return generateOval(p.width,p.height,p.style,p.thickness);
     return generateDome(p.width,p.depth,p.height,p.style,p.thickness);
   }
   function stateKey(){ const p=params(); return `vc-progress-v${result.geometryVersion}-${JSON.stringify(p)}`; }
   function pruneProgressStorage(limit=40){
     try{
-      const items=[];
+      const items:{key:string;updatedAt:number}[]=[];
       const currentPrefix=`vc-progress-v${result.geometryVersion}-`;
       const keys=[];
       for(let i=0;i<localStorage.length;i++){
@@ -243,28 +214,36 @@ if (root) {
     try{
       if(!completed.size&&stepIndex===0){
         localStorage.removeItem(stateKey());
+        setText('[data-save-status]','No saved progress for this blueprint · storage available.');
         return;
       }
       localStorage.setItem(stateKey(),encodeProgress(completed,steps,stepIndex));
       pruneProgressStorage();
+      const step=steps[stepIndex];
+      setText('[data-save-status]',`Saved on this device · ${shape==='dome'?`Layer ${step.layer+1} · `:''}Row ${step.row.y+1}.`);
     }catch{
+      setText('[data-save-status]','Not saved · browser storage is unavailable. Keep this page open.');
       showStatus('Build progress could not be saved in this browser.','neutral');
     }
   }
   function loadProgress(){
     try{
       pruneProgressStorage();
-      const restored=decodeProgress(localStorage.getItem(stateKey()),steps);
+      const raw=localStorage.getItem(stateKey());
+      const restored=decodeProgress(raw,steps);
       completed=restored.completed;
       stepIndex=restored.stepIndex;
+      const probe=`vc-storage-check-${Date.now()}-${Math.random()}`;
+      localStorage.setItem(probe,'1');localStorage.removeItem(probe);
+      const step=steps[stepIndex];
+      setText('[data-save-status]',raw&&step&&(completed.size||stepIndex)?`Saved progress restored · ${shape==='dome'?`Layer ${step.layer+1} · `:''}Row ${step.row.y+1}.`:'Progress will be saved on this device.');
     }catch{
-      completed=new Set();
-      stepIndex=0;
+      setText('[data-save-status]','Not saved · browser storage is unavailable. Keep this page open.');
     }
   }
 
   function createSteps(){
-    const out=[];
+    const out:Step[]=[];
     if(shape==='dome'){
       result.layers.forEach((layer,li)=>layer.rows.forEach((row)=>row.spans.forEach((span,si)=>out.push({key:`L${li}R${row.y}S${si}`,layer:li,row,span,si}))));
     } else result.rows.forEach(row=>row.spans.forEach((span,si)=>out.push({key:`R${row.y}S${si}`,layer:0,row,span,si})));
@@ -278,12 +257,12 @@ if (root) {
     steps.forEach((step,index)=>{
       stepIndexByKey.set(step.key,index);
       if(!stepsByLayer.has(step.layer))stepsByLayer.set(step.layer,[]);
-      stepsByLayer.get(step.layer).push(step);
+      stepsByLayer.get(step.layer)!.push(step);
       const rowKey=`${step.layer}:${step.row.y}`;
       if(!stepsByRow.has(rowKey))stepsByRow.set(rowKey,[]);
-      stepsByRow.get(rowKey).push(step);
+      stepsByRow.get(rowKey)!.push(step);
       if(!stepKeysByLayer.has(step.layer))stepKeysByLayer.set(step.layer,new Map());
-      stepKeysByLayer.get(step.layer).set(`${step.row.y}:${step.si}`,step.key);
+      stepKeysByLayer.get(step.layer)!.set(`${step.row.y}:${step.si}`,step.key);
     });
   }
   function activeRows(){ return shape==='dome' ? (result.layers[currentLayer]?.rows||[]) : result.rows; }
@@ -296,11 +275,12 @@ if (root) {
     const rect=wrap.getBoundingClientRect(); const cw=rect.width,ch=rect.height;
     ctx.save();ctx.clearRect(0,0,cw,ch);ctx.fillStyle='#fcfcfc';ctx.fillRect(0,0,cw,ch);
     const rows=activeRows(); const gw=result.width; const gh=shape==='dome'?result.depth:result.height;
-    const base=Math.max(.2,Math.min((cw-42)/gw,(ch-42)/gh)); const cell=base*zoom;
+    const base=Math.max(.1,Math.min((cw-42)/gw,(ch-42)/gh)); const cell=base*zoom;
     const ox=(cw-gw*cell)/2+panX, oy=(ch-gh*cell)/2+panY;
     const current=steps[stepIndex];
     const layerIdx=shape==='dome'?currentLayer:0;
     const activeKeys=stepKeysByLayer.get(layerIdx)||new Map();
+    if(current&&current.layer===layerIdx){ctx.fillStyle='#ecfdf5';ctx.fillRect(ox,oy+current.row.y*cell,gw*cell,cell)}
     if(display.grid&&cell>=5){ctx.strokeStyle='#eeeeee';ctx.lineWidth=1;for(let x=0;x<=gw;x++){ctx.beginPath();ctx.moveTo(ox+x*cell,oy);ctx.lineTo(ox+x*cell,oy+gh*cell);ctx.stroke()}for(let y=0;y<=gh;y++){ctx.beginPath();ctx.moveTo(ox,oy+y*cell);ctx.lineTo(ox+gw*cell,oy+y*cell);ctx.stroke()}}
     if(shape==='dome'&&display.ghost&&layerIdx>0){
       const ghostRows=result.layers[layerIdx-1]?.rows||[];
@@ -308,7 +288,7 @@ if (root) {
       for(const row of ghostRows){
         for(const s of row.spans){
           if(cell<2.5){
-            ctx.fillRect(ox+s.start*cell,oy+row.y*cell,Math.max(.75,(s.end-s.start+1)*cell),Math.max(.75,cell));
+            ctx.fillRect(ox+s.start*cell,oy+row.y*cell,Math.max(1,(s.end-s.start+1)*cell),Math.max(1,cell));
             continue;
           }
           const inset=Math.min(1,cell*.08);
@@ -320,29 +300,21 @@ if (root) {
     }
     for(const row of rows){
       row.spans.forEach((s,si)=>{
-        const key=activeKeys.get(`${row.y}:${si}`);
-        const isDone=key&&completed.has(key);
-        const isCurrent=current&&current.layer===layerIdx&&current.row.y===row.y&&current.si===si;
-        ctx.fillStyle=isCurrent?'#171717':isDone?'#a7f3d0':'#34d399';
-
+        const key=activeKeys.get(`${row.y}:${si}`); const isDone=key&&completed.has(key); const isCurrent=current&&current.layer===layerIdx&&current.row.y===row.y&&current.si===si;
         if(cell<2.5){
-          ctx.fillRect(
-            ox+s.start*cell,
-            oy+row.y*cell,
-            Math.max(.75,(s.end-s.start+1)*cell),
-            Math.max(.75,cell)
-          );
+          ctx.fillStyle=isCurrent?'#171717':isDone?'#a7f3d0':'#34d399';
+          ctx.fillRect(ox+s.start*cell,oy+row.y*cell,(s.end-s.start+1)*cell,cell);
           return;
         }
-
-        const inset=Math.min(1,cell*.08);
-        const size=Math.max(1,cell-Math.min(2,cell*.16));
         for(let x=s.start;x<=s.end;x++){
-          ctx.fillRect(ox+x*cell+inset,oy+row.y*cell+inset,size,size);
+          ctx.fillStyle=isCurrent?'#171717':isDone?'#a7f3d0':'#34d399';
+          ctx.fillRect(ox+x*cell+Math.min(1,cell*.08),oy+row.y*cell+Math.min(1,cell*.08),Math.max(1,cell-Math.min(2,cell*.16)),Math.max(1,cell-Math.min(2,cell*.16)));
         }
+        if(display.segments&&cell>=13){ctx.fillStyle=isCurrent?'#ffffff':'#171717';ctx.font='10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(s.end-s.start+1),ox+(s.start+s.end+1)*cell/2,oy+(row.y+.5)*cell)}
       })
     }
-    if(display.center){ctx.strokeStyle='#f59e0b';ctx.lineWidth=1.5;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(ox+gw*cell/2,oy);ctx.lineTo(ox+gw*cell/2,oy+gh*cell);ctx.moveTo(ox,oy+gh*cell/2);ctx.lineTo(ox+gw*cell,oy+gh*cell/2);ctx.stroke();ctx.setLineDash([])}
+    if(display.axis){ctx.strokeStyle='#f59e0b';ctx.lineWidth=1.5;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(ox+gw*cell/2,oy);ctx.lineTo(ox+gw*cell/2,oy+gh*cell);ctx.moveTo(ox,oy+gh*cell/2);ctx.lineTo(ox+gw*cell,oy+gh*cell/2);ctx.stroke();ctx.setLineDash([])}
+    if(display.center){ctx.fillStyle='#b45309';ctx.beginPath();ctx.arc(ox+gw*cell/2,oy+gh*cell/2,3,0,Math.PI*2);ctx.fill()}
     if(display.labels&&cell>=13){ctx.fillStyle='#65766c';ctx.font='10px system-ui';ctx.textAlign='right';ctx.textBaseline='middle';for(const row of rows){if(row.count)ctx.fillText(String(row.y+1),ox-5,oy+(row.y+.5)*cell)}}
     ctx.restore();
   }
@@ -351,18 +323,37 @@ if (root) {
     if(!steps.length){setText('[data-instruction-title]','No blocks generated');setText('[data-instruction-body]','Try a different size.');return;}
     stepIndex=Math.max(0,Math.min(stepIndex,steps.length-1)); const s=steps[stepIndex]; currentLayer=s.layer;
     const inst=rowInstruction(s.row,result.width)[s.si];
-    const title=shape==='dome'?`Layer ${s.layer+1} · Row ${s.row.y+1} · Segment ${s.si+1}`:`Row ${s.row.y+1} · Segment ${s.si+1}`;
+    const rowTotal=shape==='dome'?result.depth:result.height;
+    const title=`${shape==='dome'?`Layer ${result.layers[s.layer].index+1} / ${result.height} · `:''}Row ${s.row.y+1} / ${rowTotal} · Segment ${s.si+1} / ${s.row.spans.length}`;
     const gap= s.si<s.row.spans.length-1 ? s.row.spans[s.si+1].start-s.span.end-1 : 0;
     const primary=instructionMode==='edge'?inst.edge:inst.center;
     const body=`${primary}. ${gap>0?`Then skip ${gap} block${gap===1?'':'s'}.`:''}`;
-    setText('[data-instruction-title]',title);setText('[data-instruction-body]',body);renderWorldInstruction(s);
-    const done=completed.size; const pct=steps.length?Math.round(done/steps.length*100):0; q('[data-progress-bar]').style.width=`${pct}%`;setText('[data-progress-label]',`${pct}% complete · ${done}/${steps.length} segments`);
+    setText('[data-instruction-title]',title);setText('[data-instruction-body]',body);
+    const done=completed.size;
+    const built=steps.reduce((count,step)=>count+(completed.has(step.key)?step.span.end-step.span.start+1:0),0);
+    const pct=result.blockCount?Math.round(built/result.blockCount*100):0;
+    const remaining=result.blockCount-built;
+    q('[data-progress-bar]').style.width=`${pct}%`;
+    q('.progress').setAttribute('aria-valuenow',String(pct));
+    setText('[data-progress-label]',`${pct}% complete · ${done}/${steps.length} segments`);
+    setText('[data-remaining]',`Remaining: ${remaining.toLocaleString()} blocks · ${Math.floor(remaining/64)} stacks + ${remaining%64} loose`);
+    const rowJump=q<HTMLInputElement>('[data-row-jump-input]');
+    rowJump.max=String(rowTotal);rowJump.value=String(s.row.y+1);
+    setText('[data-row-total]',rowTotal);
+    const unfinished=q<HTMLButtonElement>('[data-unfinished]');
+    unfinished.disabled=completed.size===steps.length;
+    unfinished.textContent=unfinished.disabled?'All segments complete ✓':'Next unfinished segment';
+    q<HTMLButtonElement>('[data-row-prev]').disabled=!steps.some(step=>step.layer===s.layer&&step.row.y<s.row.y);
+    q<HTMLButtonElement>('[data-row-next]').disabled=!steps.some(step=>step.layer===s.layer&&step.row.y>s.row.y);
+    q<HTMLButtonElement>('[data-prev]').disabled=stepIndex===0;
+    q<HTMLButtonElement>('[data-next]').disabled=stepIndex===steps.length-1;
     if(shape==='dome'){
       setText('[data-layer]',`${currentLayer+1}/${result.layers.length}`);
       setText('[data-layer-blocks]',result.layers[currentLayer]?.count||0);
       const layerSteps=stepsByLayer.get(currentLayer)||[];
       const layerDone=layerSteps.filter(step=>completed.has(step.key)).length;
-      const layerPct=layerSteps.length?Math.round(layerDone/layerSteps.length*100):0;
+      const layerBuilt=layerSteps.reduce((count,step)=>count+(completed.has(step.key)?step.span.end-step.span.start+1:0),0);
+      const layerPct=Math.round(layerBuilt/result.layers[currentLayer].count*100);
       setText('[data-layer-progress]',`Layer ${currentLayer+1}: ${layerPct}% · ${layerDone}/${layerSteps.length} segments`);
       const currentCount=result.layers[currentLayer]?.count||0;
       const previousCount=currentLayer>0?(result.layers[currentLayer-1]?.count||0):null;
@@ -380,10 +371,10 @@ if (root) {
         }
       }
       setText('[data-layer-delta]',deltaText);
-      const prevLayerBtn=q('[data-layer-prev]'),nextLayerBtn=q('[data-layer-next]');
+      const prevLayerBtn=q<HTMLButtonElement>('[data-layer-prev]'),nextLayerBtn=q<HTMLButtonElement>('[data-layer-next]');
       if(prevLayerBtn) prevLayerBtn.disabled=currentLayer===0;
       if(nextLayerBtn) nextLayerBtn.disabled=currentLayer===result.layers.length-1;
-      const jump=q('[data-layer-jump-input]');
+      const jump=q<HTMLInputElement>('[data-layer-jump-input]');
       if(jump){jump.max=String(result.layers.length);jump.value=String(currentLayer+1)}
       setText('[data-layer-total]',result.layers.length);
     }
@@ -392,9 +383,9 @@ if (root) {
     const large=volume>10_000_000||result.blockCount>2_000_000;
     const minDim=result.type==='dome'?Math.min(result.width,result.depth,result.height):Math.min(result.width,result.height);
     const filledByThickness=result.style==='thick'&&result.thickness>=Math.max(1,Math.floor(minDim/2));
-    const litematic=q('[data-litematic]');
+    const litematic=q<HTMLButtonElement>('[data-litematic]');
     if(litematic){
-      litematic.disabled=blocked;
+      litematic.disabled=blocked||exporting;
       litematic.title=blocked?'Reduce dimensions before exporting Litematic.':'Download Litematic for supported Java Edition workflows.';
     }
     const warning=q('[data-size-warning]');
@@ -406,34 +397,36 @@ if (root) {
       warning.hidden=messages.length===0;
       warning.textContent=messages.join(' ');
     }
-    q('[data-complete]').textContent=completed.has(s.key)?'Completed ✓':'Complete segment';
+    q<HTMLButtonElement>('[data-complete]').textContent=completed.has(s.key)?'Completed ✓':'Complete segment';
     draw();
   }
 
-  function renderStats(){setText('[data-blocks]',result.blockCount.toLocaleString()); const stacks=Math.floor(result.blockCount/64),loose=result.blockCount%64;setText('[data-stacks]',loose?`${stacks} + ${loose}`:String(stacks)); const p=params();setText('[data-blueprint-title]',shape==='circle'?`${p.diameter}×${p.diameter} Circle`:shape==='oval'?`${p.width}×${p.height} Oval`:`${p.width}×${p.depth}×${p.height} Dome`)}
+  function renderStats(){setText('[data-blocks]',result.blockCount.toLocaleString()); const stacks=Math.floor(result.blockCount/64),loose=result.blockCount%64;setText('[data-stacks]',loose?`${stacks} + ${loose}`:String(stacks)); const p=params();setText('[data-blueprint-title]',p.shape==='circle'?`${p.diameter}×${p.diameter} Circle`:p.shape==='oval'?`${p.width}×${p.height} Oval`:`${p.width}×${p.depth}×${p.height} Dome`)}
 
   function normalizeInputs(){
-    const styleInput=q('[data-input="style"]');
-    const thicknessInput=q('[data-input="thickness"]');
+    const styleInput=q<HTMLInputElement>('[data-input="style"]');
+    const thicknessInput=q<HTMLInputElement>('[data-input="thickness"]');
     if(styleInput) styleInput.value=result.style;
     if(thicknessInput) thicknessInput.value=String(result.thickness);
     if(shape==='circle'){
-      const input=q('[data-input="diameter"]'); if(input) input.value=String(result.width);
+      const input=q<HTMLInputElement>('[data-input="diameter"]'); if(input) input.value=String(result.width);
     } else if(shape==='oval'){
-      const w=q('[data-input="width"]'); const h=q('[data-input="height"]');
+      const w=q<HTMLInputElement>('[data-input="width"]'); const h=q<HTMLInputElement>('[data-input="height"]');
       if(w) w.value=String(result.width); if(h) h.value=String(result.height);
     } else {
-      const w=q('[data-input="width"]'); const d=q('[data-input="depth"]'); const h=q('[data-input="height"]');
+      const w=q<HTMLInputElement>('[data-input="width"]'); const d=q<HTMLInputElement>('[data-input="depth"]'); const h=q<HTMLInputElement>('[data-input="height"]');
       if(w) w.value=String(result.width); if(d) d.value=String(result.depth); if(h) h.value=String(result.height);
     }
   }
 
   function regenerate(resetView=false){
+    undoHistory=[];
+    completed=new Set();stepIndex=0;
     result=makeResult();normalizeInputs();steps=createSteps();indexSteps();loadProgress();if(resetView){zoom=1;panX=0;panY=0}renderStats();renderInstruction();
     q('[data-thickness-wrap]').style.display=result.style==='thick'?'':'none';
     qa('[data-style]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.style===text('style'))));
     if(shape==='circle'){
-      const d=String(params().diameter);
+      const d=String(result.width);
       qa('[data-preset]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.preset===d)));
     }
   }
@@ -444,36 +437,32 @@ if (root) {
     history.replaceState(null,'',`${location.pathname}#${fragment}`);
     return canonicalBlueprintUrl(location.pathname,p);
   }
-  function regenerateAndSync(resetView=false){
-    regenerate(resetView);
-    updateFragment();
-  }
   function parseFragment(){
     const state=parseBlueprintFragment(location.hash);
     if(!state||state.shape!==shape)return false;
     if(state.shape==='circle'){
-      q('[data-input="diameter"]').value=String(state.diameter);
-      q('[data-input="style"]').value=state.style;
-      q('[data-input="thickness"]').value=String(state.thickness);
+      q<HTMLInputElement>('[data-input="diameter"]').value=String(state.diameter);
+      q<HTMLInputElement>('[data-input="style"]').value=state.style;
+      q<HTMLInputElement>('[data-input="thickness"]').value=String(state.thickness);
       return true;
     }
     if(state.shape==='oval'){
-      q('[data-input="width"]').value=String(state.width);
-      q('[data-input="height"]').value=String(state.height);
-      q('[data-input="style"]').value=state.style;
-      q('[data-input="thickness"]').value=String(state.thickness);
+      q<HTMLInputElement>('[data-input="width"]').value=String(state.width);
+      q<HTMLInputElement>('[data-input="height"]').value=String(state.height);
+      q<HTMLInputElement>('[data-input="style"]').value=state.style;
+      q<HTMLInputElement>('[data-input="thickness"]').value=String(state.thickness);
       return true;
     }
-    q('[data-input="width"]').value=String(state.width);
-    q('[data-input="depth"]').value=String(state.depth);
-    q('[data-input="height"]').value=String(state.height);
-    q('[data-input="style"]').value=state.style;
-    q('[data-input="thickness"]').value=String(state.thickness);
+    q<HTMLInputElement>('[data-input="width"]').value=String(state.width);
+    q<HTMLInputElement>('[data-input="depth"]').value=String(state.depth);
+    q<HTMLInputElement>('[data-input="height"]').value=String(state.height);
+    q<HTMLInputElement>('[data-input="style"]').value=state.style;
+    q<HTMLInputElement>('[data-input="thickness"]').value=String(state.thickness);
     return true;
   }
 
   let statusTimer=0;
-  function showStatus(message,kind='ok'){
+  function showStatus(message:string,kind='ok'){
     const el=q('[data-action-status]'); if(!el)return;
     el.textContent=message;
     el.dataset.kind=kind;
@@ -481,7 +470,7 @@ if (root) {
     statusTimer=window.setTimeout(()=>{el.textContent='';delete el.dataset.kind},2600);
   }
 
-  function downloadBlob(blob,filename){
+  function downloadBlob(blob:Blob,filename:string){
     const a=document.createElement('a');
     const url=URL.createObjectURL(blob);
     a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
@@ -492,7 +481,10 @@ if (root) {
     const rows=activeRows();
     const gw=result.width;
     const gh=shape==='dome'?result.depth:result.height;
-    const padding=display.labels?44:24;
+    const pngMode=q<HTMLSelectElement>('[data-png-options]').value;
+    const showLabels=pngMode==='rows';
+    const showGrid=pngMode==='grid'||showLabels;
+    const padding=showLabels?44:24;
     const maxSide=2048;
     const targetCell=Math.max(3,Math.min(24,Math.floor((maxSide-padding*2)/Math.max(gw,gh))));
     const width=gw*targetCell+padding*2;
@@ -500,11 +492,11 @@ if (root) {
     const out=document.createElement('canvas');
     out.width=width;
     out.height=height;
-    const x=out.getContext('2d');
+    const x=out.getContext('2d')!;
     x.fillStyle='#ffffff';
     x.fillRect(0,0,width,height);
 
-    if(display.grid&&targetCell>=5){
+    if(showGrid){
       x.strokeStyle='#eeeeee';
       x.lineWidth=1;
       for(let gx=0;gx<=gw;gx++){
@@ -530,20 +522,7 @@ if (root) {
       }
     }
 
-    if(display.center){
-      x.strokeStyle='#f59e0b';
-      x.lineWidth=1;
-      x.setLineDash([5,5]);
-      x.beginPath();
-      x.moveTo(padding+gw*targetCell/2,padding);
-      x.lineTo(padding+gw*targetCell/2,padding+gh*targetCell);
-      x.moveTo(padding,padding+gh*targetCell/2);
-      x.lineTo(padding+gw*targetCell,padding+gh*targetCell/2);
-      x.stroke();
-      x.setLineDash([]);
-    }
-
-    if(display.labels&&targetCell>=10){
+    if(showLabels){
       x.fillStyle='#737373';
       x.font='11px ui-monospace, SFMono-Regular, Menlo, monospace';
       x.textAlign='right';
@@ -558,74 +537,82 @@ if (root) {
 
   settingsButton?.addEventListener('click',()=>setMobileControlsState(!root.querySelector('.controls')?.classList.contains('mobile-collapsed')));
   mobileControls.addEventListener?.('change',(event)=>setMobileControlsState(event.matches));
-  qa('[data-input]')
-    .filter(el=>el.getAttribute('type')!=='hidden'&&el.dataset.input!=='material')
-    .forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>regenerateAndSync(true)));
+  qa<HTMLInputElement>('[data-input]').filter(el=>el.getAttribute('type')!=='hidden'&&el.dataset.input!=='material').forEach(el=>el.addEventListener('change',()=>{regenerate(true);updateFragment();usage(`generate_${shape}`)}));
+  function renderMaterial(){
+    const material=resolveMaterial(text('material'));
+    setText('[data-material-note]',material?`Litematic material: ${material}.`:'Custom label: TXT and print keep this name. Litematic will ask before using Stone.');
+  }
+  q('[data-input="material"]').addEventListener('input',renderMaterial);
+  renderMaterial();
   qa('[data-style]').forEach(el=>el.addEventListener('click',()=>{
-    const style=el.dataset.style;
-    q('[data-input="style"]').value=style;
-    const thickness=q('[data-input="thickness"]');
+    const style=el.dataset.style!;
+    q<HTMLInputElement>('[data-input="style"]').value=style;
+    const thickness=q<HTMLInputElement>('[data-input="thickness"]');
     if(thickness){
       if(style==='thin'||style==='filled') thickness.value='1';
       if(style==='thick'&&Number(thickness.value)<2) thickness.value='2';
     }
-    regenerateAndSync(false);
+    regenerate(false);
+    updateFragment();usage(`generate_${shape}`);
   }));
-  qa('[data-preset]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="diameter"]').value=el.dataset.preset;regenerateAndSync(true)}));
-  qa('[data-toggle]').forEach(el=>el.addEventListener('click',()=>{const k=el.dataset.toggle;display[k]=!display[k];el.setAttribute('aria-pressed',String(display[k]));draw()}));
-  qa('[data-instruction-mode]').forEach(el=>el.addEventListener('click',()=>{instructionMode=el.dataset.instructionMode;qa('[data-instruction-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn===el)));renderInstruction()}));
-  q('[data-world-toggle]')?.addEventListener('click',(event)=>{
-    worldEnabled=!worldEnabled;
-    const btn=event.currentTarget;
-    btn.setAttribute('aria-pressed',String(worldEnabled));
-    btn.textContent=worldEnabled?'World coords on':'Enable world coords';
-    const controls=q('[data-world-controls]');
-    if(controls)controls.hidden=!worldEnabled;
-    if(worldEnabled)setDefaultWorldAnchor();
-    renderInstruction();
-  });
-  qa('[data-world]').forEach(el=>el.addEventListener('input',()=>renderInstruction()));
-  q('[data-hemisphere]')?.addEventListener('click',()=>{const w=num('width',31);q('[data-input="depth"]').value=String(w);q('[data-input="height"]').value=String(Math.ceil(w/2));regenerateAndSync(true)});
+  qa('[data-preset]').forEach(el=>el.addEventListener('click',()=>{q<HTMLInputElement>('[data-input="diameter"]').value=el.dataset.preset!;regenerate(true);updateFragment();usage(`generate_${shape}`)}));
+  qa('[data-toggle]').forEach(el=>el.addEventListener('click',()=>{const k=el.dataset.toggle as keyof typeof display;display[k]=!display[k];el.setAttribute('aria-pressed',String(display[k]));draw()}));
+  qa('[data-instruction-mode]').forEach(el=>el.addEventListener('click',()=>{instructionMode=el.dataset.instructionMode!;qa('[data-instruction-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn===el)));renderInstruction()}));
+  root.querySelector('[data-hemisphere]')?.addEventListener('click',()=>{const w=num('width',31);q<HTMLInputElement>('[data-input="depth"]').value=String(w);q<HTMLInputElement>('[data-input="height"]').value=String(Math.ceil(w/2));regenerate(true);updateFragment();usage(`generate_${shape}`)});
   q('[data-fit]').addEventListener('click',fit);
   q('[data-zoom-in]').addEventListener('click',()=>{zoom=Math.min(8,zoom*1.2);draw()});
   q('[data-zoom-out]').addEventListener('click',()=>{zoom=Math.max(.25,zoom/1.2);draw()});
-  q('[data-print]').addEventListener('click',()=>{
+  q('[data-print]').addEventListener('click',async()=>{
     if(buildMode)setBuildMode(false);
     const exportCanvas=createPngExportCanvas();
-    const printImage=q('[data-print-image]');
+    const printImage=q<HTMLImageElement>('[data-print-image]');
     if(printImage) printImage.src=exportCanvas.toDataURL('image/png');
     setText('[data-print-sheet-title]',q('[data-blueprint-title]')?.textContent||'VoxelCurve Blueprint');
     const stacks=Math.floor(result.blockCount/64),loose=result.blockCount%64;
     setText('[data-print-sheet-meta]',`${result.blockCount.toLocaleString()} blocks · ${stacks} stack${stacks===1?'':'s'}${loose?` + ${loose} blocks`:''} · ${text('material','Blocks')}`);
-    const plan=q('[data-print-plan]'); if(plan) plan.textContent=buildTextPlan(result,text('material','Blocks'),worldAnchor());
+    const plan=q('[data-print-plan]'); if(plan) plan.textContent=buildTextPlan(result,text('material','Blocks'));
     document.body.classList.add('vc-printing');
+    await printImage.decode().catch(()=>{});
     requestAnimationFrame(()=>window.print());
   });
   window.addEventListener('afterprint',()=>document.body.classList.remove('vc-printing'));
   q('[data-prev]').addEventListener('click',()=>{stepIndex=Math.max(0,stepIndex-1);saveProgress();renderInstruction()});
   q('[data-next]').addEventListener('click',()=>{stepIndex=Math.min(steps.length-1,stepIndex+1);saveProgress();renderInstruction()});
-  q('[data-complete]').addEventListener('click',()=>{
+  q<HTMLButtonElement>('[data-complete]').addEventListener('click',()=>{
     const s=steps[stepIndex];if(!s)return;
+    undoHistory.push({added:completed.has(s.key)?[]:[s.key],removed:completed.has(s.key)?[s.key]:[],stepIndex});
+    if(undoHistory.length>100)undoHistory.shift();
     if(completed.has(s.key)) completed.delete(s.key);
     else {
       completed.add(s.key);
+      usage('complete_segment');
       const next=steps.findIndex((step,index)=>index>stepIndex&&!completed.has(step.key));
       if(next>=0) stepIndex=next;
     }
     saveProgress();renderInstruction();
   });
-  q('[data-undo]').addEventListener('click',()=>{if(!completed.size)return;const arr=[...completed];const key=arr[arr.length-1];completed.delete(key);const idx=steps.findIndex(s=>s.key===key);if(idx>=0)stepIndex=idx;saveProgress();renderInstruction()});
+  q('[data-undo]').addEventListener('click',()=>{
+    const action=undoHistory.pop();
+    if(action){action.added.forEach(key=>completed.delete(key));action.removed.forEach(key=>completed.add(key));stepIndex=action.stepIndex}
+    else {if(!completed.size)return;const key=[...completed].at(-1)!;completed.delete(key);stepIndex=stepIndexByKey.get(key)??stepIndex}
+    saveProgress();renderInstruction();
+  });
   q('[data-complete-row]').addEventListener('click',()=>{
     const current=steps[stepIndex]; if(!current)return;
     const rowSteps=stepsByRow.get(`${current.layer}:${current.row.y}`)||[];
+    undoHistory.push({added:rowSteps.filter(step=>!completed.has(step.key)).map(step=>step.key),removed:[],stepIndex});
+    if(undoHistory.length>100)undoHistory.shift();
     rowSteps.forEach(step=>completed.add(step.key));
     const next=steps.findIndex((step,index)=>index>stepIndex&&!completed.has(step.key)&&(step.layer!==current.layer||step.row.y!==current.row.y));
     if(next>=0) stepIndex=next; else stepIndex=steps.length-1;
     saveProgress();renderInstruction();
   });
-  q('[data-complete-layer]')?.addEventListener('click',()=>{
+  root.querySelector('[data-complete-layer]')?.addEventListener('click',()=>{
     const current=steps[stepIndex]; if(!current)return;
+    undoHistory.push({added:(stepsByLayer.get(current.layer)||[]).filter(step=>!completed.has(step.key)).map(step=>step.key),removed:[],stepIndex});
+    if(undoHistory.length>100)undoHistory.shift();
     (stepsByLayer.get(current.layer)||[]).forEach(step=>completed.add(step.key));
+    usage('complete_layer');
     const next=steps.findIndex((step,index)=>index>stepIndex&&!completed.has(step.key)&&step.layer!==current.layer);
     if(next>=0) stepIndex=next; else stepIndex=steps.length-1;
     saveProgress();renderInstruction();
@@ -633,11 +620,11 @@ if (root) {
   q('[data-reset-progress]').addEventListener('click',()=>{
     if(!completed.size&&stepIndex===0)return;
     if(!confirm('Reset all saved progress for this blueprint?'))return;
-    completed.clear();stepIndex=0;
-    try{localStorage.removeItem(stateKey())}catch{}
+    completed.clear();stepIndex=0;undoHistory=[];
+    saveProgress();
     renderInstruction();
   });
-  function goToLayer(target){
+  function goToLayer(target:number){
     if(shape!=='dome')return;
     target=Math.max(0,Math.min(result.layers.length-1,target));
     const layerSteps=stepsByLayer.get(target)||[];
@@ -647,75 +634,66 @@ if (root) {
       saveProgress();renderInstruction();
     }
   }
-  q('[data-layer-prev]')?.addEventListener('click',()=>goToLayer(currentLayer-1));
-  q('[data-layer-next]')?.addEventListener('click',()=>goToLayer(currentLayer+1));
-  q('[data-layer-jump-input]')?.addEventListener('change',(event)=>{
-    const value=Number(event.currentTarget.value);
-    if(Number.isFinite(value)) goToLayer(Math.round(value)-1);
-  });
-  let wakeLock=null;
-  let wakeEnabled=false;
-  const wakeButton=q('[data-wake-toggle]');
-  async function requestWakeLock(){
-    if(!wakeEnabled||document.visibilityState!=='visible'||!('wakeLock' in navigator))return;
-    try{
-      wakeLock=await navigator.wakeLock.request('screen');
-      wakeLock.addEventListener('release',()=>{wakeLock=null});
-      wakeButton?.setAttribute('aria-pressed','true');
-      if(wakeButton) wakeButton.textContent='Screen awake ✓';
-    }catch{
-      wakeEnabled=false;
-      wakeButton?.setAttribute('aria-pressed','false');
-      if(wakeButton) wakeButton.textContent='Keep screen awake';
-      showStatus('Screen wake lock is not available right now.','neutral');
+  function goToRow(direction:number){
+    const current=steps[stepIndex];if(!current)return;
+    const layerSteps=stepsByLayer.get(current.layer)||[];
+    const chosen=direction>0?layerSteps.find(step=>step.row.y>current.row.y):layerSteps.findLast(step=>step.row.y<current.row.y);
+    if(chosen){
+      const first=(stepsByRow.get(`${chosen.layer}:${chosen.row.y}`)||[])[0];
+      stepIndex=stepIndexByKey.get(first.key)??stepIndex;saveProgress();renderInstruction();
     }
   }
-  if(wakeButton&&'wakeLock' in navigator){
-    wakeButton.hidden=false;
-    wakeButton.addEventListener('click',async()=>{
-      wakeEnabled=!wakeEnabled;
-      if(wakeEnabled){
-        await requestWakeLock();
-        if(wakeEnabled) showStatus('Screen wake lock enabled.');
-      }else{
-        await wakeLock?.release?.().catch(()=>{});
-        wakeLock=null;
-        wakeButton.setAttribute('aria-pressed','false');
-        wakeButton.textContent='Keep screen awake';
-        showStatus('Screen wake lock disabled.','neutral');
-      }
-    });
-    document.addEventListener('visibilitychange',()=>{
-      if(document.visibilityState==='visible'&&wakeEnabled&&!wakeLock) requestWakeLock();
-    });
-  }
-
+  q('[data-row-prev]').addEventListener('click',()=>goToRow(-1));
+  q('[data-row-next]').addEventListener('click',()=>goToRow(1));
+  q('[data-row-jump-input]').addEventListener('change',()=>{
+    const input=q<HTMLInputElement>('[data-row-jump-input]');
+    const target=Number(input.value),total=shape==='dome'?result.depth:result.height;
+    if(!Number.isInteger(target)||target<1||target>total){showStatus(`Choose a row from 1 to ${total}.`,'neutral');renderInstruction();return}
+    const rowSteps=stepsByRow.get(`${currentLayer}:${target-1}`)||[];
+    const chosen=rowSteps.find(step=>!completed.has(step.key))||rowSteps[0];
+    if(!chosen){showStatus(`Row ${target} has no blocks on this layer.`,'neutral');renderInstruction();return}
+    stepIndex=stepIndexByKey.get(chosen.key)??stepIndex;saveProgress();renderInstruction();
+  });
+  q('[data-unfinished]').addEventListener('click',()=>{
+    const next=steps.findIndex((step,index)=>index>stepIndex&&!completed.has(step.key));
+    const target=next>=0?next:steps.findIndex(step=>!completed.has(step.key));
+    if(target<0)return;
+    stepIndex=target;saveProgress();renderInstruction();
+  });
+  root.querySelector('[data-layer-prev]')?.addEventListener('click',()=>goToLayer(currentLayer-1));
+  root.querySelector('[data-layer-next]')?.addEventListener('click',()=>goToLayer(currentLayer+1));
+  root.querySelector('[data-layer-jump-input]')?.addEventListener('change',(event)=>{
+    const value=Number((event.currentTarget as HTMLInputElement).value);
+    if(Number.isInteger(value)&&value>=1&&value<=result.layers.length)goToLayer(value-1);
+    else{showStatus(`Choose a layer from 1 to ${result.layers.length}.`,'neutral');renderInstruction()}
+  });
   q('[data-share]').addEventListener('click',async()=>{
     const url=updateFragment();
     try{
       await navigator.clipboard.writeText(url);
+      usage('share');
       showStatus('Canonical blueprint link copied.');
     }catch{
       const value=prompt('Copy this blueprint link:',url);
       showStatus(value===null?'Copy cancelled.':'Blueprint link ready.','neutral');
     }
   });
-  q('[data-qr]').addEventListener('click',async()=>{
-    const btn=q('[data-qr]');const old=btn.textContent;btn.disabled=true;btn.textContent='Creating…';
+  q<HTMLButtonElement>('[data-qr]').addEventListener('click',async()=>{
+    const btn=q<HTMLButtonElement>('[data-qr]');const old=btn.textContent;btn.disabled=true;btn.textContent='Creating…';
     try{
       const url=updateFragment();
       const QRCode=(await import('qrcode')).default;
-      const qc=q('[data-qr-canvas]');
+      const qc=q<HTMLCanvasElement>('[data-qr-canvas]');
       await QRCode.toCanvas(qc,url,{width:240,margin:1});
-      const qrLink=q('[data-qr-link]');
-      if(qrLink) qrLink.href=url;
-      q('[data-qr-dialog]').showModal();
+      q<HTMLAnchorElement>('[data-qr-link]').href=url;
+      q<HTMLDialogElement>('[data-qr-dialog]').showModal();
+      usage('share');
       showStatus('QR code created for voxelcurve.com.');
     }catch{
       showStatus('Could not create QR code. Try Copy link instead.','error');
     }finally{btn.disabled=false;btn.textContent=old}
   });
-  q('[data-qr-close]').addEventListener('click',()=>q('[data-qr-dialog]').close());
+  q('[data-qr-close]').addEventListener('click',()=>q<HTMLDialogElement>('[data-qr-dialog]').close());
   q('[data-png]').addEventListener('click',()=>{
     try{
       const exportCanvas=createPngExportCanvas();
@@ -723,65 +701,86 @@ if (root) {
       exportCanvas.toBlob(blob=>{
         if(!blob){showStatus('Could not create PNG.','error');return}
         downloadBlob(blob,`${blueprintSlug()}${suffix}.png`);
+        usage('download_png');
         showStatus('PNG blueprint downloaded.');
       },'image/png');
     }catch{showStatus('Could not create PNG.','error')}
   });
-  q('[data-svg]').addEventListener('click',()=>{
-    try{
-      const rows=activeRows();
-      const height=shape==='dome'?result.depth:result.height;
-      const layerSuffix=shape==='dome'?` · Layer ${currentLayer+1}`:'';
-      const title=`${q('[data-blueprint-title]')?.textContent||'VoxelCurve Blueprint'}${layerSuffix}`;
-      const svg=buildBlueprintSvg({
-        rows,
-        width:result.width,
-        height,
-        title,
-        showGrid:display.grid,
-        showCenter:display.center,
-        showLabels:display.labels
-      });
-      const suffix=shape==='dome'?'-layer-'+(currentLayer+1):'';
-      downloadBlob(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}),`${blueprintSlug()}${suffix}.svg`);
-      showStatus('SVG blueprint downloaded.');
-    }catch{showStatus('Could not create SVG.','error')}
-  });
   q('[data-txt]').addEventListener('click',()=>{
     try{
-      const blob=new Blob([buildTextPlan(result,text('material','Blocks'),worldAnchor())],{type:'text/plain;charset=utf-8'});
+      const blob=new Blob([buildTextPlan(result,text('material','Blocks'))],{type:'text/plain;charset=utf-8'});
       downloadBlob(blob,`${blueprintSlug()}-build-plan.txt`);
+      usage('download_txt');
       showStatus('TXT build plan downloaded.');
     }catch{showStatus('Could not create TXT plan.','error')}
   });
-  q('[data-litematic]').addEventListener('click',async()=>{const btn=q('[data-litematic]');const old=btn.textContent;btn.textContent='Building file…';btn.disabled=true;try{const {exportLitematic}=await import('../lib/litematic');const raw=text('material','stone').trim().toLowerCase();const aliases={'stone bricks':'stone_bricks','stone brick':'stone_bricks','glass':'glass','quartz':'quartz_block','quartz block':'quartz_block','stone':'stone','cobblestone':'cobblestone','deepslate':'deepslate','smooth stone':'smooth_stone','oak planks':'oak_planks','spruce planks':'spruce_planks','birch planks':'birch_planks','white concrete':'white_concrete','black concrete':'black_concrete','gray concrete':'gray_concrete','light gray concrete':'light_gray_concrete'};const allowed=new Set(['stone','stone_bricks','glass','quartz_block','cobblestone','deepslate','smooth_stone','oak_planks','spruce_planks','birch_planks','white_concrete','black_concrete','gray_concrete','light_gray_concrete']);const normalized=raw.replace(/[^a-z0-9_]/g,'_');const candidate=aliases[raw]||(allowed.has(normalized)?normalized:'');const safe=candidate||'stone';const bytes=exportLitematic(result,`VoxelCurve · ${q('[data-blueprint-title]')?.textContent||shape}`,`minecraft:${safe||'stone'}`);const blob=new Blob([bytes],{type:'application/octet-stream'});downloadBlob(blob,`${blueprintSlug()}.litematic`);showStatus('Litematic file downloaded.')}catch(e){showStatus(e?.message||'Could not create Litematic file.','error')}finally{btn.textContent=old;btn.disabled=false}});
+  q('[data-cancel-export]').addEventListener('click',()=>cancelExport?.());
+  q<HTMLButtonElement>('[data-litematic]').addEventListener('click',async()=>{
+    if(exporting)return;
+    let material=resolveMaterial(text('material'));
+    if(!material){
+      if(!confirm(`“${text('material')}” is not a supported Litematic material. Export using Stone instead? TXT and print will keep your custom label.`)){
+        showStatus('Litematic export cancelled. Choose a supported material or use TXT.','neutral');return;
+      }
+      material='minecraft:stone';
+    }
+    const btn=q<HTMLButtonElement>('[data-litematic]');
+    const filename=`${blueprintSlug()}.litematic`;
+    const name=`VoxelCurve · ${q('[data-blueprint-title]').textContent||shape}`;
+    const blueprint=params();
+    let worker:Worker|null=null;
+    exporting=true;btn.disabled=true;btn.textContent='Building file…';
+    btn.setAttribute('aria-busy','true');
+    q('[data-cancel-export]').hidden=false;
+    showStatus('Generating Litematic in the background. You can keep navigating or cancel.','neutral');
+    try{
+      const bytes=await new Promise<Uint8Array>((resolve,reject)=>{
+        worker=new LitematicWorker();
+        cancelExport=()=>{worker?.terminate();reject(new Error('Litematic export cancelled.'))};
+        worker.onerror=()=>reject(new Error('Litematic export could not start or ran out of memory. Try a smaller blueprint.'));
+        worker.onmessage=(event:MessageEvent)=>{
+          if(event.data.type==='status')showStatus(event.data.message,'neutral');
+          else if(event.data.type==='ready')resolve(event.data.bytes);
+          else if(event.data.type==='error')reject(new Error(event.data.message));
+        };
+        worker.postMessage({params:blueprint,name,material});
+      });
+      downloadBlob(new Blob([Uint8Array.from(bytes)],{type:'application/octet-stream'}),filename);
+      usage('download_litematic');showStatus(`Litematic downloaded · ${material}.`);
+    }catch(error){showStatus(error instanceof Error?error.message:'Could not create Litematic file.','neutral')}
+    finally{
+      (worker as Worker|null)?.terminate();cancelExport=null;exporting=false;
+      btn.textContent='.litematic';btn.removeAttribute('aria-busy');
+      q('[data-cancel-export]').hidden=true;renderInstruction();
+    }
+  });
 
   wrap.addEventListener('wheel',(e)=>{e.preventDefault();zoom=Math.max(.25,Math.min(8,zoom*(e.deltaY<0?1.1:.9)));draw()},{passive:false});
-  wrap.addEventListener('pointerdown',(e)=>{wrap.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===1)dragStart={x:e.clientX,y:e.clientY,px:panX,py:panY,moved:false};if(pointers.size===2){const a=[...pointers.values()];pinchStart={dist:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),zoom}}});
+  wrap.addEventListener('pointerdown',(e)=>{wrap.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===1)dragStart={x:e.clientX,y:e.clientY,px:panX,py:panY,moved:false};if(pointers.size===2){if(dragStart)dragStart.moved=true;const a=[...pointers.values()];pinchStart={dist:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),zoom}}});
   wrap.addEventListener('pointermove',(e)=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===2&&pinchStart){const a=[...pointers.values()];const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);zoom=Math.max(.25,Math.min(8,pinchStart.zoom*d/pinchStart.dist));draw();return}if(pointers.size===1&&dragStart){const dx=e.clientX-dragStart.x,dy=e.clientY-dragStart.y;if(Math.hypot(dx,dy)>5)dragStart.moved=true;panX=dragStart.px+dx;panY=dragStart.py+dy;draw()}});
   wrap.addEventListener('dblclick',(e)=>{e.preventDefault();fit()});
-  const pointerEnd=(e)=>{
-    const wasSingle=pointers.size===1;
-    const wasPinching=!!pinchStart;
-    const wasTap=wasSingle&&!wasPinching&&dragStart&&!dragStart.moved;
-    if(e.type==='pointerup'&&e.pointerType==='touch'&&wasTap){
+  let lastTapAt=0,lastTapX=0,lastTapY=0;
+  const pointerEnd=(e:PointerEvent)=>{
+    let fitted=false;
+    if(e.type==='pointerup'&&e.pointerType==='touch'&&pointers.size===1&&dragStart&&!dragStart.moved){
       const now=Date.now();
-      const close=Math.hypot(e.clientX-lastTapX,e.clientY-lastTapY)<28;
-      if(now-lastTapAt<340&&close){
-        fit();
-        lastTapAt=0;
-      }else{
-        lastTapAt=now;
-        lastTapX=e.clientX;
-        lastTapY=e.clientY;
-      }
+      if(now-lastTapAt<340&&Math.hypot(e.clientX-lastTapX,e.clientY-lastTapY)<28){fit();lastTapAt=0;fitted=true}
+      else{lastTapAt=now;lastTapX=e.clientX;lastTapY=e.clientY}
+    }
+    if(!fitted&&e.type==='pointerup'&&pointers.size===1&&dragStart&&!dragStart.moved){
+      const rect=wrap.getBoundingClientRect();
+      const gw=result.width,gh=shape==='dome'?result.depth:result.height;
+      const cell=Math.max(.1,Math.min((rect.width-42)/gw,(rect.height-42)/gh))*zoom;
+      const x=Math.floor((e.clientX-rect.left-(rect.width-gw*cell)/2-panX)/cell);
+      const y=Math.floor((e.clientY-rect.top-(rect.height-gh*cell)/2-panY)/cell);
+      const selected=(stepsByRow.get(`${currentLayer}:${y}`)||[]).find(step=>x>=step.span.start&&x<=step.span.end);
+      if(selected){stepIndex=stepIndexByKey.get(selected.key)??stepIndex;saveProgress();renderInstruction()}
     }
     pointers.delete(e.pointerId);
     if(pointers.size<2)pinchStart=null;
     if(!pointers.size)dragStart=null;
-  };
-  wrap.addEventListener('pointerup',pointerEnd);
-  wrap.addEventListener('pointercancel',pointerEnd);
+    else if(dragStart)dragStart.moved=true;
+  };wrap.addEventListener('pointerup',pointerEnd);wrap.addEventListener('pointercancel',pointerEnd);
 
   window.addEventListener('hashchange',()=>{
     if(!parseFragment())return;
@@ -792,7 +791,7 @@ if (root) {
   new ResizeObserver(resize).observe(wrap);
   const restoredFromFragment=parseFragment();
   regenerate(true);
-  if(restoredFromFragment) updateFragment();
+  if(restoredFromFragment)updateFragment();
   resize();
 }
 </script>

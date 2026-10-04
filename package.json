@@ -2,7 +2,9 @@
   "name": "voxelcurve",
   "version": "1.0.0",
   "private": true,
-  "engines": { "node": ">=22 <23" },
+  "engines": {
+    "node": ">=22 <23"
+  },
   "type": "module",
   "packageManager": "npm@11.21.0",
   "scripts": {
@@ -10,7 +12,10 @@
     "build": "node scripts/generate-og.mjs && astro build",
     "preview": "astro preview",
     "test": "vitest run",
+    "check": "astro check && tsc --noEmit",
+    "test:browser": "playwright test",
     "audit": "node scripts/audit.mjs",
+    "release:check": "node scripts/release-check.mjs",
     "security:audit": "npm audit --omit=dev --audit-level=moderate"
   },
   "dependencies": {
@@ -18,8 +23,10 @@
     "qrcode": "1.5.4"
   },
   "devDependencies": {
-    "astro": "7.2.8",
+    "@astrojs/check": "0.9.10",
+    "@playwright/test": "1.62.1",
     "@types/qrcode": "1.5.5",
+    "astro": "7.2.8",
     "typescript": "5.9.3",
     "vitest": "4.1.11"
   }

@@ -1,6 +1,6 @@
 # VoxelCurve Geometry Specification
 
-Version: **Geometry v1**
+Version: **Geometry v3**
 
 This document is normative. The generator, chart, material counts, guided build instructions, TXT output, PNG output and Litematic export must all consume the same geometry result and must not implement independent shape formulas.
 
@@ -306,43 +306,7 @@ Origin:
 
 The web block count, TXT plan block count and occupied Litematic palette count must match.
 
-## 12. World-coordinate helper
-
-World coordinates are a **display and instruction transform only**. They do not change occupied blocks in the `ShapeResult`.
-
-Optional anchor inputs:
-
-```
-Center X
-Base Y
-Center Z
-```
-
-Mapping:
-
-```
-worldX = centerX + gridX - (Width - 1) / 2
-worldZ = centerZ + gridRow - (Depth - 1) / 2
-worldY = baseY + layer
-```
-
-For 2D Circle/Oval plans, `Depth` means the 2D blueprint row count (`height`).
-
-Axes:
-
-- blueprint right = +X
-- blueprint rows downward = +Z
-- Dome layers upward = +Y
-
-Block-aligned center rule:
-
-- odd dimensions use whole-number center coordinates;
-- even dimensions use centers ending in `.5`;
-- Base Y is a whole block Y coordinate.
-
-World coordinates are not included in share URL fragments or local completion progress. They do not change the Litematic region origin.
-
-## 13. Safe limits
+## 12. Safe limits
 
 Current UI limits:
 
@@ -356,19 +320,19 @@ Litematic export rejects structures above 20,000,000 bounding-volume cells or ab
 
 These limits are engineering limits, not SEO content claims, and may only be raised after performance testing.
 
-## 14. Geometry version
+## 13. Geometry version
 
 Current:
 
 ```
-GEOMETRY_VERSION = 2
+GEOMETRY_VERSION = 3
 ```
 
 Saved progress includes the geometry version.
 
 Any change that can alter generated occupied blocks for the same parameters must increment the version so old progress cannot be applied to a new blueprint.
 
-## 15. Non-negotiable invariants
+## 14. Non-negotiable invariants
 
 For every shape:
 
@@ -382,4 +346,4 @@ For every shape:
 8. UI labels must reflect normalized geometry inputs;
 9. geometry output is deterministic.
 
-If a future implementation violates one of these invariants, it is not compatible with VoxelCurve Geometry v1.
+If a future implementation violates one of these invariants, it is not compatible with the current VoxelCurve geometry version.

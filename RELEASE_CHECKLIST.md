@@ -2,6 +2,8 @@
 
 This checklist is intentionally short. VoxelCurve is designed to be finished, deployed and then monitored at low frequency rather than continuously redesigned.
 
+The user's unique final standard is `FINAL_STANDARD.txt`. This checklist implements its acceptance gates and cannot expand or reduce product scope. Latest user decision (2026-10-04): analytics is temporarily deferred. No provider is configured; analytics is not a current release blocker and must not be reported as enabled.
+
 ## 1. Automated gates
 
 A release is not ready unless GitHub Actions is green.
@@ -9,7 +11,10 @@ A release is not ready unless GitHub Actions is green.
 CI currently runs:
 
 - production dependency security audit;
-- geometry regression tests;
+- Astro / TypeScript checks;
+- geometry regression and golden row fixture tests;
+- independent NBT decoding and export cell parity;
+- Chromium desktop/mobile, Firefox and WebKit mobile browser flows;
 - Astro production build;
 - production site audit;
 - Title / Meta Description uniqueness;
@@ -53,9 +58,6 @@ Test:
 - [ ] Escape exits Build Mode on desktop;
 - [ ] Center instructions;
 - [ ] Edge instructions;
-- [ ] optional world coordinates for odd dimensions;
-- [ ] optional world coordinates for even dimensions using .5 centers;
-- [ ] world coordinates are absent from shared URLs;
 - [ ] progress save after refresh;
 - [ ] Complete Segment;
 - [ ] Complete Row;
@@ -65,7 +67,6 @@ Test:
 - [ ] Copy link;
 - [ ] Send to phone QR;
 - [ ] PNG;
-- [ ] SVG;
 - [ ] Print;
 - [ ] TXT;
 - [ ] Litematic.
@@ -110,15 +111,13 @@ Test:
 - [ ] Complete Layer;
 - [ ] local progress restore;
 - [ ] PNG exports current layer;
-- [ ] SVG exports current layer;
 - [ ] Print includes blueprint + full plan;
 - [ ] TXT includes Layer / Row / Segment instructions;
-- [ ] TXT includes world X/Y/Z when enabled;
 - [ ] Litematic.
 
 ## 6. Litematic manual import gate
 
-Automated tests validate NBT metadata, V6/3700 version pairing, metadata tag types and occupied palette counts, but **do not claim full real-world compatibility until these files have been imported into a supported Litematica workflow**.
+Automated tests validate NBT metadata, V6/3700 version pairing, metadata tag types and every occupied palette cell and its orientation against geometry, but **do not claim full real-world compatibility until these files have been imported into a supported Litematica workflow**.
 
 Manual gate:
 
@@ -154,8 +153,6 @@ Verify:
 - [ ] no horizontal page overflow;
 - [ ] 44px touch targets;
 - [ ] QR dialog fits;
-- [ ] Keep screen awake appears only on supported browsers;
-- [ ] Wake Lock releases/reacquires correctly when switching apps;
 - [ ] large Dome layer controls remain usable.
 
 ## 8. Desktop browser smoke test
@@ -169,9 +166,9 @@ Check:
 
 ## 9. Repository security
 
-- [ ] GitHub Settings → Security → Private vulnerability reporting is enabled, or another private security-reporting channel is documented.
-- [ ] Public Issue templates are available for Geometry / Export / Browser bugs.
-- [ ] Do not use public Issues for exploit details.
+- [ ] Private vulnerability reporting or the documented private contact email is usable.
+- [ ] Public Geometry / Export / Browser issue templates are available.
+- [ ] Exploit details are kept out of public Issues.
 
 ## 10. Cloudflare / domain
 
@@ -179,11 +176,13 @@ Check:
 - [ ] Cloudflare Bulk Redirect: `www.voxelcurve.com/*` → `https://voxelcurve.com/:splat` with 301
 - [ ] Cloudflare Bulk Redirect: `voxelcurve.pages.dev/*` → `https://voxelcurve.com/:splat` with 301
 - [ ] Preserve query string + subpath/path suffix on both Bulk Redirects
+- [ ] Disable Include subdomains so Pages commit/branch previews remain accessible and noindex
 - [ ] Preview Pages hosts are noindex
 - [ ] CSP does not block the tool
 - [ ] QR dynamic import works under CSP
 - [ ] Litematic dynamic import works under CSP
 - [ ] static hashed assets receive immutable cache headers
+- [ ] `npm run release:check` passes against the production domain and redirects
 
 ## 11. Search
 

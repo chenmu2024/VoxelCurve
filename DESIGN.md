@@ -62,14 +62,15 @@ Do not add:
 
 --vc-ink: #171717;
 --vc-ink-secondary: #454545;
---vc-muted: #737373;
---vc-faint: #a3a3a3;
+--vc-muted: #626262;
+--vc-faint: #6b6b6b;
 
 --vc-line: #e7e7e7;
 --vc-line-strong: #d4d4d4;
 
 --vc-emerald: #34d399;
 --vc-emerald-deep: #10b981;
+--vc-emerald-text: #047857;
 --vc-emerald-soft: #ecfdf5;
 
 --vc-blueprint-current: #171717;
@@ -427,7 +428,7 @@ Preferred:
 - Minimum mobile interactive target: 44×44px
 - Visible keyboard focus
 - Do not encode current/completed state by color alone
-- Maintain WCAG AA contrast
+- Maintain WCAG AA contrast. On light surfaces, use #047857 for small green text; on dark tool surfaces, use #9ca39e or lighter for secondary labels.
 - Preserve semantic labels and form labels
 - Canvas must be accompanied by readable build instructions
 

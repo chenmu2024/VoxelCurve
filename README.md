@@ -19,11 +19,8 @@ Core tools:
 - immersive Build Mode for focused desktop/mobile construction
 - Browser-local build progress
 - Material and stack counts
-- optional Center X / Base Y / Center Z world-coordinate guidance
 - Share URL + QR
-- progressive screen Wake Lock during Build Mode
 - PNG export
-- SVG vector export
 - Printable build plan
 - TXT guided build plan
 - `.litematic` export
@@ -39,9 +36,14 @@ Explicitly out of scope unless future search data justifies a new decision:
 - AI features
 - PWA
 - 3D preview
+- World coordinates
+- Wake Lock
+- SVG export
 - `.schem`, `.mcstructure`, `.mcfunction`
 
 ## Source-of-truth documents
+
+`FINAL_STANDARD.txt` is the user's locked final product and acceptance standard. Earlier plans, recommendations and implemented features do not override it. The documents below describe its implementation and must remain consistent with it. Only an explicit user decision can change scope. The user has temporarily deferred analytics; no analytics provider should be enabled until requested.
 
 Before changing product behavior or UI, read:
 
@@ -81,22 +83,21 @@ src/
 │   └── ToolApp.astro
 ├── layouts/
 │   └── BaseLayout.astro
+├── core/geometry/
+│   └── index.ts
 ├── lib/
 │   ├── buildPlan.ts
-│   ├── geometry.ts
 │   ├── litematic.ts
 │   ├── progress.ts
 │   ├── schema.ts
 │   ├── state.ts
-│   ├── svg.ts
-│   └── world.ts
 ├── pages/
 └── styles/
 ```
 
 Geometry is generated once as compact row/layer spans.
 
-Canvas, material counts, PNG/SVG output, TXT plans, print output and Litematic export must consume the same `ShapeResult`. Optional world coordinates are a display/instruction transform and never change geometry.
+Canvas, material counts, PNG output, TXT plans, print output and Litematic export must consume the same `ShapeResult`.
 
 ## Development
 
@@ -141,6 +142,8 @@ npm test
 npm run build
 npm run audit
 ```
+
+After deploying the release to the custom domain, run `npm run release:check` to verify production HTTPS, canonical URLs, indexability, geometry version, Sitemap, robots, 404 and host redirects. This read-only check fails when production still serves an older geometry version or a required domain is unavailable. It does not replace real-device/game tests, search-platform submissions or launch distribution.
 
 Production dependency security is a release gate: `npm audit --omit=dev --audit-level=moderate` must pass before deployment.
 
@@ -211,7 +214,7 @@ Blueprint parameters stay in URL fragments and are not separate crawlable pages.
 Current geometry version:
 
 ```
-GEOMETRY_VERSION = 2
+GEOMETRY_VERSION = 3
 ```
 
 If a geometry change alters occupied blocks for the same inputs, increment the geometry version so saved progress cannot be incorrectly applied to a new blueprint.
@@ -225,7 +228,7 @@ Keep the site static-first and dependency-light.
 Current CI budgets:
 
 - no individual JS chunk above 150 KB gzip
-- total built JS below 300 KB gzip
+- total built JS below 150 KB gzip
 - total built CSS below 100 KB gzip
 
 Do not add a large UI framework, animation framework or 3D engine without an explicit product reason.
@@ -253,3 +256,17 @@ This protects the main thread and memory on large filled structures.
 NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
 
 Minecraft is a trademark of Microsoft Corporation. VoxelCurve is an independent fan-made building utility.
+
+## Verification and usage events
+
+Run `npm run check`, `npm test`, `npm run build`, `npm run audit` and `npm run security:audit`. For browser checks, install the Playwright browsers with `npx playwright install chromium firefox webkit`, then run `npm run test:browser`. Build before running the browser suite. CI runs the same gates.
+
+The geometry tests cover bounds, symmetry, row/layer sums, continuity, extreme aspect ratios, maximum sizes and golden row fixtures. The export tests independently decode NBT and compare every occupied cell with the geometry engine. Browser tests cover progress, undo, sharing, downloads, printing and narrow-screen layouts in Chromium, Firefox and WebKit. Emulation does not replace physical-device testing or a Minecraft/Litematica import.
+
+The page emits `voxelcurve:usage` CustomEvents with action names and shape only. No analytics service is configured and no event data is transmitted. A deployment may connect an approved analytics provider to this hook.
+
+Material suggestions match the Litematic block palette. Custom TXT/print labels are allowed, but an unsupported Litematic label requires explicit confirmation before exporting Stone. Progress has a persistent saved/restored/unavailable status. Row/layer jumps and next-unfinished navigation never mark blocks complete.
+
+Litematic generation runs in a cancellable Web Worker using a snapshot of the blueprint and material at export start. Navigation and subsequent input changes do not change that file. Limits remain 20,000,000 bounding cells and 5,000,000 occupied blocks. The download panel includes placement steps and axes; real-device and in-game validation are still required.
+
+Geometry v3 fixes the 3×3 thin outline center. Earlier-version saved progress is intentionally not reused.

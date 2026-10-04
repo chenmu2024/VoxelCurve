@@ -1,5 +1,5 @@
 import { gzipSync } from 'fflate';
-import type { ShapeResult } from './geometry';
+import type { ShapeResult } from '../core/geometry';
 
 export const LITEMATIC_FORMAT_VERSION = 6;
 export const LITEMATIC_SUB_VERSION = 1;

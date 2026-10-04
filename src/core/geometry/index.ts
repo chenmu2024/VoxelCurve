@@ -6,6 +6,8 @@ export interface RowPlan { y: number; spans: Span[]; count: number; }
 export interface LayerPlan { index: number; rows: RowPlan[]; count: number; }
 export interface ShapeResult {
   type: ShapeType;
+  dimensions:{width:number;height:number;depth:number};
+  bounds:{minX:number;maxX:number;minY:number;maxY:number;minZ:number;maxZ:number};
   width: number;
   height: number;
   depth: number;
@@ -17,7 +19,7 @@ export interface ShapeResult {
   geometryVersion: number;
 }
 
-export const GEOMETRY_VERSION = 2;
+export const GEOMETRY_VERSION = 3;
 
 const clampInt = (n: number, min: number, max: number) => Math.max(min, Math.min(max, Math.round(Number.isFinite(n) ? n : min)));
 
@@ -83,7 +85,7 @@ export function generate2D(type: 'circle'|'oval', width: number, height: number,
   const t = style === 'thin' || style === 'filled' ? 1 : Math.min(maxT, Math.max(2, requestedT));
   const outer = disk(w, h, 0, 0);
   let grid: boolean[][];
-  if (style === 'filled' || t >= maxT) {
+  if (style === 'filled' || (style === 'thick' && t >= maxT)) {
     grid = outer;
   } else {
     const inner = disk(w, h, t, t);
@@ -91,7 +93,7 @@ export function generate2D(type: 'circle'|'oval', width: number, height: number,
   }
   const rows = gridToRows(grid);
   const blockCount = rows.reduce((n, r) => n + r.count, 0);
-  return { type, width: w, height: h, depth: 1, style, thickness: t, rows, layers: [], blockCount, geometryVersion: GEOMETRY_VERSION };
+  return { type, dimensions:{width:w,height:h,depth:1}, bounds:{minX:0,maxX:w-1,minY:0,maxY:0,minZ:0,maxZ:h-1}, width: w, height: h, depth: 1, style, thickness: t, rows, layers: [], blockCount, geometryVersion: GEOMETRY_VERSION };
 }
 
 export function generateCircle(diameter: number, style: BuildStyle='thin', thickness=1) {
@@ -170,6 +172,8 @@ export function generateDome(width: number, depth: number, height: number, style
 
   return {
     type: 'dome',
+    dimensions:{width:w,height:h,depth:d},
+    bounds:{minX:0,maxX:w-1,minY:0,maxY:h-1,minZ:0,maxZ:d-1},
     width: w,
     height: h,
     depth: d,

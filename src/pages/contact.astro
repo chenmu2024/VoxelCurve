@@ -2,17 +2,17 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { breadcrumbSchema } from '../lib/schema';
 const title='Contact VoxelCurve';
-const description='Report VoxelCurve geometry, export and browser issues through the public GitHub issue tracker.';
+const description='Contact VoxelCurve by email for questions and feedback, or report reproducible geometry, export and browser issues through GitHub.';
 const canonical='https://voxelcurve.com/contact';
 const schemas=[breadcrumbSchema([{name:'VoxelCurve',url:'https://voxelcurve.com/'},{name:'Contact',url:canonical}])];
 ---
 <BaseLayout {title} {description} {canonical} {schemas}>
   <section class="resource-hero"><div class="container"><div class="resource-hero-grid">
     <div><span class="eyebrow">Support</span><h1>Report a reproducible problem.</h1><p>Geometry and export bugs are easiest to fix when the exact shape settings and browser are included.</p></div>
-    <div class="resource-meta"><span>PUBLIC TRACKER</span><strong>GitHub Issues</strong><small>For technical reports only.</small></div>
+    <div class="resource-meta"><span>CONTACT</span><strong>Email & GitHub</strong><small>Questions, feedback and technical reports.</small></div>
   </div></div></section>
   <section class="section"><div class="container"><div class="section-kicker">01 / Technical reports</div><div class="section-split">
-    <div><h2>Use the issue tracker</h2><p class="section-intro">Open a public issue for geometry errors, export failures, broken layouts or browser-specific problems.</p><p><a class="text-link" href="https://github.com/chenmu2024/VoxelCurve/issues/new/choose" rel="noopener noreferrer">Open a VoxelCurve issue →</a></p></div>
+    <div><h2>Get in touch</h2><p class="section-intro">For questions, feedback or private reports, email <a class="text-link" href="mailto:contact@voxelcurve.com">contact@VoxelCurve.com</a>.</p><p>For reproducible geometry errors, export failures, broken layouts or browser-specific problems, you can also open a public issue.</p><p><a class="text-link" href="https://github.com/chenmu2024/VoxelCurve/issues/new/choose" rel="noopener noreferrer">Open a VoxelCurve issue →</a></p></div>
     <div class="capability-list">
       <article><span>01</span><div><h3>Geometry issue</h3><p>Include shape, dimensions, Thin/Thick/Filled, thickness and the row/layer that looks wrong.</p></div></article>
       <article><span>02</span><div><h3>Export issue</h3><p>Include export type, dimensions, material label, browser and the exact error shown.</p></div></article>
@@ -21,6 +21,6 @@ const schemas=[breadcrumbSchema([{name:'VoxelCurve',url:'https://voxelcurve.com/
   </div></div></section>
   <section class="section caution-section"><div class="container editorial-grid">
     <aside class="editorial-aside"><div class="section-kicker">02 / Privacy & security</div><p>GitHub Issues are public.</p></aside>
-    <div class="prose editorial-prose"><h2>Do not post sensitive information</h2><p>Do not include passwords, authentication tokens, private world files, personal identifiers, confidential information or security exploit details in a public issue.</p><p>For privacy questions, first review the <a class="text-link" href="/privacy">Privacy Policy</a>. For a security concern that should not be public, do not publish exploit details in the issue tracker.</p></div>
+    <div class="prose editorial-prose"><h2>Keep private reports private</h2><p>Do not include passwords, authentication tokens, private world files, personal identifiers, confidential information or security exploit details in a public issue.</p><p>For privacy questions, review the <a class="text-link" href="/privacy">Privacy Policy</a> or email <a class="text-link" href="mailto:contact@voxelcurve.com">contact@VoxelCurve.com</a>. Send security concerns by email instead of publishing exploit details in the issue tracker.</p></div>
   </div></section>
 </BaseLayout>

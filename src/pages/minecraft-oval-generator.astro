@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'; import ToolApp from '../components/ToolApp.astro';
 import { breadcrumbSchema, softwareSchema } from '../lib/schema';
-import { generateOval } from '../lib/geometry';
+import { generateOval } from '../core/geometry';
 const title='Minecraft Oval Generator – Block-by-Block Oval Blueprint | VoxelCurve';
 const description='Create Minecraft oval and ellipse blueprints with exact row segments, block counts and guided build progress. Free browser-based builder tool.';
 const presets=[
@@ -11,16 +11,24 @@ const presets=[
 ].map(p=>({...p,blocks:generateOval(p.width,p.height,'thin',1).blockCount}));
 const schemas=[
   breadcrumbSchema([{name:'VoxelCurve',url:'https://voxelcurve.com/'},{name:'Minecraft Oval Generator',url:'https://voxelcurve.com/minecraft-oval-generator'}]),
-  softwareSchema({name:'VoxelCurve Minecraft Oval Generator',url:'https://voxelcurve.com/minecraft-oval-generator',description,featureList:['Minecraft oval blueprint','Custom width and height','Guided row and segment building','Material count','PNG, SVG and TXT export']})
+  softwareSchema({name:'VoxelCurve Minecraft Oval Generator',url:'https://voxelcurve.com/minecraft-oval-generator',description,featureList:['Minecraft oval blueprint','Custom width and height','Guided row and segment building','Material count','PNG and TXT export']})
 ];
 ---
 <BaseLayout {title} {description} canonical="https://voxelcurve.com/minecraft-oval-generator" {schemas}>
 <section class="product-stage">
   <div class="hero container"><span class="eyebrow">Building geometry</span><div class="hero-grid"><div><h1>Minecraft Oval Generator</h1><p>Set the width and height, then follow exact row segments to build an oval without guessing the curve.</p></div><div class="hero-side-note"><span class="mono-label">ELLIPSE WORKSPACE</span><strong>Width × height, resolved</strong><span>Turn elliptical geometry into exact buildable row segments.</span></div></div></div>
   <ToolApp shape="oval" />
-  <div class="product-proof container"><div><b>2D ELLIPSE</b><span>Independent width and height controls.</span></div><div><b>EXACT SEGMENTS</b><span>Build from rows instead of eyeballing curves.</span></div><div><b>LOCAL PROGRESS</b><span>Track completion in this browser.</span></div><div><b>EXPORT READY</b><span>PNG, SVG, TXT and Litematic workflow.</span></div></div>
+  <div class="product-proof container"><div><b>2D ELLIPSE</b><span>Independent width and height controls.</span></div><div><b>EXACT SEGMENTS</b><span>Build from rows instead of eyeballing curves.</span></div><div><b>LOCAL PROGRESS</b><span>Track completion in this browser.</span></div><div><b>EXPORT READY</b><span>PNG, TXT and Litematic workflow.</span></div></div>
 </section>
 <section class="section"><div class="container prose"><h2>How the Minecraft oval generator works</h2><p>An oval uses separate horizontal and vertical radii. VoxelCurve rasterizes the ellipse onto a block grid, keeps it symmetric, then converts every occupied row into buildable segments.</p><h2>Where ovals are useful</h2><p>Ovals work well for stadiums, race tracks, halls, courtyards and elongated tower footprints. Start with the outside width and height of the space you want to occupy.</p><h2>Thin, thick and filled ovals</h2><p>Use a thin outline for walls, a thick outline for structural shells, or a filled ellipse for platforms and floors. Thickness grows inward so the outside footprint stays fixed.</p></div></section>
 <section class="section preset-section"><div class="container"><div class="section-kicker">Common oval presets</div><div class="section-split"><div><h2>Useful oval footprints</h2><p class="section-intro">These one-block outline presets are practical starting points for halls, arenas and elongated tower foundations.</p></div><div class="preset-table">{presets.map(p=><a class="preset-row" href={`/minecraft-oval-generator#o-${p.width}-${p.height}-thin-1`}><span class="preset-dim">{p.width}×{p.height}</span><span>{p.blocks.toLocaleString()} blocks</span><span class="size-action">Open →</span></a>)}</div></div></div></section>
 <section class="section related-section"><div class="container"><div class="section-kicker">Related tools</div><h2>Keep building</h2><div class="related-list"><a href="/"><span class="related-index">01</span><div><h3>Circle Generator</h3><p>Generate equal-width circular blueprints.</p></div><span class="related-arrow">↗</span></a><a href="/minecraft-dome-generator"><span class="related-index">02</span><div><h3>Dome Generator</h3><p>Turn an ellipse footprint into a layer-by-layer dome.</p></div><span class="related-arrow">↗</span></a><a href="/minecraft-circle-chart"><span class="related-index">03</span><div><h3>Circle Chart</h3><p>Quick-reference common circle sizes.</p></div><span class="related-arrow">↗</span></a></div></div></section>
+<section class="section"><div class="container prose">
+  <h2>Plan a Minecraft oval for an arena</h2>
+  <p>Measure the full outside width and height before generating the footprint. A 31×21 oval leaves more room along one axis than a circle of the same width. Use Thin for the perimeter wall or Filled for the arena floor.</p>
+  <h3>What happens when width and height are equal?</h3>
+  <p>Equal dimensions produce a circle; unequal dimensions produce an elongated ellipse. If you searched for “oval generator Minecraft”, measure both outside dimensions of your arena before choosing the footprint.</p>
+  <h3>How do I keep both sides symmetric?</h3>
+  <p>An “oval Minecraft” layout needs one consistent center, just like a circle. Follow the paired row segments, start each run at the stated offset and include its first block in the length. Check the opposite side before advancing to the next row.</p>
+</div></section>
 </BaseLayout>

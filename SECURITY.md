@@ -6,7 +6,7 @@ Do **not** publish exploit details, credentials, tokens, private files or other 
 
 Check the repository **Security** tab for GitHub private vulnerability reporting or other private reporting options that may be enabled for the project.
 
-If no private reporting channel is available, do not disclose working exploit details publicly. Contact the repository owner through the contact methods made available on their GitHub profile.
+You can also send a private report to [contact@VoxelCurve.com](mailto:contact@voxelcurve.com). Do not disclose working exploit details publicly.
 
 ## Scope
 
