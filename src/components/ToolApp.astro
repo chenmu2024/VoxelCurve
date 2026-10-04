@@ -43,7 +43,7 @@ const { shape } = Astro.props;
     <div class="panel-heading"><p class="panel-title">03 / Build</p><span>Guided placement</span></div>
     <div class="stat-grid"><div class="stat"><b data-blocks>0</b><span>Blocks</span></div><div class="stat"><b data-stacks>0</b><span>Stacks + loose</span></div>{shape==='dome' && <><div class="stat"><b data-layer>1</b><span>Layer</span></div><div class="stat"><b data-layer-blocks>0</b><span>Layer blocks</span></div></>}</div>
     <div class="instruction" role="status" aria-live="polite" aria-atomic="true"><strong data-instruction-title>Generating…</strong><span data-instruction-body></span><span class="world-instruction" data-world-instruction hidden></span></div>
-    <div class="progress" aria-label="Build progress"><i data-progress-bar></i></div><div class="notice"><span data-progress-label aria-live="polite">0% complete</span></div>
+    <div class="progress" aria-label="Build progress"><i data-progress-bar></i></div><div class="notice progress-note"><span data-progress-label aria-live="polite">0% complete</span></div>
     {shape==='dome' && <>
       <div class="notice layer-progress-note" data-layer-progress>Layer 1: 0% complete</div>
       <div class="notice layer-delta-note" data-layer-delta>Base layer</div>
