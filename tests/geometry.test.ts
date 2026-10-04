@@ -116,6 +116,13 @@ describe('geometry',()=>{
     expect(spanInstruction({start:19,end:21},31).center).toBe('Start 4 blocks right of center · place 3 right');
     expect(spanInstruction({start:8,end:11},20).center).toContain('center gap');
   });
+  it('includes world coordinates in TXT when an anchor is enabled',()=>{
+    const r=generateCircle(11,'thin',1);
+    const plan=buildTextPlan(r,'Stone Bricks',{centerX:100,baseY:64,centerZ:-30});
+    expect(plan).toContain('World Anchor: Center X 100 · Base Y 64 · Center Z -30');
+    expect(plan).toContain('World · X ');
+    expect(plan).toContain('World Axes: +X = blueprint right');
+  });
   it('text plan uses the same total block count as geometry',()=>{
     const r=generateDome(21,21,11,'thin',1);
     const plan=buildTextPlan(r,'Stone Bricks');
