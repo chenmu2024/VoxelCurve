@@ -226,6 +226,8 @@ Do not add a large UI framework, animation framework or 3D engine without an exp
 
 ## Litematic safety
 
+The exporter currently targets **Litematic format V6 / Minecraft Java 1.20.4 DataVersion (3700)**, matching Litematica's own V6 compatibility writer path. Real-world import remains a manual release gate.
+
 The exporter uses a two-entry palette:
 
 - air
