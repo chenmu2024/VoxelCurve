@@ -1112,3 +1112,24 @@ tr:last-child td{border-bottom:0}
 @media(max-width:800px){
   .wake-toggle{min-height:44px}
 }
+
+
+/* ===== Trust / legal pages ===== */
+.caution-section{
+  background:#f7f7f5;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line)
+}
+.caution-section .editorial-aside{
+  border-top-color:#d9d9d4
+}
+.prose code{
+  font:500 .9em/1.4 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  background:#f2f3f1;
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:.08em .35em
+}
+.error-hero .resource-meta strong{
+  color:#f2f3f2
+}
