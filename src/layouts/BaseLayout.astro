@@ -49,12 +49,17 @@ const baseSchemas = [
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#0c1712" />
   <meta property="og:type" content={type} />
+  <meta property="og:locale" content="en_US" />
   <meta property="og:site_name" content="VoxelCurve" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonical} />
   <meta property="og:image" content={image} />
+  <meta property="og:image:alt" content="VoxelCurve — guided Minecraft building geometry tools" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={image} />
   {[...baseSchemas, ...schemas].map(schema => <script type="application/ld+json" set:html={JSON.stringify(schema)} />)}
 </head>
 <body>
