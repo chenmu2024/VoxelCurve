@@ -43,6 +43,7 @@ const { shape } = Astro.props;
       {shape==='dome' && <button class="btn" type="button" data-complete-layer>Complete layer</button>}
       <button class="btn danger-quiet" type="button" data-reset-progress>Reset progress</button>
     </div>
+    <button class="btn wake-toggle" type="button" data-wake-toggle aria-pressed="false" hidden>Keep screen awake</button>
     <div class="nav-separator"></div>
     <div class="export-heading"><span>EXPORT</span><small>Share or save this plan</small></div>
     <div class="builder-actions export-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" style="grid-column:1/-1" type="button" data-litematic>.litematic</button></div>
@@ -426,6 +427,43 @@ if (root) {
     const value=Number(event.currentTarget.value);
     if(Number.isFinite(value)) goToLayer(Math.round(value)-1);
   });
+  let wakeLock=null;
+  let wakeEnabled=false;
+  const wakeButton=q('[data-wake-toggle]');
+  async function requestWakeLock(){
+    if(!wakeEnabled||document.visibilityState!=='visible'||!('wakeLock' in navigator))return;
+    try{
+      wakeLock=await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release',()=>{wakeLock=null});
+      wakeButton?.setAttribute('aria-pressed','true');
+      if(wakeButton) wakeButton.textContent='Screen awake ✓';
+    }catch{
+      wakeEnabled=false;
+      wakeButton?.setAttribute('aria-pressed','false');
+      if(wakeButton) wakeButton.textContent='Keep screen awake';
+      showStatus('Screen wake lock is not available right now.','neutral');
+    }
+  }
+  if(wakeButton&&'wakeLock' in navigator){
+    wakeButton.hidden=false;
+    wakeButton.addEventListener('click',async()=>{
+      wakeEnabled=!wakeEnabled;
+      if(wakeEnabled){
+        await requestWakeLock();
+        if(wakeEnabled) showStatus('Screen wake lock enabled.');
+      }else{
+        await wakeLock?.release?.().catch(()=>{});
+        wakeLock=null;
+        wakeButton.setAttribute('aria-pressed','false');
+        wakeButton.textContent='Keep screen awake';
+        showStatus('Screen wake lock disabled.','neutral');
+      }
+    });
+    document.addEventListener('visibilitychange',()=>{
+      if(document.visibilityState==='visible'&&wakeEnabled&&!wakeLock) requestWakeLock();
+    });
+  }
+
   q('[data-share]').addEventListener('click',async()=>{
     const url=updateFragment();
     try{
