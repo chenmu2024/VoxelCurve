@@ -985,3 +985,32 @@ tr:last-child td{border-bottom:0}
 @media(max-width:800px){
   .bulk-actions .btn{min-height:44px}
 }
+
+
+/* ===== Export feedback + large structure guard ===== */
+.action-status{
+  min-height:18px;
+  margin-top:8px;
+  font-size:10px;
+  line-height:1.45;
+  color:#7f8781
+}
+.action-status[data-kind="ok"]{color:#82d8ae}
+.action-status[data-kind="error"]{color:#f5a3a3}
+.action-status[data-kind="neutral"]{color:#a4aaa6}
+.size-warning{
+  margin-top:10px;
+  padding:10px 11px;
+  border:1px solid #5a4a2d;
+  border-radius:6px;
+  background:#241f15;
+  color:#d8c08a;
+  font-size:10px;
+  line-height:1.5
+}
+.size-warning[hidden]{display:none}
+.btn:disabled{
+  cursor:not-allowed;
+  opacity:.48;
+  transform:none!important
+}
