@@ -173,6 +173,8 @@ if (root) {
     const volume=result.type==='dome'?result.width*result.depth*result.height:result.width*result.height;
     const blocked=volume>20_000_000||result.blockCount>5_000_000;
     const large=volume>10_000_000||result.blockCount>2_000_000;
+    const minDim=result.type==='dome'?Math.min(result.width,result.depth,result.height):Math.min(result.width,result.height);
+    const filledByThickness=result.style==='thick'&&result.thickness>=Math.max(1,Math.floor(minDim/2));
     const litematic=q('[data-litematic]');
     if(litematic){
       litematic.disabled=blocked;
@@ -180,10 +182,12 @@ if (root) {
     }
     const warning=q('[data-size-warning]');
     if(warning){
-      warning.hidden=!large;
-      warning.textContent=blocked
-        ? 'This structure is too large for safe browser Litematic export. Reduce its dimensions or use a hollow build.'
-        : 'Large structure: exports may take longer on mobile devices.';
+      const messages=[];
+      if(filledByThickness) messages.push('Thickness reaches the center, so this build is effectively filled while keeping the same outside dimensions.');
+      if(blocked) messages.push('This structure is too large for safe browser Litematic export. Reduce its dimensions or use a hollow build.');
+      else if(large) messages.push('Large structure: exports may take longer on mobile devices.');
+      warning.hidden=messages.length===0;
+      warning.textContent=messages.join(' ');
     }
     q('[data-complete]').textContent=completed.has(s.key)?'Completed ✓':'Complete segment';
     draw();
