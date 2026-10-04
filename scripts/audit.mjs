@@ -97,6 +97,28 @@ for (const file of htmlFiles) {
   }
 }
 
+const corePages = [
+  '/',
+  '/minecraft-circle-chart',
+  '/how-to-make-a-circle-in-minecraft',
+  '/minecraft-dome-generator',
+  '/minecraft-oval-generator'
+];
+
+for (const url of corePages) {
+  const file=pageFile(url);
+  if(!file) continue;
+  const html=fs.readFileSync(file,'utf8');
+  const linked=new Set();
+  for(const match of html.matchAll(/href=["']([^"']+)["']/gi)){
+    const href=match[1];
+    if(!href.startsWith('/')||href.startsWith('//'))continue;
+    const pathname=href.split('#')[0].split('?')[0]||'/';
+    if(corePages.includes(pathname)&&pathname!==url)linked.add(pathname);
+  }
+  if(linked.size<2) errors.push(`Core page has weak internal linking (${linked.size} related core pages): ${url}`);
+}
+
 const notFound = path.join(dist, '404.html');
 if (exists(notFound)) {
   const html = fs.readFileSync(notFound, 'utf8');
