@@ -143,6 +143,74 @@ if (root) {
   function updateFragment(){ const p=params(); let v=''; if(shape==='circle')v=`c-${p.diameter}-${p.style}-${p.thickness}`; if(shape==='oval')v=`o-${p.width}-${p.height}-${p.style}-${p.thickness}`; if(shape==='dome')v=`d-${p.width}-${p.depth}-${p.height}-${p.style}-${p.thickness}`;history.replaceState(null,'',`${location.pathname}#${v}`);return location.href; }
   function parseFragment(){const h=location.hash.slice(1).split('-');if(!h.length)return;try{if(shape==='circle'&&h[0]==='c'){q('[data-input="diameter"]').value=h[1];q('[data-input="style"]').value=h[2];q('[data-input="thickness"]').value=h[3];}if(shape==='oval'&&h[0]==='o'){q('[data-input="width"]').value=h[1];q('[data-input="height"]').value=h[2];q('[data-input="style"]').value=h[3];q('[data-input="thickness"]').value=h[4];}if(shape==='dome'&&h[0]==='d'){q('[data-input="width"]').value=h[1];q('[data-input="depth"]').value=h[2];q('[data-input="height"]').value=h[3];q('[data-input="style"]').value=h[4];q('[data-input="thickness"]').value=h[5];}}catch{}}
 
+  function createPngExportCanvas(){
+    const rows=activeRows();
+    const gw=result.width;
+    const gh=shape==='dome'?result.depth:result.height;
+    const padding=display.labels?44:24;
+    const maxSide=2048;
+    const targetCell=Math.max(3,Math.min(24,Math.floor((maxSide-padding*2)/Math.max(gw,gh))));
+    const width=gw*targetCell+padding*2;
+    const height=gh*targetCell+padding*2;
+    const out=document.createElement('canvas');
+    out.width=width;
+    out.height=height;
+    const x=out.getContext('2d');
+    x.fillStyle='#ffffff';
+    x.fillRect(0,0,width,height);
+
+    if(display.grid&&targetCell>=5){
+      x.strokeStyle='#eeeeee';
+      x.lineWidth=1;
+      for(let gx=0;gx<=gw;gx++){
+        x.beginPath();x.moveTo(padding+gx*targetCell,padding);x.lineTo(padding+gx*targetCell,padding+gh*targetCell);x.stroke();
+      }
+      for(let gy=0;gy<=gh;gy++){
+        x.beginPath();x.moveTo(padding,padding+gy*targetCell);x.lineTo(padding+gw*targetCell,padding+gy*targetCell);x.stroke();
+      }
+    }
+
+    x.fillStyle='#34d399';
+    for(const row of rows){
+      for(const span of row.spans){
+        for(let bx=span.start;bx<=span.end;bx++){
+          const inset=Math.min(1,targetCell*.08);
+          x.fillRect(
+            padding+bx*targetCell+inset,
+            padding+row.y*targetCell+inset,
+            Math.max(1,targetCell-inset*2),
+            Math.max(1,targetCell-inset*2)
+          );
+        }
+      }
+    }
+
+    if(display.center){
+      x.strokeStyle='#f59e0b';
+      x.lineWidth=1;
+      x.setLineDash([5,5]);
+      x.beginPath();
+      x.moveTo(padding+gw*targetCell/2,padding);
+      x.lineTo(padding+gw*targetCell/2,padding+gh*targetCell);
+      x.moveTo(padding,padding+gh*targetCell/2);
+      x.lineTo(padding+gw*targetCell,padding+gh*targetCell/2);
+      x.stroke();
+      x.setLineDash([]);
+    }
+
+    if(display.labels&&targetCell>=10){
+      x.fillStyle='#737373';
+      x.font='11px ui-monospace, SFMono-Regular, Menlo, monospace';
+      x.textAlign='right';
+      x.textBaseline='middle';
+      for(const row of rows){
+        if(row.count)x.fillText(String(row.y+1),padding-7,padding+(row.y+.5)*targetCell);
+      }
+    }
+
+    return out;
+  }
+
   qa('[data-input]').filter(el=>el.getAttribute('type')!=='hidden').forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>regenerate(true)));
   qa('[data-style]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="style"]').value=el.dataset.style;regenerate(false)}));
   qa('[data-preset]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="diameter"]').value=el.dataset.preset;regenerate(true)}));
@@ -155,7 +223,7 @@ if (root) {
   q('[data-undo]').addEventListener('click',()=>{if(!completed.size)return;const arr=[...completed];completed.delete(arr[arr.length-1]);saveProgress();renderInstruction()});
   q('[data-share]').addEventListener('click',async()=>{const url=updateFragment();try{await navigator.clipboard.writeText(url);q('[data-share]').textContent='Copied ✓';setTimeout(()=>q('[data-share]').textContent='Copy link',1200)}catch{prompt('Copy this link:',url)}});
   q('[data-qr]').addEventListener('click',async()=>{const url=updateFragment();const QRCode=(await import('qrcode')).default;const qc=q('[data-qr-canvas]');await QRCode.toCanvas(qc,url,{width:240,margin:1});q('[data-qr-dialog]').showModal()});q('[data-qr-close]').addEventListener('click',()=>q('[data-qr-dialog]').close());
-  q('[data-png]').addEventListener('click',()=>{const a=document.createElement('a');a.download=`voxelcurve-${shape}.png`;a.href=canvas.toDataURL('image/png');a.click()});
+  q('[data-png]').addEventListener('click',()=>{const exportCanvas=createPngExportCanvas();const a=document.createElement('a');const suffix=shape==='dome'?'-layer-'+(currentLayer+1):'';a.download=`voxelcurve-${shape}${suffix}.png`;a.href=exportCanvas.toDataURL('image/png');a.click()});
   q('[data-txt]').addEventListener('click',()=>{const blob=new Blob([buildTextPlan(result,text('material','Blocks'))],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`voxelcurve-${shape}-build-plan.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
   q('[data-litematic]').addEventListener('click',async()=>{const btn=q('[data-litematic]');const old=btn.textContent;btn.textContent='Building file…';btn.disabled=true;try{const {exportLitematic}=await import('../lib/litematic');const safe=(text('material','stone').toLowerCase().replace(/[^a-z0-9_]/g,'_')||'stone');const bytes=exportLitematic(result,`VoxelCurve ${shape}`,`minecraft:${safe}`);const blob=new Blob([bytes],{type:'application/octet-stream'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`voxelcurve-${shape}.litematic`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}catch(e){alert(e?.message||'Could not create litematic file.')}finally{btn.textContent=old;btn.disabled=false}});
 
