@@ -14,8 +14,10 @@ test('circle dimensions, row navigation, progress, undo and resume',async({page}
   await openTool(page,'/#c-31-thin-1');
   await expect(page.locator('[data-blocks]')).toHaveText('84');
   await page.locator('[data-complete]').click();
+  await expect(page.locator('[data-save-status]')).toContainText('Saved on this device');
   const progress=await page.locator('[data-progress-label]').textContent();
   await page.reload();
+  await expect(page.locator('[data-save-status]')).toContainText('Saved progress restored');
   await expect(page.locator('[data-progress-label]')).toHaveText(progress!);
   await page.locator('[data-undo]').click();
   await expect(page.locator('[data-progress-label]')).toContainText('0%');
@@ -119,8 +121,10 @@ test('mobile layout and build mode expose usable controls without overflow',asyn
   await page.locator('[data-build-mode]').click();
   const instruction=await page.locator('.instruction').boundingBox();
   const action=await page.locator('[data-complete-row]').boundingBox();
+  const saved=await page.locator('[data-save-status]').boundingBox();
   expect(instruction!.y).toBeGreaterThan(0);
   expect(instruction!.y+instruction!.height).toBeLessThan(action!.y);
+  expect(saved!.y+saved!.height).toBeLessThanOrEqual(action!.y);
   expect(action!.y+action!.height).toBeLessThanOrEqual(667);
   await page.locator('[data-complete-row]').click();
   await expect(page.locator('[data-instruction-title]')).toContainText('Row 2');
@@ -160,6 +164,7 @@ test('tap selects a segment while dragging and pinching preserve progress',async
 test('maximum circle and missing browser storage remain usable',async({page})=>{
   await page.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw new Error('Storage unavailable')}})});
   await openTool(page,'/#c-512-thin-1');
+  await expect(page.locator('[data-save-status]')).toContainText('Not saved');
   await expect(page.locator('[data-blueprint-title]')).toHaveText('512×512 Circle');
   await page.locator('[data-fit]').click();await page.locator('[data-complete]').click();
   await expect(page.locator('[data-progress-label]')).toContainText('1/');

@@ -1,6 +1,7 @@
 ---
 import { GEOMETRY_VERSION, generateCircle, generateOval, generateDome } from '../core/geometry';
 import { spanInstruction } from '../lib/buildPlan';
+import { materials } from '../lib/materials';
 interface Props { shape:'circle'|'oval'|'dome'; }
 const { shape } = Astro.props;
 const initial = shape==='circle'?generateCircle(31):shape==='oval'?generateOval(31,21):generateDome(31,31,16);
@@ -22,7 +23,7 @@ const initialTitle = shape==='circle'?'31×31 Circle':shape==='oval'?'31×21 Ova
     {shape === 'dome' && <><div class="field"><label for="width">Width <small>3–256</small></label><input id="width" data-input="width" type="number" min="3" max="256" value="31" /></div><div class="field"><label for="depth">Depth <small>3–256</small></label><input id="depth" data-input="depth" type="number" min="3" max="256" value="31" /></div><div class="field"><label for="height">Height <small>2–256</small></label><input id="height" data-input="height" type="number" min="2" max="256" value="16" /></div></>}
     <div class="field"><label>Build style</label><input data-input="style" type="hidden" value="thin" /><div class="segment-control" role="group" aria-label="Build style"><button type="button" class="segment-option" data-style="thin" aria-pressed="true">Thin</button><button type="button" class="segment-option" data-style="thick" aria-pressed="false">Thick</button><button type="button" class="segment-option" data-style="filled" aria-pressed="false">Filled</button></div></div>
     <div class="field" data-thickness-wrap style="display:none"><label for="thickness">Thickness <small>blocks inward</small></label><input id="thickness" data-input="thickness" type="number" min="1" max="32" value="1" /></div>
-    <div class="field"><label for="material">Material <small>optional</small></label><input id="material" data-input="material" type="text" value="Stone Bricks" maxlength="60" list="materials" /><datalist id="materials"><option value="Stone Bricks" /><option value="Quartz" /><option value="Glass" /></datalist></div>
+    <div class="field"><label for="material">Material <small>choose or type</small></label><input id="material" data-input="material" type="text" value="Stone Bricks" maxlength="60" list="materials" aria-describedby="material-export-note" /><datalist id="materials">{materials.map(([name])=><option value={name} />)}</datalist><p class="notice" id="material-export-note" data-material-note>Litematic material: minecraft:stone_bricks.</p></div>
     <div class="field"><label>Display</label><div class="toggle-row"><button type="button" class="toggle" data-toggle="grid" aria-pressed="true">Grid</button><button type="button" class="toggle" data-toggle="center" aria-pressed="true">Center</button><button type="button" class="toggle" data-toggle="labels" aria-pressed="true">Row numbers</button><button type="button" class="toggle" data-toggle="axis" aria-pressed="true">Axis</button><button type="button" class="toggle" data-toggle="segments" aria-pressed="true">Segment labels</button>{shape==='dome' && <button type="button" class="toggle" data-toggle="ghost" aria-pressed="true">Ghost layer</button>}</div></div>
     <div class="field"><label>Instructions</label><div class="segment-control" role="group" aria-label="Instruction coordinate mode"><button type="button" class="segment-option" data-instruction-mode="center" aria-pressed="true">Center</button><button type="button" class="segment-option" data-instruction-mode="edge" aria-pressed="false">Edge</button></div></div>
     {shape === 'dome' && <button type="button" class="btn" data-hemisphere>Use hemisphere height</button>}
@@ -39,14 +40,17 @@ const initialTitle = shape==='circle'?'31×31 Circle':shape==='oval'?'31×21 Ova
     <div class="instruction" role="status" aria-live="polite" aria-atomic="true"><strong data-instruction-title>{shape==='dome'?'Layer 1 / 16 · ':''}Row {firstRow.y+1} / {initialRows.length} · Segment 1 / {firstRow.spans.length}</strong><span data-instruction-body>{firstInstruction}.</span></div>
     <div class="progress" role="progressbar" aria-label="Build progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i data-progress-bar></i></div><div class="notice progress-note"><span data-progress-label aria-live="polite">0% complete</span></div>
     <div class="notice progress-note" data-remaining>Materials remaining</div>
+    <div class="notice progress-note" data-save-status role="status" aria-live="polite">Checking local progress storage…</div>
     {shape==='dome' && <>
       <div class="notice layer-progress-note" data-layer-progress>Layer 1: 0% complete</div>
       <div class="notice layer-delta-note" data-layer-delta>Base layer</div>
       <div class="layer-nav"><button class="btn" type="button" data-layer-prev>← Previous layer</button><button class="btn" type="button" data-layer-next>Next layer →</button></div>
-      <label class="layer-jump">Go to layer <input type="number" min="1" value="1" data-layer-jump-input /> <span>/ <span data-layer-total>1</span></span></label>
+      <label class="layer-jump">Go to layer <input type="number" min="1" value="1" data-layer-jump-input inputmode="numeric" /> <span>/ <span data-layer-total>1</span></span></label>
     </>}
     <div class="builder-actions build-actions"><button class="btn" type="button" data-prev>← Previous segment</button>{shape==='dome'?<button class="btn accent" type="button" data-complete-row>Complete row</button>:<button class="btn accent" type="button" data-complete>Complete segment</button>}<button class="btn" type="button" data-next>Next segment →</button><button class="btn" type="button" data-undo>Undo</button></div>
     <div class="layer-nav"><button class="btn" type="button" data-row-prev>← Previous row</button><button class="btn" type="button" data-row-next>Next row →</button></div>
+    <label class="layer-jump">Go to row <input type="number" min="1" value="1" data-row-jump-input inputmode="numeric" /> <span>/ <span data-row-total>{initialRows.length}</span></span></label>
+    <button class="btn next-unfinished" type="button" data-unfinished>Next unfinished segment</button>
     <div class="bulk-actions">
       {shape==='dome'?<button class="btn" type="button" data-complete>Complete segment</button>:<button class="btn" type="button" data-complete-row>Complete row</button>}
       {shape==='dome' && <button class="btn" type="button" data-complete-layer>Complete layer</button>}
@@ -56,7 +60,9 @@ const initialTitle = shape==='circle'?'31×31 Circle':shape==='oval'?'31×21 Ova
     <div class="export-heading"><span>EXPORT</span><small>Share or save this plan</small></div>
     <div class="field png-options"><label for="png-options">PNG layout</label><select id="png-options" data-png-options><option value="plain">Blueprint only</option><option value="grid">Blueprint + grid</option><option value="rows" selected>Blueprint + row numbers</option></select></div>
     <div class="builder-actions export-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" type="button" data-litematic>.litematic</button></div>
-    <div class="notice">Progress is stored only in this browser. Shared links carry blueprint settings, not completion state. Litematic export targets V6 / Java 1.20.4-compatible data and falls back to Stone when a custom material label is not recognized.</div>
+    <button class="btn" type="button" data-cancel-export hidden>Cancel Litematic export</button>
+    <details class="export-help"><summary>How to use the Litematic file</summary><ol><li>Use Minecraft Java with a compatible Litematica installation. The file uses V6 / Java 1.20.4 data; Bedrock cannot import it directly.</li><li>Put the downloaded file in your Minecraft instance's <code>schematics</code> folder.</li><li>Open Litematica's menu (default: M), choose Load Schematics and create a placement.</li><li>Compare the material list and block count with this blueprint before building. The file's origin is (0, 0, 0); blueprint right is +X, rows run along +Z and dome layers rise along +Y. Move the placement to your build site.</li></ol><p class="notice">Automated file checks pass. In-game compatibility still needs a real import test for your installed versions. <a href="https://github.com/maruohon/litematica/wiki/Basic-Operations" target="_blank" rel="noopener noreferrer">Litematica instructions →</a></p></details>
+    <div class="notice">Progress is stored only in this browser. Shared links carry blueprint settings, not completion state. Custom material labels remain in TXT and print plans; unknown Litematic materials require confirmation before using Stone.</div>
     <div class="size-warning" data-size-warning hidden></div>
     <div class="action-status" data-action-status role="status" aria-live="polite"></div>
   </aside>
@@ -78,6 +84,8 @@ import { generateCircle, generateOval, generateDome } from '../core/geometry';
 import { buildTextPlan, rowInstruction } from '../lib/buildPlan';
 import { canonicalBlueprintUrl, parseBlueprintFragment, serializeBlueprintState } from '../lib/state';
 import { decodeProgress, encodeProgress } from '../lib/progress';
+import { resolveMaterial } from '../lib/materials';
+import LitematicWorker from '../lib/litematic.worker?worker';
 
 const root = document.querySelector<HTMLElement>('[data-tool]');
 if (root) {
@@ -110,6 +118,8 @@ if (root) {
   let instructionMode = 'center';
   let buildMode = false;
   let buildModeScrollY = 0;
+  let exporting=false;
+  let cancelExport:(()=>void)|null=null;
   function usage(name:string){
     window.dispatchEvent(new CustomEvent('voxelcurve:usage',{detail:{name,shape}}));
   }
@@ -204,23 +214,31 @@ if (root) {
     try{
       if(!completed.size&&stepIndex===0){
         localStorage.removeItem(stateKey());
+        setText('[data-save-status]','No saved progress for this blueprint · storage available.');
         return;
       }
       localStorage.setItem(stateKey(),encodeProgress(completed,steps,stepIndex));
       pruneProgressStorage();
+      const step=steps[stepIndex];
+      setText('[data-save-status]',`Saved on this device · ${shape==='dome'?`Layer ${step.layer+1} · `:''}Row ${step.row.y+1}.`);
     }catch{
+      setText('[data-save-status]','Not saved · browser storage is unavailable. Keep this page open.');
       showStatus('Build progress could not be saved in this browser.','neutral');
     }
   }
   function loadProgress(){
     try{
       pruneProgressStorage();
-      const restored=decodeProgress(localStorage.getItem(stateKey()),steps);
+      const raw=localStorage.getItem(stateKey());
+      const restored=decodeProgress(raw,steps);
       completed=restored.completed;
       stepIndex=restored.stepIndex;
+      const probe=`vc-storage-check-${Date.now()}-${Math.random()}`;
+      localStorage.setItem(probe,'1');localStorage.removeItem(probe);
+      const step=steps[stepIndex];
+      setText('[data-save-status]',raw&&step&&(completed.size||stepIndex)?`Saved progress restored · ${shape==='dome'?`Layer ${step.layer+1} · `:''}Row ${step.row.y+1}.`:'Progress will be saved on this device.');
     }catch{
-      completed=new Set();
-      stepIndex=0;
+      setText('[data-save-status]','Not saved · browser storage is unavailable. Keep this page open.');
     }
   }
 
@@ -319,6 +337,12 @@ if (root) {
     q('.progress').setAttribute('aria-valuenow',String(pct));
     setText('[data-progress-label]',`${pct}% complete · ${done}/${steps.length} segments`);
     setText('[data-remaining]',`Remaining: ${remaining.toLocaleString()} blocks · ${Math.floor(remaining/64)} stacks + ${remaining%64} loose`);
+    const rowJump=q<HTMLInputElement>('[data-row-jump-input]');
+    rowJump.max=String(rowTotal);rowJump.value=String(s.row.y+1);
+    setText('[data-row-total]',rowTotal);
+    const unfinished=q<HTMLButtonElement>('[data-unfinished]');
+    unfinished.disabled=completed.size===steps.length;
+    unfinished.textContent=unfinished.disabled?'All segments complete ✓':'Next unfinished segment';
     q<HTMLButtonElement>('[data-row-prev]').disabled=!steps.some(step=>step.layer===s.layer&&step.row.y<s.row.y);
     q<HTMLButtonElement>('[data-row-next]').disabled=!steps.some(step=>step.layer===s.layer&&step.row.y>s.row.y);
     q<HTMLButtonElement>('[data-prev]').disabled=stepIndex===0;
@@ -361,7 +385,7 @@ if (root) {
     const filledByThickness=result.style==='thick'&&result.thickness>=Math.max(1,Math.floor(minDim/2));
     const litematic=q<HTMLButtonElement>('[data-litematic]');
     if(litematic){
-      litematic.disabled=blocked;
+      litematic.disabled=blocked||exporting;
       litematic.title=blocked?'Reduce dimensions before exporting Litematic.':'Download Litematic for supported Java Edition workflows.';
     }
     const warning=q('[data-size-warning]');
@@ -397,6 +421,7 @@ if (root) {
 
   function regenerate(resetView=false){
     undoHistory=[];
+    completed=new Set();stepIndex=0;
     result=makeResult();normalizeInputs();steps=createSteps();indexSteps();loadProgress();if(resetView){zoom=1;panX=0;panY=0}renderStats();renderInstruction();
     q('[data-thickness-wrap]').style.display=result.style==='thick'?'':'none';
     qa('[data-style]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.style===text('style'))));
@@ -513,6 +538,12 @@ if (root) {
   settingsButton?.addEventListener('click',()=>setMobileControlsState(!root.querySelector('.controls')?.classList.contains('mobile-collapsed')));
   mobileControls.addEventListener?.('change',(event)=>setMobileControlsState(event.matches));
   qa<HTMLInputElement>('[data-input]').filter(el=>el.getAttribute('type')!=='hidden'&&el.dataset.input!=='material').forEach(el=>el.addEventListener('change',()=>{regenerate(true);updateFragment();usage(`generate_${shape}`)}));
+  function renderMaterial(){
+    const material=resolveMaterial(text('material'));
+    setText('[data-material-note]',material?`Litematic material: ${material}.`:'Custom label: TXT and print keep this name. Litematic will ask before using Stone.');
+  }
+  q('[data-input="material"]').addEventListener('input',renderMaterial);
+  renderMaterial();
   qa('[data-style]').forEach(el=>el.addEventListener('click',()=>{
     const style=el.dataset.style!;
     q<HTMLInputElement>('[data-input="style"]').value=style;
@@ -590,7 +621,7 @@ if (root) {
     if(!completed.size&&stepIndex===0)return;
     if(!confirm('Reset all saved progress for this blueprint?'))return;
     completed.clear();stepIndex=0;undoHistory=[];
-    try{localStorage.removeItem(stateKey())}catch{}
+    saveProgress();
     renderInstruction();
   });
   function goToLayer(target:number){
@@ -614,11 +645,27 @@ if (root) {
   }
   q('[data-row-prev]').addEventListener('click',()=>goToRow(-1));
   q('[data-row-next]').addEventListener('click',()=>goToRow(1));
+  q('[data-row-jump-input]').addEventListener('change',()=>{
+    const input=q<HTMLInputElement>('[data-row-jump-input]');
+    const target=Number(input.value),total=shape==='dome'?result.depth:result.height;
+    if(!Number.isInteger(target)||target<1||target>total){showStatus(`Choose a row from 1 to ${total}.`,'neutral');renderInstruction();return}
+    const rowSteps=stepsByRow.get(`${currentLayer}:${target-1}`)||[];
+    const chosen=rowSteps.find(step=>!completed.has(step.key))||rowSteps[0];
+    if(!chosen){showStatus(`Row ${target} has no blocks on this layer.`,'neutral');renderInstruction();return}
+    stepIndex=stepIndexByKey.get(chosen.key)??stepIndex;saveProgress();renderInstruction();
+  });
+  q('[data-unfinished]').addEventListener('click',()=>{
+    const next=steps.findIndex((step,index)=>index>stepIndex&&!completed.has(step.key));
+    const target=next>=0?next:steps.findIndex(step=>!completed.has(step.key));
+    if(target<0)return;
+    stepIndex=target;saveProgress();renderInstruction();
+  });
   root.querySelector('[data-layer-prev]')?.addEventListener('click',()=>goToLayer(currentLayer-1));
   root.querySelector('[data-layer-next]')?.addEventListener('click',()=>goToLayer(currentLayer+1));
   root.querySelector('[data-layer-jump-input]')?.addEventListener('change',(event)=>{
     const value=Number((event.currentTarget as HTMLInputElement).value);
-    if(Number.isFinite(value)) goToLayer(Math.round(value)-1);
+    if(Number.isInteger(value)&&value>=1&&value<=result.layers.length)goToLayer(value-1);
+    else{showStatus(`Choose a layer from 1 to ${result.layers.length}.`,'neutral');renderInstruction()}
   });
   q('[data-share]').addEventListener('click',async()=>{
     const url=updateFragment();
@@ -667,7 +714,46 @@ if (root) {
       showStatus('TXT build plan downloaded.');
     }catch{showStatus('Could not create TXT plan.','error')}
   });
-  q<HTMLButtonElement>('[data-litematic]').addEventListener('click',async()=>{const btn=q<HTMLButtonElement>('[data-litematic]');const old=btn.textContent;btn.textContent='Building file…';btn.disabled=true;try{const {exportLitematic}=await import('../lib/litematic');const raw=text('material','stone').trim().toLowerCase();const aliases:Record<string,string>={'stone bricks':'stone_bricks','stone brick':'stone_bricks','glass':'glass','quartz':'quartz_block','quartz block':'quartz_block','stone':'stone','cobblestone':'cobblestone','deepslate':'deepslate','smooth stone':'smooth_stone','oak planks':'oak_planks','spruce planks':'spruce_planks','birch planks':'birch_planks','white concrete':'white_concrete','black concrete':'black_concrete','gray concrete':'gray_concrete','light gray concrete':'light_gray_concrete'};const allowed=new Set(['stone','stone_bricks','glass','quartz_block','cobblestone','deepslate','smooth_stone','oak_planks','spruce_planks','birch_planks','white_concrete','black_concrete','gray_concrete','light_gray_concrete']);const normalized=raw.replace(/[^a-z0-9_]/g,'_');const candidate=aliases[raw]||(allowed.has(normalized)?normalized:'');const safe=candidate||'stone';const bytes=exportLitematic(result,`VoxelCurve · ${q('[data-blueprint-title]').textContent||shape}`,`minecraft:${safe||'stone'}`);const blob=new Blob([Uint8Array.from(bytes)],{type:'application/octet-stream'});downloadBlob(blob,`${blueprintSlug()}.litematic`);usage('download_litematic');showStatus('Litematic file downloaded.')}catch(e){showStatus(e instanceof Error?e.message:'Could not create Litematic file.','error')}finally{btn.textContent=old;btn.disabled=false}});
+  q('[data-cancel-export]').addEventListener('click',()=>cancelExport?.());
+  q<HTMLButtonElement>('[data-litematic]').addEventListener('click',async()=>{
+    if(exporting)return;
+    let material=resolveMaterial(text('material'));
+    if(!material){
+      if(!confirm(`“${text('material')}” is not a supported Litematic material. Export using Stone instead? TXT and print will keep your custom label.`)){
+        showStatus('Litematic export cancelled. Choose a supported material or use TXT.','neutral');return;
+      }
+      material='minecraft:stone';
+    }
+    const btn=q<HTMLButtonElement>('[data-litematic]');
+    const filename=`${blueprintSlug()}.litematic`;
+    const name=`VoxelCurve · ${q('[data-blueprint-title]').textContent||shape}`;
+    const blueprint=params();
+    let worker:Worker|null=null;
+    exporting=true;btn.disabled=true;btn.textContent='Building file…';
+    btn.setAttribute('aria-busy','true');
+    q('[data-cancel-export]').hidden=false;
+    showStatus('Generating Litematic in the background. You can keep navigating or cancel.','neutral');
+    try{
+      const bytes=await new Promise<Uint8Array>((resolve,reject)=>{
+        worker=new LitematicWorker();
+        cancelExport=()=>{worker?.terminate();reject(new Error('Litematic export cancelled.'))};
+        worker.onerror=()=>reject(new Error('Litematic export could not start or ran out of memory. Try a smaller blueprint.'));
+        worker.onmessage=(event:MessageEvent)=>{
+          if(event.data.type==='status')showStatus(event.data.message,'neutral');
+          else if(event.data.type==='ready')resolve(event.data.bytes);
+          else if(event.data.type==='error')reject(new Error(event.data.message));
+        };
+        worker.postMessage({params:blueprint,name,material});
+      });
+      downloadBlob(new Blob([Uint8Array.from(bytes)],{type:'application/octet-stream'}),filename);
+      usage('download_litematic');showStatus(`Litematic downloaded · ${material}.`);
+    }catch(error){showStatus(error instanceof Error?error.message:'Could not create Litematic file.','neutral')}
+    finally{
+      (worker as Worker|null)?.terminate();cancelExport=null;exporting=false;
+      btn.textContent='.litematic';btn.removeAttribute('aria-busy');
+      q('[data-cancel-export]').hidden=true;renderInstruction();
+    }
+  });
 
   wrap.addEventListener('wheel',(e)=>{e.preventDefault();zoom=Math.max(.25,Math.min(8,zoom*(e.deltaY<0?1.1:.9)));draw()},{passive:false});
   wrap.addEventListener('pointerdown',(e)=>{wrap.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===1)dragStart={x:e.clientX,y:e.clientY,px:panX,py:panY,moved:false};if(pointers.size===2){if(dragStart)dragStart.moved=true;const a=[...pointers.values()];pinchStart={dist:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),zoom}}});

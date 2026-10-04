@@ -261,4 +261,8 @@ The geometry tests cover bounds, symmetry, row/layer sums, continuity, extreme a
 
 The page emits `voxelcurve:usage` CustomEvents with action names and shape only. No analytics service is configured and no event data is transmitted. A deployment may connect an approved analytics provider to this hook.
 
+Material suggestions match the Litematic block palette. Custom TXT/print labels are allowed, but an unsupported Litematic label requires explicit confirmation before exporting Stone. Progress has a persistent saved/restored/unavailable status. Row/layer jumps and next-unfinished navigation never mark blocks complete.
+
+Litematic generation runs in a cancellable Web Worker using a snapshot of the blueprint and material at export start. Navigation and subsequent input changes do not change that file. Limits remain 20,000,000 bounding cells and 5,000,000 occupied blocks. The download panel includes placement steps and axes; real-device and in-game validation are still required.
+
 Geometry v3 fixes the 3×3 thin outline center. Earlier-version saved progress is intentionally not reused.
