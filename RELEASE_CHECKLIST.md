@@ -149,6 +149,7 @@ Verify:
 - [ ] Shape settings collapse;
 - [ ] mobile navigation opens and closes;
 - [ ] pinch zoom works;
+- [ ] double-click / double-tap returns the blueprint to Fit;
 - [ ] dragging pans without marking progress;
 - [ ] no horizontal page overflow;
 - [ ] 44px touch targets;
