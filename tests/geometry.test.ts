@@ -1,6 +1,6 @@
 import { describe,it,expect } from 'vitest';
 import { generateCircle,generateOval,generateDome } from '../src/lib/geometry';
-import { exportLitematic } from '../src/lib/litematic';
+import { exportLitematic, LITEMATIC_FORMAT_VERSION, LITEMATIC_SUB_VERSION, LITEMATIC_MINECRAFT_DATA_VERSION } from '../src/lib/litematic';
 import { buildTextPlan, spanInstruction } from '../src/lib/buildPlan';
 import { gunzipSync } from 'fflate';
 
@@ -20,6 +20,33 @@ function readBlockStates(raw:Uint8Array){
   let p=offset+4;
   for(let i=0;i<len;i++,p+=8) longs.push(view.getBigInt64(p,false));
   return longs;
+}
+
+function readNamedIntTag(raw:Uint8Array,name:string){
+  const encoded=new TextEncoder().encode(name);
+  for(let i=3;i<=raw.length-encoded.length-4;i++){
+    if(raw[i-3]!==3)continue; // TAG_Int
+    const nameLength=(raw[i-2]<<8)|raw[i-1];
+    if(nameLength!==encoded.length)continue;
+    let match=true;
+    for(let j=0;j<encoded.length;j++) if(raw[i+j]!==encoded[j]){match=false;break}
+    if(!match)continue;
+    const view=new DataView(raw.buffer,raw.byteOffset,raw.byteLength);
+    return {type:raw[i-3],value:view.getInt32(i+encoded.length,false)};
+  }
+  throw new Error(`TAG_Int ${name} not found`);
+}
+
+function findNamedTagType(raw:Uint8Array,name:string){
+  const encoded=new TextEncoder().encode(name);
+  for(let i=3;i<=raw.length-encoded.length;i++){
+    const nameLength=(raw[i-2]<<8)|raw[i-1];
+    if(nameLength!==encoded.length)continue;
+    let match=true;
+    for(let j=0;j<encoded.length;j++) if(raw[i+j]!==encoded[j]){match=false;break}
+    if(match)return raw[i-3];
+  }
+  throw new Error(`Tag ${name} not found`);
 }
 
 function countPaletteIndexOne(longs:bigint[], volume:number, bitsPerEntry=2){
@@ -142,6 +169,13 @@ describe('geometry',()=>{
     expect(text).toContain('VoxelCurve Test');
     expect(text).toContain('TotalBlocks');
     expect(text).toContain('minecraft:stone');
+    expect(readNamedIntTag(raw,'Version').value).toBe(LITEMATIC_FORMAT_VERSION);
+    expect(readNamedIntTag(raw,'SubVersion').value).toBe(LITEMATIC_SUB_VERSION);
+    expect(readNamedIntTag(raw,'MinecraftDataVersion').value).toBe(LITEMATIC_MINECRAFT_DATA_VERSION);
+    expect(LITEMATIC_FORMAT_VERSION).toBe(6);
+    expect(LITEMATIC_MINECRAFT_DATA_VERSION).toBe(3700);
+    expect(findNamedTagType(raw,'TotalVolume')).toBe(3);
+    expect(readNamedIntTag(raw,'TotalVolume').value).toBe(circle.width*circle.height);
     const states=readBlockStates(raw);
     expect(countPaletteIndexOne(states,circle.width*circle.height)).toBe(circle.blockCount);
   });
