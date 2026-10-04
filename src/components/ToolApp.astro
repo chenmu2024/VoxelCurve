@@ -102,6 +102,7 @@ if (root) {
   let completed = new Set();
   let zoom = 1, panX = 0, panY = 0;
   let pointers = new Map(), dragStart = null, pinchStart = null;
+  let lastTapAt = 0, lastTapX = 0, lastTapY = 0;
   const display = { grid:true, center:true, labels:true, ghost:true };
   let instructionMode = 'center';
   let worldEnabled = false;
@@ -757,7 +758,29 @@ if (root) {
   wrap.addEventListener('wheel',(e)=>{e.preventDefault();zoom=Math.max(.25,Math.min(8,zoom*(e.deltaY<0?1.1:.9)));draw()},{passive:false});
   wrap.addEventListener('pointerdown',(e)=>{wrap.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===1)dragStart={x:e.clientX,y:e.clientY,px:panX,py:panY,moved:false};if(pointers.size===2){const a=[...pointers.values()];pinchStart={dist:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),zoom}}});
   wrap.addEventListener('pointermove',(e)=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===2&&pinchStart){const a=[...pointers.values()];const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);zoom=Math.max(.25,Math.min(8,pinchStart.zoom*d/pinchStart.dist));draw();return}if(pointers.size===1&&dragStart){const dx=e.clientX-dragStart.x,dy=e.clientY-dragStart.y;if(Math.hypot(dx,dy)>5)dragStart.moved=true;panX=dragStart.px+dx;panY=dragStart.py+dy;draw()}});
-  const pointerEnd=(e)=>{pointers.delete(e.pointerId);if(pointers.size<2)pinchStart=null;if(!pointers.size)dragStart=null};wrap.addEventListener('pointerup',pointerEnd);wrap.addEventListener('pointercancel',pointerEnd);
+  wrap.addEventListener('dblclick',(e)=>{e.preventDefault();fit()});
+  const pointerEnd=(e)=>{
+    const wasSingle=pointers.size===1;
+    const wasPinching=!!pinchStart;
+    const wasTap=wasSingle&&!wasPinching&&dragStart&&!dragStart.moved;
+    if(e.type==='pointerup'&&e.pointerType==='touch'&&wasTap){
+      const now=Date.now();
+      const close=Math.hypot(e.clientX-lastTapX,e.clientY-lastTapY)<28;
+      if(now-lastTapAt<340&&close){
+        fit();
+        lastTapAt=0;
+      }else{
+        lastTapAt=now;
+        lastTapX=e.clientX;
+        lastTapY=e.clientY;
+      }
+    }
+    pointers.delete(e.pointerId);
+    if(pointers.size<2)pinchStart=null;
+    if(!pointers.size)dragStart=null;
+  };
+  wrap.addEventListener('pointerup',pointerEnd);
+  wrap.addEventListener('pointercancel',pointerEnd);
 
   window.addEventListener('hashchange',()=>{
     parseFragment();
