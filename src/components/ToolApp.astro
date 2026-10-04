@@ -42,6 +42,7 @@ const { shape } = Astro.props;
     <div class="export-heading"><span>EXPORT</span><small>Share or save this plan</small></div>
     <div class="builder-actions export-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" style="grid-column:1/-1" type="button" data-litematic>.litematic</button></div>
     <div class="notice">Progress is stored only in this browser. Shared links carry blueprint settings, not completion state. Litematic export falls back to Stone when a custom material label is not a recognized block.</div>
+    <div class="size-warning" data-size-warning hidden></div>
     <div class="action-status" data-action-status role="status" aria-live="polite"></div>
   </aside>
   <section class="print-sheet" data-print-sheet aria-hidden="true">
@@ -168,6 +169,21 @@ if (root) {
       const layerDone=layerSteps.filter(step=>completed.has(step.key)).length;
       const layerPct=layerSteps.length?Math.round(layerDone/layerSteps.length*100):0;
       setText('[data-layer-progress]',`Layer ${currentLayer+1}: ${layerPct}% · ${layerDone}/${layerSteps.length} segments`);
+    }
+    const volume=result.type==='dome'?result.width*result.depth*result.height:result.width*result.height;
+    const blocked=volume>20_000_000||result.blockCount>5_000_000;
+    const large=volume>10_000_000||result.blockCount>2_000_000;
+    const litematic=q('[data-litematic]');
+    if(litematic){
+      litematic.disabled=blocked;
+      litematic.title=blocked?'Reduce dimensions before exporting Litematic.':'Download Litematic for supported Java Edition workflows.';
+    }
+    const warning=q('[data-size-warning]');
+    if(warning){
+      warning.hidden=!large;
+      warning.textContent=blocked
+        ? 'This structure is too large for safe browser Litematic export. Reduce its dimensions or use a hollow build.'
+        : 'Large structure: exports may take longer on mobile devices.';
     }
     q('[data-complete]').textContent=completed.has(s.key)?'Completed ✓':'Complete segment';
     draw();
