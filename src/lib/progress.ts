@@ -38,7 +38,8 @@ export function encodeProgress(
   return JSON.stringify({
     v:2,
     bits:bytesToBase64(bytes),
-    stepIndex:clampIndex(stepIndex,steps.length)
+    stepIndex:clampIndex(stepIndex,steps.length),
+    updatedAt:Date.now()
   });
 }
 
