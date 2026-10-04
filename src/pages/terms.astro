@@ -1,4 +1,31 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'; const title='Terms of Use | VoxelCurve'; const description='VoxelCurve terms of use.';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbSchema } from '../lib/schema';
+const title='Terms of Use | VoxelCurve';
+const description='Terms governing use of VoxelCurve building geometry tools and generated export files.';
+const canonical='https://voxelcurve.com/terms';
+const schemas=[breadcrumbSchema([{name:'VoxelCurve',url:'https://voxelcurve.com/'},{name:'Terms of Use',url:canonical}])];
 ---
-<BaseLayout {title} {description} canonical="https://voxelcurve.com/terms"><section class="hero"><div class="container prose"><h1>Terms of Use</h1><p>VoxelCurve provides free building-planning utilities on an as-is basis. You are responsible for checking generated plans and exported files before using them in important worlds or projects.</p><h2>Exports</h2><p>Game-specific export formats can depend on third-party mods and game versions. Compatibility is not guaranteed across every release or platform.</p><h2>Acceptable use</h2><p>Do not abuse the service, attempt to disrupt availability, or misrepresent VoxelCurve as an official Minecraft product.</p></div></section></BaseLayout>
+<BaseLayout {title} {description} {canonical} {schemas}>
+  <section class="resource-hero"><div class="container"><div class="resource-hero-grid">
+    <div><span class="eyebrow">Terms</span><h1>Use the plans, verify the build.</h1><p>VoxelCurve is a free planning utility. Generated geometry and exports should be checked before use in important worlds or projects.</p></div>
+    <div class="resource-meta"><span>LAST UPDATED</span><strong>October 4, 2026</strong><small>Applies to voxelcurve.com.</small></div>
+  </div></div></section>
+  <section class="section"><div class="container editorial-grid">
+    <aside class="editorial-aside"><div class="section-kicker">01 / Use</div><p>Practical terms for a browser-based builder utility.</p></aside>
+    <div class="prose editorial-prose">
+      <h2>Service provided as available</h2>
+      <p>VoxelCurve provides browser-based building-planning tools on an as-is and as-available basis. Features, supported exports and safe size limits may change when required for correctness, security or browser compatibility.</p>
+      <h2>Verify generated plans</h2>
+      <p>You are responsible for checking generated dimensions, material counts, construction instructions and export files before relying on them in an important Minecraft world, collaborative project or other workflow.</p>
+      <h2>Third-party compatibility</h2>
+      <p>Game-specific formats such as Litematic depend on third-party software, mods and game versions outside VoxelCurve's control. Compatibility is not guaranteed for every Minecraft, mod or platform release.</p>
+      <h2>Your files and worlds</h2>
+      <p>Keep appropriate backups of worlds and project files before importing or using generated structures. VoxelCurve does not provide cloud backup or recovery for your Minecraft data.</p>
+      <h2>Acceptable use</h2>
+      <p>Do not intentionally disrupt the site, attempt to bypass technical limits in ways that degrade availability, use the service for unlawful activity, or misrepresent VoxelCurve as an official Minecraft, Mojang or Microsoft product.</p>
+      <h2>External services</h2>
+      <p>Links to GitHub or other third-party services are provided for convenience. Those services operate under their own terms and policies.</p>
+    </div>
+  </div></section>
+</BaseLayout>
