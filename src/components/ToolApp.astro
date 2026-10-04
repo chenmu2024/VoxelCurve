@@ -80,7 +80,9 @@ if (root) {
   const clamp = (n,min,max) => Math.max(min, Math.min(max, Math.round(Number.isFinite(n)?n:min)));
 
   function params(){
-    const style=text('style','thin'); const thickness=clamp(num('thickness',1),1,32);
+    const rawStyle=text('style','thin');
+    const style=['thin','thick','filled'].includes(rawStyle)?rawStyle:'thin';
+    const thickness=clamp(num('thickness',1),1,32);
     if(shape==='circle') return {shape, diameter:clamp(num('diameter',31),3,512), style, thickness};
     if(shape==='oval') return {shape, width:clamp(num('width',31),3,512), height:clamp(num('height',21),3,512), style, thickness};
     return {shape, width:clamp(num('width',31),3,256), depth:clamp(num('depth',31),3,256), height:clamp(num('height',16),2,256), style, thickness};
@@ -150,9 +152,25 @@ if (root) {
 
   function renderStats(){setText('[data-blocks]',result.blockCount.toLocaleString()); const stacks=Math.floor(result.blockCount/64),loose=result.blockCount%64;setText('[data-stacks]',loose?`${stacks} + ${loose}`:String(stacks)); const p=params();setText('[data-blueprint-title]',shape==='circle'?`${p.diameter}×${p.diameter} Circle`:shape==='oval'?`${p.width}×${p.height} Oval`:`${p.width}×${p.depth}×${p.height} Dome`)}
 
+  function normalizeInputs(){
+    const styleInput=q('[data-input="style"]');
+    const thicknessInput=q('[data-input="thickness"]');
+    if(styleInput) styleInput.value=result.style;
+    if(thicknessInput) thicknessInput.value=String(result.thickness);
+    if(shape==='circle'){
+      const input=q('[data-input="diameter"]'); if(input) input.value=String(result.width);
+    } else if(shape==='oval'){
+      const w=q('[data-input="width"]'); const h=q('[data-input="height"]');
+      if(w) w.value=String(result.width); if(h) h.value=String(result.height);
+    } else {
+      const w=q('[data-input="width"]'); const d=q('[data-input="depth"]'); const h=q('[data-input="height"]');
+      if(w) w.value=String(result.width); if(d) d.value=String(result.depth); if(h) h.value=String(result.height);
+    }
+  }
+
   function regenerate(resetView=false){
-    result=makeResult();steps=createSteps();loadProgress();if(resetView){zoom=1;panX=0;panY=0}renderStats();renderInstruction();
-    q('[data-thickness-wrap]').style.display=text('style')==='filled'?'none':'';
+    result=makeResult();normalizeInputs();steps=createSteps();loadProgress();if(resetView){zoom=1;panX=0;panY=0}renderStats();renderInstruction();
+    q('[data-thickness-wrap]').style.display=result.style==='filled'?'none':'';
     qa('[data-style]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.style===text('style'))));
     if(shape==='circle'){
       const d=String(params().diameter);
