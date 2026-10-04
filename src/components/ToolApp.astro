@@ -1,11 +1,12 @@
 ---
+import { GEOMETRY_VERSION } from '../lib/geometry';
 interface Props { shape:'circle'|'oval'|'dome'; }
 const { shape } = Astro.props;
 ---
 <section class="tool-shell container" data-tool data-shape={shape}>
   <div class="workspace-topbar">
     <div class="workspace-id"><span class="workspace-dot"></span><span>VOXELCURVE / BUILD WORKSPACE</span></div>
-    <div class="workspace-meta"><span>LOCAL ENGINE</span><span>GEOMETRY V1</span></div>
+    <div class="workspace-meta"><span>LOCAL ENGINE</span><span>GEOMETRY V{GEOMETRY_VERSION}</span><button class="workspace-build-toggle" type="button" data-build-mode aria-pressed="false">Build mode</button></div>
   </div>
   <aside class="panel controls" aria-label="Generator controls">
     <div class="panel-heading"><p class="panel-title">01 / Controls</p><span>Shape setup</span></div>
@@ -104,6 +105,8 @@ if (root) {
   const display = { grid:true, center:true, labels:true, ghost:true };
   let instructionMode = 'center';
   let worldEnabled = false;
+  let buildMode = false;
+  let buildModeScrollY = 0;
   const mobileControls = window.matchMedia('(max-width: 800px)');
   const settingsButton = q('[data-settings-toggle]');
   const setMobileControlsState = (collapsed) => {
@@ -116,6 +119,29 @@ if (root) {
   };
   if(mobileControls.matches) setMobileControlsState(true);
 
+  const buildModeButton=q('[data-build-mode]');
+  function setBuildMode(enabled){
+    buildMode=enabled;
+    buildModeButton?.setAttribute('aria-pressed',String(enabled));
+    if(buildModeButton) buildModeButton.textContent=enabled?'Exit build mode':'Build mode';
+
+    if(enabled){
+      buildModeScrollY=window.scrollY;
+      document.body.classList.add('vc-build-mode');
+    }else{
+      document.body.classList.remove('vc-build-mode');
+    }
+
+    requestAnimationFrame(()=>{
+      resize();
+      fit();
+      if(!enabled) window.scrollTo({top:buildModeScrollY,behavior:'auto'});
+    });
+  }
+  buildModeButton?.addEventListener('click',()=>setBuildMode(!buildMode));
+  document.addEventListener('keydown',(event)=>{
+    if(event.key==='Escape'&&buildMode)setBuildMode(false);
+  });
 
   const num = (name, fallback) => Number(q(`[data-input="${name}"]`)?.value ?? fallback);
   const text = (name, fallback='') => String(q(`[data-input="${name}"]`)?.value ?? fallback);
