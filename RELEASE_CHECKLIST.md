@@ -19,7 +19,7 @@ CI currently runs:
 - local-asset validation;
 - exact Sitemap URL validation;
 - 404 noindex validation;
-- Cloudflare `_headers` / `_redirects` validation;
+- Cloudflare `_headers` validation and rejection of unsupported host redirects in `_redirects`;
 - Open Graph PNG validation;
 - JS/CSS performance budgets.
 
@@ -165,8 +165,9 @@ Check:
 ## 9. Cloudflare / domain
 
 - [ ] `https://voxelcurve.com` loads over HTTPS
-- [ ] `https://www.voxelcurve.com/*` redirects to apex
-- [ ] `https://voxelcurve.pages.dev/*` redirects to apex
+- [ ] Cloudflare Bulk Redirect: `www.voxelcurve.com/*` → `https://voxelcurve.com/:splat` with 301
+- [ ] Cloudflare Bulk Redirect: `voxelcurve.pages.dev/*` → `https://voxelcurve.com/:splat` with 301
+- [ ] Preserve query string + subpath/path suffix on both Bulk Redirects
 - [ ] Preview Pages hosts are noindex
 - [ ] CSP does not block the tool
 - [ ] QR dynamic import works under CSP
