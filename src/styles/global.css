@@ -1093,3 +1093,22 @@ tr:last-child td{border-bottom:0}
   .layer-jump{font-size:11px}
   .layer-jump input{height:44px;width:72px}
 }
+
+
+.wake-toggle{
+  width:100%;
+  margin-top:8px;
+  min-height:36px;
+  background:transparent!important;
+  border-color:#303430!important;
+  color:#8f9792!important;
+  font-size:11px!important
+}
+.wake-toggle[aria-pressed="true"]{
+  border-color:#2f8f67!important;
+  color:#bff4da!important;
+  background:#183026!important
+}
+@media(max-width:800px){
+  .wake-toggle{min-height:44px}
+}
