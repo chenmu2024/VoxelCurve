@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://voxelcurve.com/sitemap-index.xml
+Sitemap: https://voxelcurve.com/sitemap.xml
