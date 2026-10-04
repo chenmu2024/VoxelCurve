@@ -1,7 +1,6 @@
 name: Geometry bug
 description: Report a circle, oval or dome geometry result that appears incorrect.
 title: "[Geometry] "
-labels: ["geometry"]
 body:
   - type: markdown
     attributes:
