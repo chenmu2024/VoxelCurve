@@ -540,3 +540,51 @@ tr:last-child td{border-bottom:0}
   .resource-hero-grid{grid-template-columns:1fr;gap:26px}
   .resource-meta{border-left:0;border-top:1px solid #303430;padding:16px 0 0}
 }
+
+
+/* ===== Mobile build mode ===== */
+@media(max-width:800px){
+  .product-stage .stats{
+    padding-bottom:18px
+  }
+  .product-stage .instruction{
+    margin-top:2px
+  }
+  .product-stage .build-actions{
+    position:sticky;
+    bottom:0;
+    z-index:20;
+    margin-left:-16px;
+    margin-right:-16px;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    background:rgba(21,23,21,.96);
+    border-top:1px solid #303430;
+    backdrop-filter:blur(12px)
+  }
+  .product-stage .build-actions .btn{
+    min-height:46px
+  }
+  .product-stage .build-actions .btn.accent{
+    font-weight:700
+  }
+  .product-stage .export-heading{
+    margin-top:20px
+  }
+}
+@media(max-width:480px){
+  .product-stage .stat-grid{
+    margin-bottom:14px
+  }
+  .product-stage .instruction{
+    padding:13px
+  }
+  .product-stage .instruction strong{
+    font-size:11px
+  }
+  .product-stage .instruction span{
+    font-size:12px
+  }
+  .product-stage .build-actions{
+    grid-template-columns:1fr 1fr
+  }
+}
