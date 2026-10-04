@@ -22,12 +22,24 @@ describe('geometry',()=>{
   it('oval stays in bounds',()=>{const r=generateOval(31,15,'thin',1);expect(r.rows).toHaveLength(15);expect(r.blockCount).toBeGreaterThan(0)});
   it('dome layer sums equal total',()=>{const r=generateDome(31,31,16,'thin',1);expect(r.layers.reduce((n,l)=>n+l.count,0)).toBe(r.blockCount);expect(r.blockCount).toBeGreaterThan(0)});
   it('filled dome has more blocks than hollow',()=>{expect(generateDome(21,21,11,'filled').blockCount).toBeGreaterThan(generateDome(21,21,11,'thin').blockCount)});
+  it('locks common 31x31x16 hollow dome count',()=>{
+    expect(generateDome(31,31,16,'thin',1).blockCount).toBe(1353);
+  });
   it('hollow dome keeps a solid top cap and no empty layers',()=>{
     const hollow=generateDome(31,31,16,'thin',1);
     expect(hollow.layers.every(layer=>layer.count>0)).toBe(true);
     const top=hollow.layers[hollow.layers.length-1];
     expect(top.index).toBe(15);
     expect(top.count).toBeGreaterThan(0);
+    for (const layer of hollow.layers) {
+      for (const row of layer.rows) {
+        for (const span of row.spans) {
+          const mirrorStart=hollow.width-1-span.end;
+          const mirrorEnd=hollow.width-1-span.start;
+          expect(row.spans.some(s=>s.start===mirrorStart&&s.end===mirrorEnd)).toBe(true);
+        }
+      }
+    }
   });
   it('center instructions use the segment start, not segment midpoint',()=>{
     expect(spanInstruction({start:9,end:11},31).center).toBe('Start 6 blocks left of center · place 3 right');
