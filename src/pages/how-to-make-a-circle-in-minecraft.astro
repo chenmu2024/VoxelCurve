@@ -42,11 +42,12 @@ const schemas=[
         <div class="table-wrap"><table><caption>First three rows of the {size}×{size} thin outline</caption><thead><tr><th>Row</th><th>Place these segments</th><th>Empty gap</th></tr></thead><tbody>{result.rows.slice(0,3).map(row=><tr><td>{row.y+1}</td><td>{rowInstruction(row,size).map(instruction=><div>{instruction.center} (columns {instruction.span.start+1}–{instruction.span.end+1})</div>)}</td><td>{row.spans.length>1?row.spans[1].start-row.spans[0].end-1:'—'}</td></tr>)}</tbody></table></div>
       </div>)}
     </div>
-    <h2>Large circle tips</h2>
+    <h2>How to make a large circle in Minecraft</h2>
     <p>For a 31×31 or larger footprint, mark the center axes with temporary blocks and keep the tool open in Build Mode. Work by row or segment, mark progress after placement and use Undo immediately after a mistaken completion. Fit restores the full blueprint after panning or zooming. Material totals exclude temporary markers.</p>
     <h2>Common mistakes</h2>
     <ul><li>Using radius as diameter: measure the entire outside width.</li><li>Moving an even circle onto one center block: keep the four-block center gap.</li><li>Adding a starting block to the stated segment length: the first block is already included.</li><li>Counting the gap from a segment's start: count empty columns after its last block.</li><li>Duplicating blocks on a mirrored center line: overlapping center positions are placed once.</li><li>Sharing a link to transfer progress: links share the blueprint, while progress stays on the current device.</li></ul>
-    <h2>Use the circle generator</h2>
+    <h2>Which circle-building question does this guide answer?</h2>
+    <p>This circle Minecraft guide follows one method for the questions “how to make a Minecraft circle”, “how to make circle in Minecraft”, “how to build a circle in Minecraft” and “how to create a circle in Minecraft”. The shorter search “Minecraft how to make a circle” leads to the same practical steps: choose a diameter, mark the center, place the anchors and mirror the row segments. Use the examples above to check each step before scaling up.</p>
     <p><a class="text-link" href="/#c-31-thin-1">Open the 31×31 Minecraft Circle Generator →</a> to follow exact segments, track remaining materials and save a PNG, TXT or Litematic plan. The <a class="text-link" href="/minecraft-circle-chart">Circle Chart</a> compares common footprints before you build.</p>
   </div>
 </div></article>
