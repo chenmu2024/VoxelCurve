@@ -1,7 +1,6 @@
 name: Browser or UI bug
 description: Report a layout, interaction, mobile or browser-specific problem.
 title: "[Browser] "
-labels: ["browser"]
 body:
   - type: markdown
     attributes:
