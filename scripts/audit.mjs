@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { gzipSync } from 'node:zlib';
 
 const dist = path.resolve('dist');
 const required = [
@@ -100,6 +101,25 @@ else {
   if (!/Sitemap:\s*https:\/\/voxelcurve\.com\//i.test(text)) errors.push('robots.txt missing production sitemap URL');
 }
 
+const assetDir = path.join(dist, '_astro');
+let totalJsGzip = 0;
+let totalCssGzip = 0;
+if (exists(assetDir)) {
+  for (const name of fs.readdirSync(assetDir)) {
+    const full = path.join(assetDir, name);
+    if (!fs.statSync(full).isFile()) continue;
+    const bytes = fs.readFileSync(full);
+    const gz = gzipSync(bytes).byteLength;
+    if (name.endsWith('.js')) {
+      totalJsGzip += gz;
+      if (gz > 150 * 1024) errors.push(`JS chunk exceeds 150KB gzip: ${name} (${Math.round(gz/1024)}KB)`);
+    }
+    if (name.endsWith('.css')) totalCssGzip += gz;
+  }
+}
+if (totalJsGzip > 300 * 1024) errors.push(`Total built JavaScript exceeds 300KB gzip: ${Math.round(totalJsGzip/1024)}KB`);
+if (totalCssGzip > 100 * 1024) errors.push(`Total built CSS exceeds 100KB gzip: ${Math.round(totalCssGzip/1024)}KB`);
+
 if (errors.length) {
   console.error('\nVoxelCurve site audit failed:\n');
   for (const error of errors) console.error(`- ${error}`);
@@ -107,3 +127,4 @@ if (errors.length) {
 }
 
 console.log(`VoxelCurve audit passed: ${htmlFiles.length} HTML pages, ${titles.size} unique titles, ${canonicals.size} unique canonicals.`);
+console.log(`Asset budget: ${Math.round(totalJsGzip/1024)}KB total JS gzip, ${Math.round(totalCssGzip/1024)}KB total CSS gzip.`);
