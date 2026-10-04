@@ -48,6 +48,9 @@ Test:
 - [ ] Thick;
 - [ ] Filled;
 - [ ] common preset buttons;
+- [ ] Build Mode enter / exit;
+- [ ] Build Mode hides site chrome and long-form content;
+- [ ] Escape exits Build Mode on desktop;
 - [ ] Center instructions;
 - [ ] Edge instructions;
 - [ ] optional world coordinates for odd dimensions;
@@ -140,8 +143,9 @@ Check at approximately 375px width on:
 
 Verify:
 
+- [ ] Build Mode fills the viewport without horizontal overflow;
 - [ ] Blueprint appears before settings;
-- [ ] Build controls remain usable;
+- [ ] Build controls remain usable in Build Mode;
 - [ ] Shape settings collapse;
 - [ ] mobile navigation opens and closes;
 - [ ] pinch zoom works;
