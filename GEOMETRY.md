@@ -315,7 +315,7 @@ These limits are engineering limits, not SEO content claims, and may only be rai
 Current:
 
 ```
-GEOMETRY_VERSION = 1
+GEOMETRY_VERSION = 2
 ```
 
 Saved progress includes the geometry version.
