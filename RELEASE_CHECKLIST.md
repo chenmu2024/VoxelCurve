@@ -59,6 +59,7 @@ Test:
 - [ ] Copy link;
 - [ ] Send to phone QR;
 - [ ] PNG;
+- [ ] SVG;
 - [ ] Print;
 - [ ] TXT;
 - [ ] Litematic.
@@ -103,6 +104,7 @@ Test:
 - [ ] Complete Layer;
 - [ ] local progress restore;
 - [ ] PNG exports current layer;
+- [ ] SVG exports current layer;
 - [ ] Print includes blueprint + full plan;
 - [ ] TXT includes Layer / Row / Segment instructions;
 - [ ] Litematic.
