@@ -38,6 +38,14 @@ const { shape } = Astro.props;
     <div class="builder-actions export-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" style="grid-column:1/-1" type="button" data-litematic>.litematic</button></div>
     <div class="notice">Progress is stored only in this browser. Shared links carry blueprint settings, not completion state.</div>
   </aside>
+  <section class="print-sheet" data-print-sheet aria-hidden="true">
+    <div class="print-brand">VoxelCurve · Build Plan</div>
+    <h1 data-print-sheet-title>Blueprint</h1>
+    <p class="print-meta" data-print-sheet-meta></p>
+    <img data-print-image alt="Printable block blueprint" />
+    <h2>Build instructions</h2>
+    <pre data-print-plan></pre>
+  </section>
   <dialog class="qr-dialog" data-qr-dialog aria-labelledby="qr-dialog-title"><button class="btn" style="float:right" data-qr-close aria-label="Close QR dialog">Close</button><h3 id="qr-dialog-title">Send blueprint to phone</h3><canvas data-qr-canvas></canvas><p class="notice">Scan to open the same dimensions on your phone.</p></dialog>
 </section>
 
@@ -275,7 +283,21 @@ if (root) {
   qa('[data-toggle]').forEach(el=>el.addEventListener('click',()=>{const k=el.dataset.toggle;display[k]=!display[k];el.setAttribute('aria-pressed',String(display[k]));draw()}));
   qa('[data-instruction-mode]').forEach(el=>el.addEventListener('click',()=>{instructionMode=el.dataset.instructionMode;qa('[data-instruction-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn===el)));renderInstruction()}));
   q('[data-hemisphere]')?.addEventListener('click',()=>{const w=num('width',31);q('[data-input="depth"]').value=String(w);q('[data-input="height"]').value=String(Math.ceil(w/2));regenerate(true)});
-  q('[data-fit]').addEventListener('click',fit);q('[data-zoom-in]').addEventListener('click',()=>{zoom=Math.min(8,zoom*1.2);draw()});q('[data-zoom-out]').addEventListener('click',()=>{zoom=Math.max(.25,zoom/1.2);draw()});q('[data-print]').addEventListener('click',()=>{fit();requestAnimationFrame(()=>window.print())});
+  q('[data-fit]').addEventListener('click',fit);
+  q('[data-zoom-in]').addEventListener('click',()=>{zoom=Math.min(8,zoom*1.2);draw()});
+  q('[data-zoom-out]').addEventListener('click',()=>{zoom=Math.max(.25,zoom/1.2);draw()});
+  q('[data-print]').addEventListener('click',()=>{
+    const exportCanvas=createPngExportCanvas();
+    const printImage=q('[data-print-image]');
+    if(printImage) printImage.src=exportCanvas.toDataURL('image/png');
+    setText('[data-print-sheet-title]',q('[data-blueprint-title]')?.textContent||'VoxelCurve Blueprint');
+    const stacks=Math.floor(result.blockCount/64),loose=result.blockCount%64;
+    setText('[data-print-sheet-meta]',`${result.blockCount.toLocaleString()} blocks · ${stacks} stack${stacks===1?'':'s'}${loose?` + ${loose} blocks`:''} · ${text('material','Blocks')}`);
+    const plan=q('[data-print-plan]'); if(plan) plan.textContent=buildTextPlan(result,text('material','Blocks'));
+    document.body.classList.add('vc-printing');
+    requestAnimationFrame(()=>window.print());
+  });
+  window.addEventListener('afterprint',()=>document.body.classList.remove('vc-printing'));
   q('[data-prev]').addEventListener('click',()=>{stepIndex=Math.max(0,stepIndex-1);saveProgress();renderInstruction()});
   q('[data-next]').addEventListener('click',()=>{stepIndex=Math.min(steps.length-1,stepIndex+1);saveProgress();renderInstruction()});
   q('[data-complete]').addEventListener('click',()=>{const s=steps[stepIndex];if(!s)return;if(completed.has(s.key))completed.delete(s.key);else{completed.add(s.key);if(stepIndex<steps.length-1)stepIndex++}saveProgress();renderInstruction()});
