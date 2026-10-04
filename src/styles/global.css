@@ -76,6 +76,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,su
 .toggle-row{display:flex;gap:6px;flex-wrap:wrap}
 .toggle{min-height:34px;padding:7px 10px;border-radius:6px;border:1px solid var(--line);background:#fff;font-size:12px;color:#555}
 .toggle[aria-pressed="true"]{background:var(--dark);color:#fff;border-color:var(--dark)}
+.segment-control{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px;background:var(--surface-muted);border:1px solid var(--line);border-radius:8px}
+.segment-option{min-height:36px;border:0;background:transparent;border-radius:6px;color:var(--muted);font-size:12px;font-weight:600}
+.segment-option[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.nav-separator{height:1px;background:var(--line);margin:16px 0}
 
 /* Blueprint */
 .canvas-panel{min-height:600px;display:flex;flex-direction:column;overflow:hidden;background:#fff}
