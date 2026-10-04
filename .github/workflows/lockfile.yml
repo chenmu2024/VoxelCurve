@@ -23,7 +23,9 @@ jobs:
           cache-dependency-path: package-lock.json
         continue-on-error: true
       - name: Generate exact lockfile
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+        run: |
+          rm -f package-lock.json
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
       - name: Commit lockfile if changed
         run: |
           if git diff --quiet -- package-lock.json && git ls-files --error-unmatch package-lock.json >/dev/null 2>&1; then
