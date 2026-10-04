@@ -46,7 +46,7 @@ const { shape } = Astro.props;
     <button class="btn wake-toggle" type="button" data-wake-toggle aria-pressed="false" hidden>Keep screen awake</button>
     <div class="nav-separator"></div>
     <div class="export-heading"><span>EXPORT</span><small>Share or save this plan</small></div>
-    <div class="builder-actions export-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" style="grid-column:1/-1" type="button" data-litematic>.litematic</button></div>
+    <div class="builder-actions export-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-svg>SVG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" type="button" data-litematic>.litematic</button></div>
     <div class="notice">Progress is stored only in this browser. Shared links carry blueprint settings, not completion state. Litematic export falls back to Stone when a custom material label is not a recognized block.</div>
     <div class="size-warning" data-size-warning hidden></div>
     <div class="action-status" data-action-status role="status" aria-live="polite"></div>
@@ -67,6 +67,7 @@ import { generateCircle, generateOval, generateDome } from '../lib/geometry';
 import { buildTextPlan, rowInstruction } from '../lib/buildPlan';
 import { canonicalBlueprintUrl, parseBlueprintFragment, serializeBlueprintState } from '../lib/state';
 import { decodeProgress, encodeProgress } from '../lib/progress';
+import { buildBlueprintSvg } from '../lib/svg';
 
 const root = document.querySelector('[data-tool]');
 if (root) {
@@ -596,6 +597,26 @@ if (root) {
         showStatus('PNG blueprint downloaded.');
       },'image/png');
     }catch{showStatus('Could not create PNG.','error')}
+  });
+  q('[data-svg]').addEventListener('click',()=>{
+    try{
+      const rows=activeRows();
+      const height=shape==='dome'?result.depth:result.height;
+      const layerSuffix=shape==='dome'?` · Layer ${currentLayer+1}`:'';
+      const title=`${q('[data-blueprint-title]')?.textContent||'VoxelCurve Blueprint'}${layerSuffix}`;
+      const svg=buildBlueprintSvg({
+        rows,
+        width:result.width,
+        height,
+        title,
+        showGrid:display.grid,
+        showCenter:display.center,
+        showLabels:display.labels
+      });
+      const suffix=shape==='dome'?'-layer-'+(currentLayer+1):'';
+      downloadBlob(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}),`voxelcurve-${shape}${suffix}.svg`);
+      showStatus('SVG blueprint downloaded.');
+    }catch{showStatus('Could not create SVG.','error')}
   });
   q('[data-txt]').addEventListener('click',()=>{
     try{
