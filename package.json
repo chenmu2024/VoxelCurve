@@ -10,10 +10,10 @@
     "preview": "astro preview",
     "test": "vitest run",
     "audit": "node scripts/audit.mjs",
-    "security:audit": "npm audit --omit=dev --audit-level=high"
+    "security:audit": "npm audit --omit=dev --audit-level=moderate"
   },
   "dependencies": {
-    "fflate": "0.8.2",
+    "fflate": "0.8.3",
     "qrcode": "1.5.4"
   },
   "devDependencies": {
