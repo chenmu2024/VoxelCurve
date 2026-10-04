@@ -18,6 +18,18 @@ const { shape } = Astro.props;
     <div class="field"><label for="material">Material <small>optional</small></label><input id="material" data-input="material" type="text" value="Stone Bricks" maxlength="60" /></div>
     <div class="field"><label>Display</label><div class="toggle-row"><button type="button" class="toggle" data-toggle="grid" aria-pressed="true">Grid</button><button type="button" class="toggle" data-toggle="center" aria-pressed="true">Center</button><button type="button" class="toggle" data-toggle="labels" aria-pressed="true">Labels</button>{shape==='dome' && <button type="button" class="toggle" data-toggle="ghost" aria-pressed="true">Ghost layer</button>}</div></div>
     <div class="field"><label>Instructions</label><div class="segment-control" role="group" aria-label="Instruction coordinate mode"><button type="button" class="segment-option" data-instruction-mode="center" aria-pressed="true">Center</button><button type="button" class="segment-option" data-instruction-mode="edge" aria-pressed="false">Edge</button></div></div>
+    <div class="field world-field">
+      <label>World coordinates <small>optional</small></label>
+      <button class="toggle world-toggle" type="button" data-world-toggle aria-pressed="false">Enable world coords</button>
+      <div class="world-controls" data-world-controls hidden>
+        <div class="world-grid">
+          <label><span>Center X</span><input type="number" step="0.5" data-world="centerX" /></label>
+          <label><span>Base Y</span><input type="number" step="1" data-world="baseY" /></label>
+          <label><span>Center Z</span><input type="number" step="0.5" data-world="centerZ" /></label>
+        </div>
+        <div class="notice world-note" data-world-note>+X right · +Z rows down · +Y layers up. Not saved or shared.</div>
+      </div>
+    </div>
     {shape === 'dome' && <button type="button" class="btn" data-hemisphere>Use hemisphere height</button>}
   </aside>
 
@@ -29,7 +41,7 @@ const { shape } = Astro.props;
   <aside class="panel stats">
     <div class="panel-heading"><p class="panel-title">03 / Build</p><span>Guided placement</span></div>
     <div class="stat-grid"><div class="stat"><b data-blocks>0</b><span>Blocks</span></div><div class="stat"><b data-stacks>0</b><span>Stacks + loose</span></div>{shape==='dome' && <><div class="stat"><b data-layer>1</b><span>Layer</span></div><div class="stat"><b data-layer-blocks>0</b><span>Layer blocks</span></div></>}</div>
-    <div class="instruction" role="status" aria-live="polite" aria-atomic="true"><strong data-instruction-title>Generating…</strong><span data-instruction-body></span></div>
+    <div class="instruction" role="status" aria-live="polite" aria-atomic="true"><strong data-instruction-title>Generating…</strong><span data-instruction-body></span><span class="world-instruction" data-world-instruction hidden></span></div>
     <div class="progress" aria-label="Build progress"><i data-progress-bar></i></div><div class="notice"><span data-progress-label aria-live="polite">0% complete</span></div>
     {shape==='dome' && <>
       <div class="notice layer-progress-note" data-layer-progress>Layer 1: 0% complete</div>
@@ -68,6 +80,7 @@ import { buildTextPlan, rowInstruction } from '../lib/buildPlan';
 import { canonicalBlueprintUrl, parseBlueprintFragment, serializeBlueprintState } from '../lib/state';
 import { decodeProgress, encodeProgress } from '../lib/progress';
 import { buildBlueprintSvg } from '../lib/svg';
+import { formatWorldSegment, worldSegment } from '../lib/world';
 
 const root = document.querySelector('[data-tool]');
 if (root) {
