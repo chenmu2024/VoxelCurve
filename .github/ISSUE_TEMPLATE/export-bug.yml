@@ -1,7 +1,6 @@
 name: Export bug
 description: Report a PNG, TXT, Print, QR or Litematic export problem.
 title: "[Export] "
-labels: ["export"]
 body:
   - type: markdown
     attributes:
