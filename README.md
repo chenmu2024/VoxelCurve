@@ -189,7 +189,7 @@ Blueprint parameters stay in URL fragments and are not separate crawlable pages.
 Current geometry version:
 
 ```
-GEOMETRY_VERSION = 1
+GEOMETRY_VERSION = 2
 ```
 
 If a geometry change alters occupied blocks for the same inputs, increment the geometry version so saved progress cannot be incorrectly applied to a new blueprint.
