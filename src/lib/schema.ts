@@ -22,6 +22,7 @@ export function softwareSchema(input: {
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
+    '@id': `${input.url}#software`,
     name: input.name,
     url: input.url,
     description: input.description,
@@ -29,6 +30,8 @@ export function softwareSchema(input: {
     operatingSystem: 'Web',
     browserRequirements: 'Requires a modern web browser with JavaScript enabled.',
     isAccessibleForFree: true,
+    publisher: { '@id': 'https://voxelcurve.com/#organization' },
+    isPartOf: { '@id': 'https://voxelcurve.com/#website' },
     offers: {
       '@type': 'Offer',
       price: '0',
@@ -49,16 +52,9 @@ export function articleSchema(input: {
     headline: input.headline,
     url: input.url,
     description: input.description,
-    author: {
-      '@type': 'Organization',
-      name: 'VoxelCurve',
-      url: 'https://voxelcurve.com/'
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'VoxelCurve',
-      url: 'https://voxelcurve.com/'
-    },
+    author: { '@id': 'https://voxelcurve.com/#organization' },
+    publisher: { '@id': 'https://voxelcurve.com/#organization' },
+    isPartOf: { '@id': 'https://voxelcurve.com/#website' },
     mainEntityOfPage: input.url
   };
 }
