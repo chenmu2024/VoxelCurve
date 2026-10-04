@@ -8,9 +8,19 @@ const items = [
   ['/how-to-make-a-circle-in-minecraft', 'Guide']
 ];
 ---
-<header class="site-header"><div class="container nav">
-  <a class="brand" href="/" aria-label="VoxelCurve home"><span class="brand-mark">V</span><span>VoxelCurve</span></a>
-  <nav class="nav-links" aria-label="Primary">
-    {items.map(([href,label]) => <a href={href} aria-current={path===href?'page':undefined}>{label}</a>)}
-  </nav>
-</div></header>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="/" aria-label="VoxelCurve home">
+      <span class="brand-mark">V</span><span>VoxelCurve</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      {items.map(([href,label]) => <a href={href} aria-current={path===href?'page':undefined}>{label}</a>)}
+    </nav>
+    <details class="mobile-menu">
+      <summary aria-label="Open navigation"><span></span><span></span><span></span></summary>
+      <nav aria-label="Mobile primary">
+        {items.map(([href,label]) => <a href={href} aria-current={path===href?'page':undefined}>{label}<span>↗</span></a>)}
+      </nav>
+    </details>
+  </div>
+</header>
