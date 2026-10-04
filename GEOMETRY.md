@@ -272,6 +272,16 @@ Even-width shapes use the phrase `center gap` to avoid implying that one center 
 
 VoxelCurve exports one region named `Main`.
 
+Current file compatibility target:
+
+```
+Litematic Version: 6
+SubVersion: 1
+MinecraftDataVersion: 3700 (Java 1.20.4)
+```
+
+This intentionally follows Litematica's V6 compatibility writer path. Do not pair V6 with a post-1.20.4 DataVersion without revisiting the format version.
+
 ### Circle / Oval
 
 ```
