@@ -16,7 +16,7 @@ const { shape } = Astro.props;
     <div class="field"><label>Build style</label><input data-input="style" type="hidden" value="thin" /><div class="segment-control" role="group" aria-label="Build style"><button type="button" class="segment-option" data-style="thin" aria-pressed="true">Thin</button><button type="button" class="segment-option" data-style="thick" aria-pressed="false">Thick</button><button type="button" class="segment-option" data-style="filled" aria-pressed="false">Filled</button></div></div>
     <div class="field" data-thickness-wrap><label for="thickness">Thickness <small>blocks inward</small></label><input id="thickness" data-input="thickness" type="number" min="1" max="32" value="1" /></div>
     <div class="field"><label for="material">Material <small>optional</small></label><input id="material" data-input="material" type="text" value="Stone Bricks" maxlength="60" /></div>
-    <div class="field"><label>Display</label><div class="toggle-row"><button type="button" class="toggle" data-toggle="grid" aria-pressed="true">Grid</button><button type="button" class="toggle" data-toggle="center" aria-pressed="true">Center</button><button type="button" class="toggle" data-toggle="labels" aria-pressed="true">Labels</button></div></div>
+    <div class="field"><label>Display</label><div class="toggle-row"><button type="button" class="toggle" data-toggle="grid" aria-pressed="true">Grid</button><button type="button" class="toggle" data-toggle="center" aria-pressed="true">Center</button><button type="button" class="toggle" data-toggle="labels" aria-pressed="true">Labels</button>{shape==='dome' && <button type="button" class="toggle" data-toggle="ghost" aria-pressed="true">Ghost layer</button>}</div></div>
     <div class="field"><label>Instructions</label><div class="segment-control" role="group" aria-label="Instruction coordinate mode"><button type="button" class="segment-option" data-instruction-mode="center" aria-pressed="true">Center</button><button type="button" class="segment-option" data-instruction-mode="edge" aria-pressed="false">Edge</button></div></div>
     {shape === 'dome' && <button type="button" class="btn" data-hemisphere>Use hemisphere height</button>}
   </aside>
@@ -31,7 +31,11 @@ const { shape } = Astro.props;
     <div class="stat-grid"><div class="stat"><b data-blocks>0</b><span>Blocks</span></div><div class="stat"><b data-stacks>0</b><span>Stacks + loose</span></div>{shape==='dome' && <><div class="stat"><b data-layer>1</b><span>Layer</span></div><div class="stat"><b data-layer-blocks>0</b><span>Layer blocks</span></div></>}</div>
     <div class="instruction" role="status" aria-live="polite" aria-atomic="true"><strong data-instruction-title>Generating…</strong><span data-instruction-body></span></div>
     <div class="progress" aria-label="Build progress"><i data-progress-bar></i></div><div class="notice"><span data-progress-label aria-live="polite">0% complete</span></div>
-    {shape==='dome' && <div class="notice layer-progress-note" data-layer-progress>Layer 1: 0% complete</div>}
+    {shape==='dome' && <>
+      <div class="notice layer-progress-note" data-layer-progress>Layer 1: 0% complete</div>
+      <div class="notice layer-delta-note" data-layer-delta>Base layer</div>
+      <div class="layer-nav"><button class="btn" type="button" data-layer-prev>← Previous layer</button><button class="btn" type="button" data-layer-next>Next layer →</button></div>
+    </>}
     <div class="builder-actions build-actions"><button class="btn" type="button" data-prev>← Previous</button><button class="btn accent" type="button" data-complete>Complete segment</button><button class="btn" type="button" data-next>Next →</button><button class="btn" type="button" data-undo>Undo</button></div>
     <div class="bulk-actions">
       <button class="btn" type="button" data-complete-row>Complete row</button>
@@ -75,7 +79,7 @@ if (root) {
   let completed = new Set();
   let zoom = 1, panX = 0, panY = 0;
   let pointers = new Map(), dragStart = null, pinchStart = null;
-  const display = { grid:true, center:true, labels:true };
+  const display = { grid:true, center:true, labels:true, ghost:true };
   let instructionMode = 'center';
   const mobileControls = window.matchMedia('(max-width: 800px)');
   const settingsButton = q('[data-settings-toggle]');
@@ -138,6 +142,18 @@ if (root) {
     const activeKeys=new Map();
     steps.forEach(s=>{if(s.layer===layerIdx) activeKeys.set(`${s.row.y}:${s.si}`,s.key)});
     if(display.grid&&cell>=5){ctx.strokeStyle='#eeeeee';ctx.lineWidth=1;for(let x=0;x<=gw;x++){ctx.beginPath();ctx.moveTo(ox+x*cell,oy);ctx.lineTo(ox+x*cell,oy+gh*cell);ctx.stroke()}for(let y=0;y<=gh;y++){ctx.beginPath();ctx.moveTo(ox,oy+y*cell);ctx.lineTo(ox+gw*cell,oy+y*cell);ctx.stroke()}}
+    if(shape==='dome'&&display.ghost&&layerIdx>0){
+      const ghostRows=result.layers[layerIdx-1]?.rows||[];
+      ctx.save();ctx.globalAlpha=.2;ctx.fillStyle='#34d399';
+      for(const row of ghostRows){
+        for(const s of row.spans){
+          for(let x=s.start;x<=s.end;x++){
+            ctx.fillRect(ox+x*cell+Math.min(1,cell*.08),oy+row.y*cell+Math.min(1,cell*.08),Math.max(1,cell-Math.min(2,cell*.16)),Math.max(1,cell-Math.min(2,cell*.16)));
+          }
+        }
+      }
+      ctx.restore();
+    }
     for(const row of rows){
       row.spans.forEach((s,si)=>{
         const key=activeKeys.get(`${row.y}:${si}`); const isDone=key&&completed.has(key); const isCurrent=current&&current.layer===layerIdx&&current.row.y===row.y&&current.si===si;
@@ -169,6 +185,9 @@ if (root) {
       const layerDone=layerSteps.filter(step=>completed.has(step.key)).length;
       const layerPct=layerSteps.length?Math.round(layerDone/layerSteps.length*100):0;
       setText('[data-layer-progress]',`Layer ${currentLayer+1}: ${layerPct}% · ${layerDone}/${layerSteps.length} segments`);
+      const currentCount=result.layers[currentLayer]?.count||0;
+      const previousCount=currentLayer>0?(result.layers[currentLayer-1]?.count||0):null;
+      setText('[data-layer-delta]',previousCount===null?'Base layer':`vs previous layer: ${currentCount-previousCount>=0?'+':''}${currentCount-previousCount} blocks`);
     }
     const volume=result.type==='dome'?result.width*result.depth*result.height:result.width*result.height;
     const blocked=volume>20_000_000||result.blockCount>5_000_000;
@@ -364,6 +383,16 @@ if (root) {
     if(!confirm('Reset all saved progress for this blueprint?'))return;
     completed.clear();stepIndex=0;saveProgress();renderInstruction();
   });
+  function goToLayer(target){
+    if(shape!=='dome')return;
+    target=Math.max(0,Math.min(result.layers.length-1,target));
+    const layerIndexes=steps.map((step,index)=>({step,index})).filter(item=>item.step.layer===target);
+    const firstIncomplete=layerIndexes.find(item=>!completed.has(item.step.key));
+    const chosen=firstIncomplete||layerIndexes[0];
+    if(chosen){stepIndex=chosen.index;saveProgress();renderInstruction()}
+  }
+  q('[data-layer-prev]')?.addEventListener('click',()=>goToLayer(currentLayer-1));
+  q('[data-layer-next]')?.addEventListener('click',()=>goToLayer(currentLayer+1));
   q('[data-share]').addEventListener('click',async()=>{
     const url=updateFragment();
     try{
