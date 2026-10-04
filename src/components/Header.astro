@@ -1,6 +1,16 @@
+---
+const path = Astro.url.pathname;
+const items = [
+  ['/', 'Circle'],
+  ['/minecraft-circle-chart', 'Circle Chart'],
+  ['/minecraft-dome-generator', 'Dome'],
+  ['/minecraft-oval-generator', 'Oval'],
+  ['/how-to-make-a-circle-in-minecraft', 'Guide']
+];
+---
 <header class="site-header"><div class="container nav">
-  <a class="brand" href="/"><span class="brand-mark">V</span><span>VoxelCurve</span></a>
+  <a class="brand" href="/" aria-label="VoxelCurve home"><span class="brand-mark">V</span><span>VoxelCurve</span></a>
   <nav class="nav-links" aria-label="Primary">
-    <a href="/">Circle</a><a href="/minecraft-circle-chart">Circle Chart</a><a href="/minecraft-dome-generator">Dome</a><a href="/minecraft-oval-generator">Oval</a><a href="/how-to-make-a-circle-in-minecraft">Guide</a>
+    {items.map(([href,label]) => <a href={href} aria-current={path===href?'page':undefined}>{label}</a>)}
   </nav>
 </div></header>
