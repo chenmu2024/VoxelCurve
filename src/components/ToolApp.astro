@@ -42,6 +42,7 @@ const { shape } = Astro.props;
     <div class="export-heading"><span>EXPORT</span><small>Share or save this plan</small></div>
     <div class="builder-actions export-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" style="grid-column:1/-1" type="button" data-litematic>.litematic</button></div>
     <div class="notice">Progress is stored only in this browser. Shared links carry blueprint settings, not completion state. Litematic export falls back to Stone when a custom material label is not a recognized block.</div>
+    <div class="action-status" data-action-status role="status" aria-live="polite"></div>
   </aside>
   <section class="print-sheet" data-print-sheet aria-hidden="true">
     <div class="print-brand">VoxelCurve · Build Plan</div>
@@ -200,8 +201,24 @@ if (root) {
     }
   }
 
-  function updateFragment(){ const p=params(); let v=''; if(shape==='circle')v=`c-${p.diameter}-${p.style}-${p.thickness}`; if(shape==='oval')v=`o-${p.width}-${p.height}-${p.style}-${p.thickness}`; if(shape==='dome')v=`d-${p.width}-${p.depth}-${p.height}-${p.style}-${p.thickness}`;history.replaceState(null,'',`${location.pathname}#${v}`);return location.href; }
+  function updateFragment(){ const p=params(); let v=''; if(shape==='circle')v=`c-${p.diameter}-${p.style}-${p.thickness}`; if(shape==='oval')v=`o-${p.width}-${p.height}-${p.style}-${p.thickness}`; if(shape==='dome')v=`d-${p.width}-${p.depth}-${p.height}-${p.style}-${p.thickness}`;history.replaceState(null,'',`${location.pathname}#${v}`);return `https://voxelcurve.com${location.pathname}#${v}`; }
   function parseFragment(){const h=location.hash.slice(1).split('-');if(!h.length)return;try{if(shape==='circle'&&h[0]==='c'){q('[data-input="diameter"]').value=h[1];q('[data-input="style"]').value=h[2];q('[data-input="thickness"]').value=h[3];}if(shape==='oval'&&h[0]==='o'){q('[data-input="width"]').value=h[1];q('[data-input="height"]').value=h[2];q('[data-input="style"]').value=h[3];q('[data-input="thickness"]').value=h[4];}if(shape==='dome'&&h[0]==='d'){q('[data-input="width"]').value=h[1];q('[data-input="depth"]').value=h[2];q('[data-input="height"]').value=h[3];q('[data-input="style"]').value=h[4];q('[data-input="thickness"]').value=h[5];}}catch{}}
+
+  let statusTimer=0;
+  function showStatus(message,kind='ok'){
+    const el=q('[data-action-status]'); if(!el)return;
+    el.textContent=message;
+    el.dataset.kind=kind;
+    clearTimeout(statusTimer);
+    statusTimer=window.setTimeout(()=>{el.textContent='';delete el.dataset.kind},2600);
+  }
+
+  function downloadBlob(blob,filename){
+    const a=document.createElement('a');
+    const url=URL.createObjectURL(blob);
+    a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }
 
   function createPngExportCanvas(){
     const rows=activeRows();
@@ -327,11 +344,49 @@ if (root) {
     if(!confirm('Reset all saved progress for this blueprint?'))return;
     completed.clear();stepIndex=0;saveProgress();renderInstruction();
   });
-  q('[data-share]').addEventListener('click',async()=>{const url=updateFragment();try{await navigator.clipboard.writeText(url);q('[data-share]').textContent='Copied ✓';setTimeout(()=>q('[data-share]').textContent='Copy link',1200)}catch{prompt('Copy this link:',url)}});
-  q('[data-qr]').addEventListener('click',async()=>{const url=updateFragment();const QRCode=(await import('qrcode')).default;const qc=q('[data-qr-canvas]');await QRCode.toCanvas(qc,url,{width:240,margin:1});q('[data-qr-dialog]').showModal()});q('[data-qr-close]').addEventListener('click',()=>q('[data-qr-dialog]').close());
-  q('[data-png]').addEventListener('click',()=>{const exportCanvas=createPngExportCanvas();const a=document.createElement('a');const suffix=shape==='dome'?'-layer-'+(currentLayer+1):'';a.download=`voxelcurve-${shape}${suffix}.png`;a.href=exportCanvas.toDataURL('image/png');a.click()});
-  q('[data-txt]').addEventListener('click',()=>{const blob=new Blob([buildTextPlan(result,text('material','Blocks'))],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`voxelcurve-${shape}-build-plan.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
-  q('[data-litematic]').addEventListener('click',async()=>{const btn=q('[data-litematic]');const old=btn.textContent;btn.textContent='Building file…';btn.disabled=true;try{const {exportLitematic}=await import('../lib/litematic');const raw=text('material','stone').trim().toLowerCase();const aliases={'stone bricks':'stone_bricks','stone brick':'stone_bricks','glass':'glass','quartz':'quartz_block','quartz block':'quartz_block','stone':'stone','cobblestone':'cobblestone','deepslate':'deepslate','smooth stone':'smooth_stone','oak planks':'oak_planks','spruce planks':'spruce_planks','birch planks':'birch_planks','white concrete':'white_concrete','black concrete':'black_concrete','gray concrete':'gray_concrete','light gray concrete':'light_gray_concrete'};const allowed=new Set(['stone','stone_bricks','glass','quartz_block','cobblestone','deepslate','smooth_stone','oak_planks','spruce_planks','birch_planks','white_concrete','black_concrete','gray_concrete','light_gray_concrete']);const normalized=raw.replace(/[^a-z0-9_]/g,'_');const candidate=aliases[raw]||(allowed.has(normalized)?normalized:'');const safe=candidate||'stone';const bytes=exportLitematic(result,`VoxelCurve ${shape}`,`minecraft:${safe||'stone'}`);const blob=new Blob([bytes],{type:'application/octet-stream'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`voxelcurve-${shape}.litematic`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}catch(e){alert(e?.message||'Could not create litematic file.')}finally{btn.textContent=old;btn.disabled=false}});
+  q('[data-share]').addEventListener('click',async()=>{
+    const url=updateFragment();
+    try{
+      await navigator.clipboard.writeText(url);
+      showStatus('Canonical blueprint link copied.');
+    }catch{
+      const value=prompt('Copy this blueprint link:',url);
+      showStatus(value===null?'Copy cancelled.':'Blueprint link ready.','neutral');
+    }
+  });
+  q('[data-qr]').addEventListener('click',async()=>{
+    const btn=q('[data-qr]');const old=btn.textContent;btn.disabled=true;btn.textContent='Creating…';
+    try{
+      const url=updateFragment();
+      const QRCode=(await import('qrcode')).default;
+      const qc=q('[data-qr-canvas]');
+      await QRCode.toCanvas(qc,url,{width:240,margin:1});
+      q('[data-qr-dialog]').showModal();
+      showStatus('QR code created for voxelcurve.com.');
+    }catch{
+      showStatus('Could not create QR code. Try Copy link instead.','error');
+    }finally{btn.disabled=false;btn.textContent=old}
+  });
+  q('[data-qr-close]').addEventListener('click',()=>q('[data-qr-dialog]').close());
+  q('[data-png]').addEventListener('click',()=>{
+    try{
+      const exportCanvas=createPngExportCanvas();
+      const suffix=shape==='dome'?'-layer-'+(currentLayer+1):'';
+      exportCanvas.toBlob(blob=>{
+        if(!blob){showStatus('Could not create PNG.','error');return}
+        downloadBlob(blob,`voxelcurve-${shape}${suffix}.png`);
+        showStatus('PNG blueprint downloaded.');
+      },'image/png');
+    }catch{showStatus('Could not create PNG.','error')}
+  });
+  q('[data-txt]').addEventListener('click',()=>{
+    try{
+      const blob=new Blob([buildTextPlan(result,text('material','Blocks'))],{type:'text/plain;charset=utf-8'});
+      downloadBlob(blob,`voxelcurve-${shape}-build-plan.txt`);
+      showStatus('TXT build plan downloaded.');
+    }catch{showStatus('Could not create TXT plan.','error')}
+  });
+  q('[data-litematic]').addEventListener('click',async()=>{const btn=q('[data-litematic]');const old=btn.textContent;btn.textContent='Building file…';btn.disabled=true;try{const {exportLitematic}=await import('../lib/litematic');const raw=text('material','stone').trim().toLowerCase();const aliases={'stone bricks':'stone_bricks','stone brick':'stone_bricks','glass':'glass','quartz':'quartz_block','quartz block':'quartz_block','stone':'stone','cobblestone':'cobblestone','deepslate':'deepslate','smooth stone':'smooth_stone','oak planks':'oak_planks','spruce planks':'spruce_planks','birch planks':'birch_planks','white concrete':'white_concrete','black concrete':'black_concrete','gray concrete':'gray_concrete','light gray concrete':'light_gray_concrete'};const allowed=new Set(['stone','stone_bricks','glass','quartz_block','cobblestone','deepslate','smooth_stone','oak_planks','spruce_planks','birch_planks','white_concrete','black_concrete','gray_concrete','light_gray_concrete']);const normalized=raw.replace(/[^a-z0-9_]/g,'_');const candidate=aliases[raw]||(allowed.has(normalized)?normalized:'');const safe=candidate||'stone';const bytes=exportLitematic(result,`VoxelCurve ${shape}`,`minecraft:${safe||'stone'}`);const blob=new Blob([bytes],{type:'application/octet-stream'});downloadBlob(blob,`voxelcurve-${shape}.litematic`);showStatus('Litematic file downloaded.')}catch(e){showStatus(e?.message||'Could not create Litematic file.','error')}finally{btn.textContent=old;btn.disabled=false}});
 
   wrap.addEventListener('wheel',(e)=>{e.preventDefault();zoom=Math.max(.25,Math.min(8,zoom*(e.deltaY<0?1.1:.9)));draw()},{passive:false});
   wrap.addEventListener('pointerdown',(e)=>{wrap.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===1)dragStart={x:e.clientX,y:e.clientY,px:panX,py:panY,moved:false};if(pointers.size===2){const a=[...pointers.values()];pinchStart={dist:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),zoom}}});
