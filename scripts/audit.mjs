@@ -89,9 +89,18 @@ if (exists(notFound)) {
 
 const sitemapFiles = fs.readdirSync(dist).filter(name => /^sitemap.*\.xml$/.test(name));
 if (!sitemapFiles.length) errors.push('No sitemap XML generated');
+const sitemapUrls = new Set();
 for (const name of sitemapFiles) {
   const xml = fs.readFileSync(path.join(dist, name), 'utf8');
   if (xml.includes('/404')) errors.push(`404 URL found in ${name}`);
+  for (const match of xml.matchAll(/<loc>(.*?)<\/loc>/g)) sitemapUrls.add(match[1].trim());
+}
+const expectedSitemapUrls = new Set(required.map(url => `https://voxelcurve.com${url === '/' ? '/' : url}`));
+for (const url of expectedSitemapUrls) {
+  if (!sitemapUrls.has(url)) errors.push(`Missing URL from sitemap: ${url}`);
+}
+for (const url of sitemapUrls) {
+  if (!expectedSitemapUrls.has(url)) errors.push(`Unexpected URL in sitemap: ${url}`);
 }
 
 const robots = path.join(dist, 'robots.txt');
