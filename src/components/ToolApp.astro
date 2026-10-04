@@ -45,10 +45,10 @@ const initialTitle = shape==='circle'?'31×31 Circle':shape==='oval'?'31×21 Ova
       <div class="layer-nav"><button class="btn" type="button" data-layer-prev>← Previous layer</button><button class="btn" type="button" data-layer-next>Next layer →</button></div>
       <label class="layer-jump">Go to layer <input type="number" min="1" value="1" data-layer-jump-input /> <span>/ <span data-layer-total>1</span></span></label>
     </>}
-    <div class="builder-actions build-actions"><button class="btn" type="button" data-prev>← Previous segment</button><button class:list={['btn',{accent:shape!=='dome'}]} type="button" data-complete>Complete segment</button><button class="btn" type="button" data-next>Next segment →</button><button class="btn" type="button" data-undo>Undo</button></div>
+    <div class="builder-actions build-actions"><button class="btn" type="button" data-prev>← Previous segment</button>{shape==='dome'?<button class="btn accent" type="button" data-complete-row>Complete row</button>:<button class="btn accent" type="button" data-complete>Complete segment</button>}<button class="btn" type="button" data-next>Next segment →</button><button class="btn" type="button" data-undo>Undo</button></div>
     <div class="layer-nav"><button class="btn" type="button" data-row-prev>← Previous row</button><button class="btn" type="button" data-row-next>Next row →</button></div>
     <div class="bulk-actions">
-      <button class:list={['btn',{accent:shape==='dome'}]} type="button" data-complete-row>Complete row</button>
+      {shape==='dome'?<button class="btn" type="button" data-complete>Complete segment</button>:<button class="btn" type="button" data-complete-row>Complete row</button>}
       {shape==='dome' && <button class="btn" type="button" data-complete-layer>Complete layer</button>}
       <button class="btn danger-quiet" type="button" data-reset-progress>Reset progress</button>
     </div>

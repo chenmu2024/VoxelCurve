@@ -115,6 +115,17 @@ test('mobile layout and build mode expose usable controls without overflow',asyn
   await expect(page.locator('[data-progress-label]')).not.toContainText('0% complete');
   await page.locator('[data-build-mode]').click();
   await expect(page.locator('[data-build-mode]')).toHaveText('Build mode');
+  await openTool(page,'/minecraft-dome-generator');
+  await page.locator('[data-build-mode]').click();
+  const instruction=await page.locator('.instruction').boundingBox();
+  const action=await page.locator('[data-complete-row]').boundingBox();
+  expect(instruction!.y).toBeGreaterThan(0);
+  expect(instruction!.y+instruction!.height).toBeLessThan(action!.y);
+  expect(action!.y+action!.height).toBeLessThanOrEqual(667);
+  await page.locator('[data-complete-row]').click();
+  await expect(page.locator('[data-instruction-title]')).toContainText('Row 2');
+  await page.locator('[data-undo]').click();
+  await expect(page.locator('[data-instruction-title]')).toContainText('Row 1');
 });
 
 test('tap selects a segment while dragging and pinching preserve progress',async({page})=>{
@@ -169,13 +180,15 @@ test('all content pages are readable on mobile and the chart has real HTML data'
 
 
 test('fragment normalization, page anchors, QR Escape and double-click Fit preserve behavior',async({page})=>{
+  await page.emulateMedia({reducedMotion:'reduce'});
   await openTool(page,'/#c-21-thick-1');
   await expect(page).toHaveURL(/#c-21-thick-2$/);
   await page.locator('[data-complete]').click();
   const progress=await page.locator('[data-progress-label]').textContent();
-  await page.evaluate(()=>{location.hash='main-content'});
+  await page.evaluate(()=>new Promise<void>(resolve=>{window.addEventListener('hashchange',()=>resolve(),{once:true});location.hash='main-content'}));
   await expect(page.locator('[data-progress-label]')).toHaveText(progress!);
   await page.locator('[data-qr]').click();
+  await expect(page.locator('[data-qr-dialog]')).toBeVisible();
   await expect(page.locator('[data-qr-link]')).toHaveAttribute('href','https://voxelcurve.com/#c-21-thick-2');
   await page.keyboard.press('Escape');
   await expect(page.locator('[data-qr-dialog]')).not.toBeVisible();

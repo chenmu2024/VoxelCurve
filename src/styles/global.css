@@ -1293,3 +1293,8 @@ body.vc-build-mode .tool-shell .size-warning{
 @media(max-width:800px){
   .tool-shell :is(button,select,input:not([type="hidden"])){min-width:44px;min-height:44px}
 }
+
+@media(max-width:800px){
+  body.vc-build-mode .tool-shell .stats .panel-heading,
+  body.vc-build-mode .tool-shell .stats .stat-grid{display:none}
+}
