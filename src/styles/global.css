@@ -710,3 +710,47 @@ tr:last-child td{border-bottom:0}
 @media(max-width:800px){
   .mobile-menu{display:block}
 }
+
+
+/* ===== Visible polish pass ===== */
+.size-section,.faq-section{background:var(--surface-2)}
+.product-proof b{font-size:11px}
+.product-proof span{font-size:12px}
+.hero-side-note span:last-child{font-size:13px}
+.product-stage .panel-heading>span{font-size:11px}
+.product-stage .notice{line-height:1.55}
+
+.faq details{position:relative}
+.faq summary{
+  list-style:none;
+  position:relative;
+  padding-right:42px
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{
+  content:"+";
+  position:absolute;
+  right:4px;
+  top:50%;
+  transform:translateY(-50%);
+  width:26px;
+  height:26px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line-strong);
+  border-radius:6px;
+  color:var(--muted);
+  font:500 16px/1 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  background:#fff
+}
+.faq details[open] summary::after{
+  content:"−";
+  color:var(--ink)
+}
+.faq details[open] p{
+  animation:faq-in .18s ease-out
+}
+@keyframes faq-in{
+  from{opacity:0;transform:translateY(-3px)}
+  to{opacity:1;transform:translateY(0)}
+}
