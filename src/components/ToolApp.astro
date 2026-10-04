@@ -66,6 +66,7 @@ const { shape } = Astro.props;
 import { generateCircle, generateOval, generateDome } from '../lib/geometry';
 import { buildTextPlan, rowInstruction } from '../lib/buildPlan';
 import { canonicalBlueprintUrl, parseBlueprintFragment, serializeBlueprintState } from '../lib/state';
+import { decodeProgress, encodeProgress } from '../lib/progress';
 
 const root = document.querySelector('[data-tool]');
 if (root) {
@@ -118,8 +119,23 @@ if (root) {
     return generateDome(p.width,p.depth,p.height,p.style,p.thickness);
   }
   function stateKey(){ const p=params(); return `vc-progress-v${result.geometryVersion}-${JSON.stringify(p)}`; }
-  function saveProgress(){ try{localStorage.setItem(stateKey(),JSON.stringify({completed:[...completed],stepIndex}));}catch{} }
-  function loadProgress(){ completed=new Set();stepIndex=0;try{const raw=localStorage.getItem(stateKey());if(raw){const s=JSON.parse(raw);completed=new Set(s.completed||[]);stepIndex=Math.min(s.stepIndex||0,Math.max(0,steps.length-1));}}catch{} }
+  function saveProgress(){
+    try{
+      localStorage.setItem(stateKey(),encodeProgress(completed,steps,stepIndex));
+    }catch{
+      showStatus('Build progress could not be saved in this browser.','neutral');
+    }
+  }
+  function loadProgress(){
+    try{
+      const restored=decodeProgress(localStorage.getItem(stateKey()),steps);
+      completed=restored.completed;
+      stepIndex=restored.stepIndex;
+    }catch{
+      completed=new Set();
+      stepIndex=0;
+    }
+  }
 
   function createSteps(){
     const out=[];
