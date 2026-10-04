@@ -181,19 +181,3 @@ export function generateDome(width: number, depth: number, height: number, style
     geometryVersion: GEOMETRY_VERSION
   };
 }
-
-export function resultToCells(result: ShapeResult): Array<{x:number;y:number;z:number}> {
-  const cells: Array<{x:number;y:number;z:number}> = [];
-  if (result.type === 'dome') {
-    for (const layer of result.layers) {
-      for (const row of layer.rows) {
-        for (const s of row.spans) for (let x=s.start; x<=s.end; x++) cells.push({x, y: layer.index, z: row.y});
-      }
-    }
-  } else {
-    for (const row of result.rows) {
-      for (const s of row.spans) for (let x=s.start; x<=s.end; x++) cells.push({x, y:0, z:row.y});
-    }
-  }
-  return cells;
-}
