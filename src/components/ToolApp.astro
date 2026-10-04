@@ -9,6 +9,7 @@ const { shape } = Astro.props;
   </div>
   <aside class="panel controls" aria-label="Generator controls">
     <div class="panel-heading"><p class="panel-title">01 / Controls</p><span>Shape setup</span></div>
+    <button class="mobile-settings-toggle" type="button" data-settings-toggle aria-expanded="false"><span>Shape settings</span><span data-settings-icon>+</span></button>
     {shape === 'circle' && <div class="field"><label for="diameter">Diameter <small>3–512 blocks</small></label><input id="diameter" data-input="diameter" type="number" min="3" max="512" value="31" /><div class="preset-row" style="margin-top:8px">{[7,9,11,15,21,31,41,51,64,100].map(n=><button class="chip" type="button" data-preset={n}>{n}</button>)}</div></div>}
     {shape === 'oval' && <><div class="field"><label for="width">Width <small>3–512</small></label><input id="width" data-input="width" type="number" min="3" max="512" value="31" /></div><div class="field"><label for="height">Height <small>3–512</small></label><input id="height" data-input="height" type="number" min="3" max="512" value="21" /></div></>}
     {shape === 'dome' && <><div class="field"><label for="width">Width <small>3–256</small></label><input id="width" data-input="width" type="number" min="3" max="256" value="31" /></div><div class="field"><label for="depth">Depth <small>3–256</small></label><input id="depth" data-input="depth" type="number" min="3" max="256" value="31" /></div><div class="field"><label for="height">Height <small>2–256</small></label><input id="height" data-input="height" type="number" min="2" max="256" value="16" /></div></>}
@@ -60,6 +61,18 @@ if (root) {
   let pointers = new Map(), dragStart = null, pinchStart = null;
   const display = { grid:true, center:true, labels:true };
   let instructionMode = 'center';
+  const mobileControls = window.matchMedia('(max-width: 800px)');
+  const settingsButton = q('[data-settings-toggle]');
+  const setMobileControlsState = (collapsed) => {
+    root.querySelector('.controls')?.classList.toggle('mobile-collapsed', collapsed);
+    if(settingsButton){
+      settingsButton.setAttribute('aria-expanded', String(!collapsed));
+      const icon=settingsButton.querySelector('[data-settings-icon]');
+      if(icon) icon.textContent=collapsed?'+':'−';
+    }
+  };
+  if(mobileControls.matches) setMobileControlsState(true);
+
 
   const num = (name, fallback) => Number(q(`[data-input="${name}"]`)?.value ?? fallback);
   const text = (name, fallback='') => String(q(`[data-input="${name}"]`)?.value ?? fallback);
@@ -218,7 +231,9 @@ if (root) {
     return out;
   }
 
-  qa('[data-input]').filter(el=>el.getAttribute('type')!=='hidden').forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>regenerate(true)));
+  settingsButton?.addEventListener('click',()=>setMobileControlsState(!root.querySelector('.controls')?.classList.contains('mobile-collapsed')));
+  mobileControls.addEventListener?.('change',(event)=>setMobileControlsState(event.matches));
+    qa('[data-input]').filter(el=>el.getAttribute('type')!=='hidden').forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>regenerate(true)));
   qa('[data-style]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="style"]').value=el.dataset.style;regenerate(false)}));
   qa('[data-preset]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="diameter"]').value=el.dataset.preset;regenerate(true)}));
   qa('[data-toggle]').forEach(el=>el.addEventListener('click',()=>{const k=el.dataset.toggle;display[k]=!display[k];el.setAttribute('aria-pressed',String(display[k]));draw()}));
