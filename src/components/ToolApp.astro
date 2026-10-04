@@ -82,7 +82,8 @@ if (root) {
   function params(){
     const rawStyle=text('style','thin');
     const style=['thin','thick','filled'].includes(rawStyle)?rawStyle:'thin';
-    const thickness=clamp(num('thickness',1),1,32);
+    const rawThickness=clamp(num('thickness',1),1,32);
+    const thickness=style==='thin'||style==='filled'?1:Math.max(2,rawThickness);
     if(shape==='circle') return {shape, diameter:clamp(num('diameter',31),3,512), style, thickness};
     if(shape==='oval') return {shape, width:clamp(num('width',31),3,512), height:clamp(num('height',21),3,512), style, thickness};
     return {shape, width:clamp(num('width',31),3,256), depth:clamp(num('depth',31),3,256), height:clamp(num('height',16),2,256), style, thickness};
@@ -252,7 +253,16 @@ if (root) {
   settingsButton?.addEventListener('click',()=>setMobileControlsState(!root.querySelector('.controls')?.classList.contains('mobile-collapsed')));
   mobileControls.addEventListener?.('change',(event)=>setMobileControlsState(event.matches));
     qa('[data-input]').filter(el=>el.getAttribute('type')!=='hidden').forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>regenerate(true)));
-  qa('[data-style]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="style"]').value=el.dataset.style;regenerate(false)}));
+  qa('[data-style]').forEach(el=>el.addEventListener('click',()=>{
+    const style=el.dataset.style;
+    q('[data-input="style"]').value=style;
+    const thickness=q('[data-input="thickness"]');
+    if(thickness){
+      if(style==='thin'||style==='filled') thickness.value='1';
+      if(style==='thick'&&Number(thickness.value)<2) thickness.value='2';
+    }
+    regenerate(false);
+  }));
   qa('[data-preset]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="diameter"]').value=el.dataset.preset;regenerate(true)}));
   qa('[data-toggle]').forEach(el=>el.addEventListener('click',()=>{const k=el.dataset.toggle;display[k]=!display[k];el.setAttribute('aria-pressed',String(display[k]));draw()}));
   qa('[data-instruction-mode]').forEach(el=>el.addEventListener('click',()=>{instructionMode=el.dataset.instructionMode;qa('[data-instruction-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn===el)));renderInstruction()}));
