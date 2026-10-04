@@ -87,6 +87,7 @@ src/
 │   ├── progress.ts
 │   ├── schema.ts
 │   ├── state.ts
+│   ├── svg.ts
 │   └── world.ts
 ├── pages/
 └── styles/
@@ -171,11 +172,15 @@ NODE_VERSION: 22
 
 GitHub `main` deploys automatically through Cloudflare Pages.
 
-The Pages hostname and `www` hostname redirect to:
+Canonical host is:
 
 ```
 https://voxelcurve.com
 ```
+
+**Important:** Cloudflare Pages `_redirects` does not support domain-level redirects. Configure the `pages.dev` and `www` host redirects with **Cloudflare Bulk Redirects**. See `CLOUDFLARE.md`.
+
+The repository keeps `X-Robots-Tag: noindex` on the `pages.dev` production and preview hosts as a search-indexing fallback.
 
 ## Canonical SEO pages
 
