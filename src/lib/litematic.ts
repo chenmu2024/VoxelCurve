@@ -1,6 +1,10 @@
 import { gzipSync } from 'fflate';
 import type { ShapeResult } from './geometry';
 
+export const LITEMATIC_FORMAT_VERSION = 6;
+export const LITEMATIC_SUB_VERSION = 1;
+export const LITEMATIC_MINECRAFT_DATA_VERSION = 3700; // Minecraft Java 1.20.4 compatibility path
+
 class NbtWriter {
   chunks: Uint8Array[] = [];
   push(bytes: Uint8Array) { this.chunks.push(bytes); }
@@ -72,9 +76,9 @@ export function exportLitematic(result: ShapeResult, name='VoxelCurve Build', bl
   const now=BigInt(Date.now());
   const w=new NbtWriter();
   w.u8(10); w.str('');
-  w.tagInt('Version',6);
-  w.tagInt('SubVersion',1);
-  w.tagInt('MinecraftDataVersion',3953);
+  w.tagInt('Version',LITEMATIC_FORMAT_VERSION);
+  w.tagInt('SubVersion',LITEMATIC_SUB_VERSION);
+  w.tagInt('MinecraftDataVersion',LITEMATIC_MINECRAFT_DATA_VERSION);
   w.tagCompound('Metadata',()=>{
     w.tagString('Name',name);
     w.tagString('Author','VoxelCurve');
@@ -83,7 +87,7 @@ export function exportLitematic(result: ShapeResult, name='VoxelCurve Build', bl
     w.tagLong('TimeCreated',now);
     w.tagLong('TimeModified',now);
     w.tagInt('TotalBlocks',result.blockCount);
-    w.tagLong('TotalVolume',BigInt(sx*sy*sz));
+    w.tagInt('TotalVolume',sx*sy*sz);
     w.tagCompound('EnclosingSize',()=>{w.tagInt('x',sx);w.tagInt('y',sy);w.tagInt('z',sz);});
   });
   w.tagCompound('Regions',()=>{
