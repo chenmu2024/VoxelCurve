@@ -21,6 +21,7 @@ Core tools:
 - Share URL + QR
 - progressive screen Wake Lock during build mode
 - PNG export
+- SVG vector export
 - Printable build plan
 - TXT guided build plan
 - `.litematic` export
