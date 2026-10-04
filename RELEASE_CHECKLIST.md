@@ -143,6 +143,8 @@ Verify:
 - [ ] no horizontal page overflow;
 - [ ] 44px touch targets;
 - [ ] QR dialog fits;
+- [ ] Keep screen awake appears only on supported browsers;
+- [ ] Wake Lock releases/reacquires correctly when switching apps;
 - [ ] large Dome layer controls remain usable.
 
 ## 8. Desktop browser smoke test
