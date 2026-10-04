@@ -36,9 +36,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,su
 .brand-mark{width:30px;height:30px;border-radius:7px;background:var(--dark);display:grid;place-items:center;color:var(--accent);font-weight:750}
 .nav-links{display:flex;align-items:center;gap:24px;color:#5a5a5a;font-size:14px}
 .nav-links a{position:relative;padding:20px 0}
-.nav-links a:hover{color:var(--ink)}
+.nav-links a:hover,.nav-links a[aria-current="page"]{color:var(--ink)}
 .nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:14px;height:1px;background:var(--ink);transition:right .18s ease}
-.nav-links a:hover::after{right:0}
+.nav-links a:hover::after,.nav-links a[aria-current="page"]::after{right:0}
 
 /* Hero */
 .hero{padding:42px 0 20px}
