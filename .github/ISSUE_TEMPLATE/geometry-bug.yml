@@ -1,0 +1,75 @@
+name: Geometry bug
+description: Report a circle, oval or dome geometry result that appears incorrect.
+title: "[Geometry] "
+labels: ["geometry"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a reproducible geometry issue. Do not include personal or confidential information.
+  - type: dropdown
+    id: shape
+    attributes:
+      label: Shape
+      options:
+        - Circle
+        - Oval
+        - Dome
+    validations:
+      required: true
+  - type: input
+    id: dimensions
+    attributes:
+      label: Dimensions
+      description: Examples: 31 diameter, 31×21, or 31×31×16.
+      placeholder: "31×31"
+    validations:
+      required: true
+  - type: dropdown
+    id: style
+    attributes:
+      label: Build style
+      options:
+        - Thin
+        - Thick
+        - Filled
+    validations:
+      required: true
+  - type: input
+    id: thickness
+    attributes:
+      label: Thickness
+      description: Enter the thickness if Thick is selected.
+      placeholder: "2"
+  - type: input
+    id: location
+    attributes:
+      label: Affected row / layer
+      description: If known, identify the row, layer or segment where the geometry looks wrong.
+      placeholder: "Layer 8, Row 12"
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      description: Describe what you expected to see.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Describe what VoxelCurve generated instead.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: "Chrome 151 on Windows 11"
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshot or comparison
+      description: Drag screenshots here or link a comparison if useful.
