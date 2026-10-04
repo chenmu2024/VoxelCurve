@@ -6,6 +6,34 @@ import { gunzipSync } from 'fflate';
 
 function cells2d(r:any){const s=new Set<string>();for(const row of r.rows)for(const span of row.spans)for(let x=span.start;x<=span.end;x++)s.add(`${x},${row.y}`);return s}
 
+function readBlockStates(raw:Uint8Array){
+  const needle=new TextEncoder().encode('BlockStates');
+  let offset=-1;
+  outer: for(let i=0;i<=raw.length-needle.length;i++){
+    for(let j=0;j<needle.length;j++) if(raw[i+j]!==needle[j]) continue outer;
+    offset=i+needle.length;break;
+  }
+  if(offset<0) throw new Error('BlockStates not found');
+  const view=new DataView(raw.buffer,raw.byteOffset,raw.byteLength);
+  const len=view.getInt32(offset,false);
+  const longs:bigint[]=[];
+  let p=offset+4;
+  for(let i=0;i<len;i++,p+=8) longs.push(view.getBigInt64(p,false));
+  return longs;
+}
+
+function countPaletteIndexOne(longs:bigint[], volume:number, bitsPerEntry=2){
+  let count=0;
+  for(let index=0;index<volume;index++){
+    const bitIndex=index*bitsPerEntry;
+    const li=Math.floor(bitIndex/64);
+    const shift=BigInt(bitIndex%64);
+    const value=(BigInt.asUintN(64,longs[li])>>shift)&3n;
+    if(value===1n) count++;
+  }
+  return count;
+}
+
 describe('geometry',()=>{
   it('locks common community-compatible circle counts',()=>{
     expect(generateCircle(11,'thin',1).blockCount).toBe(28);
@@ -62,7 +90,8 @@ describe('geometry',()=>{
     expect(plan).toContain('Layer 1');
   });
   it('litematic export is gzipped NBT with expected metadata',()=>{
-    const bytes=exportLitematic(generateCircle(11,'thin',1),'VoxelCurve Test','minecraft:stone');
+    const circle=generateCircle(11,'thin',1);
+    const bytes=exportLitematic(circle,'VoxelCurve Test','minecraft:stone');
     expect(bytes[0]).toBe(0x1f);
     expect(bytes[1]).toBe(0x8b);
     const raw=gunzipSync(bytes);
@@ -70,5 +99,13 @@ describe('geometry',()=>{
     expect(text).toContain('VoxelCurve Test');
     expect(text).toContain('TotalBlocks');
     expect(text).toContain('minecraft:stone');
+    const states=readBlockStates(raw);
+    expect(countPaletteIndexOne(states,circle.width*circle.height)).toBe(circle.blockCount);
+  });
+  it('dome litematic palette count matches geometry block count',()=>{
+    const dome=generateDome(21,21,11,'thin',1);
+    const raw=gunzipSync(exportLitematic(dome,'VoxelCurve Dome Test','minecraft:stone'));
+    const states=readBlockStates(raw);
+    expect(countPaletteIndexOne(states,dome.width*dome.depth*dome.height)).toBe(dome.blockCount);
   });
 });
