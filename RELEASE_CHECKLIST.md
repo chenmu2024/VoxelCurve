@@ -166,7 +166,13 @@ Check:
 - [ ] Edge
 - [ ] Safari when available
 
-## 9. Cloudflare / domain
+## 9. Repository security
+
+- [ ] GitHub Settings → Security → Private vulnerability reporting is enabled, or another private security-reporting channel is documented.
+- [ ] Public Issue templates are available for Geometry / Export / Browser bugs.
+- [ ] Do not use public Issues for exploit details.
+
+## 10. Cloudflare / domain
 
 - [ ] `https://voxelcurve.com` loads over HTTPS
 - [ ] Cloudflare Bulk Redirect: `www.voxelcurve.com/*` → `https://voxelcurve.com/:splat` with 301
@@ -178,7 +184,7 @@ Check:
 - [ ] Litematic dynamic import works under CSP
 - [ ] static hashed assets receive immutable cache headers
 
-## 10. Search
+## 11. Search
 
 - [ ] `https://voxelcurve.com/sitemap.xml` returns 200
 - [ ] `https://voxelcurve.com/robots.txt` returns 200
@@ -192,14 +198,14 @@ Check:
 
 Do not submit fragment states as URLs.
 
-## 11. Social sharing
+## 12. Social sharing
 
 - [ ] `og.png` is 1200×630
 - [ ] shared homepage shows VoxelCurve preview
 - [ ] Copy Link always uses `voxelcurve.com`
 - [ ] QR always encodes `voxelcurve.com`
 
-## 12. Performance
+## 13. Performance
 
 Automated bundle budgets are only a guardrail.
 
@@ -218,7 +224,7 @@ Target lab scores:
 
 Treat field Core Web Vitals as the real long-term signal.
 
-## 13. Monitoring cadence
+## 14. Monitoring cadence
 
 After the release is stable:
 
