@@ -14,7 +14,7 @@ class NbtWriter {
   tagString(name:string,v:string){ this.tag(8,name,()=>this.str(v)); }
   tagCompound(name:string,fn:()=>void){ this.tag(10,name,()=>{ fn(); this.u8(0); }); }
   tagList(name:string,childType:number,length:number,write:()=>void){ this.tag(9,name,()=>{ this.u8(childType); this.i32(length); write(); }); }
-  tagLongArray(name:string,values:bigint[]){ this.tag(12,name,()=>{ this.i32(values.length); for(const v of values)this.i64(v); }); }
+  tagLongArray(name:string,values:bigint[]){ this.tag(12,name,()=>{ this.i32(values.length); const b=new Uint8Array(values.length*8); const view=new DataView(b.buffer); for(let i=0;i<values.length;i++) view.setBigInt64(i*8,BigInt.asIntN(64,values[i]),false); this.push(b); }); }
   bytes(){ const n=this.chunks.reduce((s,c)=>s+c.length,0); const out=new Uint8Array(n); let o=0; for(const c of this.chunks){out.set(c,o);o+=c.length;} return out; }
 }
 
@@ -25,7 +25,10 @@ function packResultPalette(result: ShapeResult, bitsPerEntry=2): bigint[] {
   const volume=sx*sy*sz;
 
   if(volume>20_000_000) {
-    throw new Error('Structure is too large for browser export. Reduce its dimensions.');
+    throw new Error('Structure bounding volume is too large for browser Litematic export. Reduce its dimensions.');
+  }
+  if(result.blockCount>5_000_000) {
+    throw new Error('Structure contains more than 5,000,000 blocks. Reduce its dimensions or use a hollow build before exporting Litematic.');
   }
 
   const totalBits=volume*bitsPerEntry;
