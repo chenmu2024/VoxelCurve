@@ -22,22 +22,22 @@ const { shape } = Astro.props;
   </aside>
 
   <section class="panel canvas-panel" aria-label="Blueprint">
-    <div class="canvas-toolbar"><div class="blueprint-heading"><span>02 / BLUEPRINT</span><strong data-blueprint-title>Blueprint</strong></div><div class="actions"><button class="btn" type="button" data-fit>Fit</button><button class="btn" type="button" data-zoom-out>−</button><button class="btn" type="button" data-zoom-in>+</button><button class="btn" type="button" data-print>Print</button></div></div>
-    <div class="canvas-wrap" data-canvas-wrap><canvas data-canvas aria-label="Generated block blueprint"></canvas></div>
+    <div class="canvas-toolbar"><div class="blueprint-heading"><span>02 / BLUEPRINT</span><strong data-blueprint-title>Blueprint</strong></div><div class="actions"><button class="btn" type="button" data-fit>Fit</button><button class="btn" type="button" data-zoom-out aria-label="Zoom out">−</button><button class="btn" type="button" data-zoom-in aria-label="Zoom in">+</button><button class="btn" type="button" data-print>Print</button></div></div>
+    <div class="canvas-wrap" data-canvas-wrap><canvas data-canvas aria-label="Generated block blueprint">Generated block blueprint. Use the guided build instructions beside the canvas for an accessible text version.</canvas></div>
   </section>
 
   <aside class="panel stats">
     <div class="panel-heading"><p class="panel-title">03 / Build</p><span>Guided placement</span></div>
     <div class="stat-grid"><div class="stat"><b data-blocks>0</b><span>Blocks</span></div><div class="stat"><b data-stacks>0</b><span>Stacks + loose</span></div>{shape==='dome' && <><div class="stat"><b data-layer>1</b><span>Layer</span></div><div class="stat"><b data-layer-blocks>0</b><span>Layer blocks</span></div></>}</div>
-    <div class="instruction"><strong data-instruction-title>Generating…</strong><span data-instruction-body></span></div>
-    <div class="progress" aria-label="Build progress"><i data-progress-bar></i></div><div class="notice"><span data-progress-label>0% complete</span></div>
+    <div class="instruction" role="status" aria-live="polite" aria-atomic="true"><strong data-instruction-title>Generating…</strong><span data-instruction-body></span></div>
+    <div class="progress" aria-label="Build progress"><i data-progress-bar></i></div><div class="notice"><span data-progress-label aria-live="polite">0% complete</span></div>
     <div class="builder-actions build-actions"><button class="btn" type="button" data-prev>← Previous</button><button class="btn accent" type="button" data-complete>Complete</button><button class="btn" type="button" data-next>Next →</button><button class="btn" type="button" data-undo>Undo</button></div>
     <div class="nav-separator"></div>
     <div class="export-heading"><span>EXPORT</span><small>Share or save this plan</small></div>
     <div class="builder-actions export-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" style="grid-column:1/-1" type="button" data-litematic>.litematic</button></div>
     <div class="notice">Progress is stored only in this browser. Shared links carry blueprint settings, not completion state.</div>
   </aside>
-  <dialog class="qr-dialog" data-qr-dialog><button class="btn" style="float:right" data-qr-close>Close</button><h3>Send blueprint to phone</h3><canvas data-qr-canvas></canvas><p class="notice">Scan to open the same dimensions on your phone.</p></dialog>
+  <dialog class="qr-dialog" data-qr-dialog aria-labelledby="qr-dialog-title"><button class="btn" style="float:right" data-qr-close aria-label="Close QR dialog">Close</button><h3 id="qr-dialog-title">Send blueprint to phone</h3><canvas data-qr-canvas></canvas><p class="notice">Scan to open the same dimensions on your phone.</p></dialog>
 </section>
 
 <script>
