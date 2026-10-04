@@ -31,6 +31,7 @@ const { shape } = Astro.props;
     <div class="stat-grid"><div class="stat"><b data-blocks>0</b><span>Blocks</span></div><div class="stat"><b data-stacks>0</b><span>Stacks + loose</span></div>{shape==='dome' && <><div class="stat"><b data-layer>1</b><span>Layer</span></div><div class="stat"><b data-layer-blocks>0</b><span>Layer blocks</span></div></>}</div>
     <div class="instruction" role="status" aria-live="polite" aria-atomic="true"><strong data-instruction-title>Generating…</strong><span data-instruction-body></span></div>
     <div class="progress" aria-label="Build progress"><i data-progress-bar></i></div><div class="notice"><span data-progress-label aria-live="polite">0% complete</span></div>
+    {shape==='dome' && <div class="notice layer-progress-note" data-layer-progress>Layer 1: 0% complete</div>}
     <div class="builder-actions build-actions"><button class="btn" type="button" data-prev>← Previous</button><button class="btn accent" type="button" data-complete>Complete</button><button class="btn" type="button" data-next>Next →</button><button class="btn" type="button" data-undo>Undo</button></div>
     <div class="nav-separator"></div>
     <div class="export-heading"><span>EXPORT</span><small>Share or save this plan</small></div>
@@ -146,7 +147,14 @@ if (root) {
     const body=`${primary}. ${gap>0?`Then skip ${gap} block${gap===1?'':'s'}.`:''}`;
     setText('[data-instruction-title]',title);setText('[data-instruction-body]',body);
     const done=completed.size; const pct=steps.length?Math.round(done/steps.length*100):0; q('[data-progress-bar]').style.width=`${pct}%`;setText('[data-progress-label]',`${pct}% complete · ${done}/${steps.length} segments`);
-    if(shape==='dome'){setText('[data-layer]',`${currentLayer+1}/${result.layers.length}`);setText('[data-layer-blocks]',result.layers[currentLayer]?.count||0)}
+    if(shape==='dome'){
+      setText('[data-layer]',`${currentLayer+1}/${result.layers.length}`);
+      setText('[data-layer-blocks]',result.layers[currentLayer]?.count||0);
+      const layerSteps=steps.filter(step=>step.layer===currentLayer);
+      const layerDone=layerSteps.filter(step=>completed.has(step.key)).length;
+      const layerPct=layerSteps.length?Math.round(layerDone/layerSteps.length*100):0;
+      setText('[data-layer-progress]',`Layer ${currentLayer+1}: ${layerPct}% · ${layerDone}/${layerSteps.length} segments`);
+    }
     q('[data-complete]').textContent=completed.has(s.key)?'Completed ✓':'Complete';
     draw();
   }
