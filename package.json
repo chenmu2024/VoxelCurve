@@ -15,6 +15,7 @@
     "check": "astro check && tsc --noEmit",
     "test:browser": "playwright test",
     "audit": "node scripts/audit.mjs",
+    "release:check": "node scripts/release-check.mjs",
     "security:audit": "npm audit --omit=dev --audit-level=moderate"
   },
   "dependencies": {

@@ -1,0 +1,2673 @@
+# VoxelCurve.com Minecraft 建筑几何工具站最终完整建设方案
+
+**正式域名：** `VoxelCurve.com`  
+**品牌名称：** `VoxelCurve`  
+**项目类型：** 英文 SEO 工具流量站  
+**主要市场：** 全球英文搜索用户  
+**商业模式：** 免费工具 + Organic Search + 后期 AdSense  
+**建设模式：** 一次完整开发 → 上线 → 一次性推广 → 低频观察 → 开发下一个网站  
+**成本目标：** 除域名外，固定运行成本尽量接近 $0
+
+---
+
+# 1. 最终项目定义
+
+VoxelCurve 不做 Minecraft 综合内容站。
+
+网站只解决：
+
+> **Minecraft 建筑中的曲线和几何形状如何转换成可以真正施工的方块蓝图。**
+
+核心产品不是：
+
+> Circle 图片生成器。
+
+而是：
+
+> **Guided Block Building Tool**
+
+用户输入尺寸后，不仅得到 Blueprint，还应该知道：
+
+- 从哪里开始；
+- 当前这一行放几个方块；
+- 方块位于什么位置；
+- 中间空多少格；
+- Dome 当前是哪一层；
+- 已经完成多少；
+- 还需要多少材料。
+
+一句话产品定位：
+
+> **Turn Minecraft curves into exact, guided block-by-block building plans.**
+
+---
+
+# 2. 为什么品牌叫 VoxelCurve
+
+品牌拆解：
+
+**Voxel**
+
+代表体素、方块化三维世界，与 Minecraft 建筑场景自然相关，但不直接把 Minecraft 当品牌名称。
+
+**Curve**
+
+对应网站最核心的问题：
+
+- Circle
+- Oval
+- Arc
+- Dome profile
+
+同时比 `Circle` 更宽，不会把整个网站永久锁死在单一圆形工具。
+
+正式品牌统一写作：
+
+> **VoxelCurve**
+
+不要：
+
+`Voxel Curve`
+
+也不要：
+
+`VoxelCurve Lab`
+
+---
+
+# 3. 正式域名规范
+
+唯一正式域名：
+
+```text
+https://voxelcurve.com/
+```
+
+Canonical Host：
+
+```text
+voxelcurve.com
+```
+
+如果用户访问：
+
+```text
+www.voxelcurve.com
+```
+
+统一：
+
+**301 → voxelcurve.com**
+
+所有：
+
+- Canonical
+- Sitemap
+- Open Graph
+- Schema
+- RSS（如果未来存在）
+- 分享链接
+
+统一使用：
+
+```text
+https://voxelcurve.com
+```
+
+不允许 www/non-www 混用。
+
+---
+
+# 4. GitHub 与 Cloudflare 命名
+
+建议 GitHub 新仓库：
+
+```text
+VoxelCurve
+```
+
+或者：
+
+```text
+voxelcurve
+```
+
+Cloudflare Pages Project：
+
+```text
+voxelcurve
+```
+
+部署流程：
+
+```text
+GitHub main
+↓
+Cloudflare Pages
+↓
+voxelcurve.com
+```
+
+后续代码只维护这一套。
+
+---
+
+# 5. 网站主题边界
+
+VoxelCurve 只围绕：
+
+> **Minecraft Building Geometry**
+
+建设内容。
+
+允许：
+
+- Circle
+- Oval
+- Dome
+- Circle Chart
+- Building Guide
+- Blueprint
+- Guided Build
+- Material Count
+- Litematic
+
+禁止扩展：
+
+- Minecraft News
+- Creaking
+- Mobs
+- Seeds
+- Mods
+- Skins
+- Servers
+- Recipes
+- Enchantments
+- Wiki
+- Texture Packs
+- Download
+- 游戏攻略大全
+
+即使这些关键词有搜索量，也不放进本站。
+
+---
+
+# 6. 最终产品范围
+
+正式建设：
+
+### Circle Generator
+
+整个网站最重要的产品与 SEO 页面。
+
+### Oval Generator
+
+复用 Circle Engine，增加新的搜索入口。
+
+### Dome Generator
+
+第二重要工具页面，也是目前最漂亮的低 KD 长尾机会之一。
+
+### Circle Chart
+
+承接查表、模板、Diagram 意图。
+
+### Circle Building Guide
+
+承接 How-to 搜索意图。
+
+### Guided Build Navigator
+
+网站真正的产品差异化。
+
+### Materials
+
+计算 blocks、stacks 和 loose blocks。
+
+### Build Progress
+
+本机保存施工状态。
+
+### Share URL
+
+可分享 Blueprint。
+
+### QR
+
+电脑发送到手机。
+
+### PNG Export
+
+导出 Blueprint。
+
+### TXT Build Plan
+
+导出行、段、层施工说明。
+
+### `.litematic`
+
+唯一正式支持的 Minecraft 专用结构格式。
+
+---
+
+# 7. Sphere 最终处理
+
+当前项目没有与 Circle/Dome 同质量的 Sphere Volume/KD 数据。
+
+而 Sphere 又会显著增加：
+
+- 3D shell 算法；
+- layer complexity；
+- 测试；
+- Litematic 验证；
+- 移动端性能工作。
+
+因此最终方案中：
+
+> **Sphere 暂不进入 VoxelCurve 正式上线范围。**
+
+不是留下一个：
+
+“Coming Soon”。
+
+也不是空页面。
+
+网站中：
+
+**完全不创建 `/minecraft-sphere-generator`。**
+
+如果未来机会雷达重新发现 Sphere 有明确数据，再把它作为一个新机会单独判断。
+
+这不会影响当前网站完成度。
+
+---
+
+# 8. 明确不做的功能
+
+为了保持“做完就走”的模式，以下全部删除：
+
+- 3D Preview
+- Three.js
+- PWA
+- Wake Lock
+- World Coordinates
+- SVG 单独导出
+- CSV
+- `.schem`
+- `.mcstructure`
+- `.mcfunction`
+- 云同步
+- 用户账号
+- 数据库
+- AI
+- Heart Generator
+- Star Generator
+- Cone
+- Torus
+- Spiral
+- Cylinder
+- Sphere
+- 完整 Block Database
+- 跨设备 Progress Sync
+- Progress Import/Export
+
+没有“以后慢慢补”的默认计划。
+
+---
+
+# 9. 最终网站架构
+
+正式页面：
+
+```text
+/
+├── /minecraft-circle-chart
+├── /how-to-make-a-circle-in-minecraft
+├── /minecraft-dome-generator
+├── /minecraft-oval-generator
+├── /about
+├── /contact
+├── /privacy
+├── /terms
+└── /disclaimer
+```
+
+技术文件：
+
+```text
+/robots.txt
+/sitemap.xml
+/manifest.webmanifest  ← 不需要
+```
+
+由于已经取消 PWA：
+
+**不需要 manifest。**
+
+---
+
+# 10. Sitemap 最终内容
+
+只包含：
+
+```text
+https://voxelcurve.com/
+https://voxelcurve.com/minecraft-circle-chart
+https://voxelcurve.com/how-to-make-a-circle-in-minecraft
+https://voxelcurve.com/minecraft-dome-generator
+https://voxelcurve.com/minecraft-oval-generator
+https://voxelcurve.com/about
+https://voxelcurve.com/contact
+https://voxelcurve.com/privacy
+https://voxelcurve.com/terms
+https://voxelcurve.com/disclaimer
+```
+
+不包含：
+
+- URL fragment
+- Generator 状态
+- Diameter 参数
+- 动态 Blueprint
+
+---
+
+# 11. 关键词战略
+
+VoxelCurve 不采用：
+
+> 一个关键词建立一个页面。
+
+采用：
+
+> **一个 Search Intent Cluster 建立一个页面。**
+
+目标：
+
+少页面。
+
+强相关。
+
+降低 Cannibalization。
+
+---
+
+# 12. 首页关键词
+
+正式 URL：
+
+```text
+https://voxelcurve.com/
+```
+
+Primary：
+
+**minecraft circle generator**
+
+现有项目数据：
+
+| Keyword | Volume | KD |
+|---|---:|---:|
+| minecraft circle generator | 33,100 | 33 |
+| mc circle generator | 12,100 | 25 |
+| minecraft circle | 12,100 | 47 |
+| circle maker minecraft | 9,900 | 34 |
+| circle generator minecraft | 9,900 | 26 |
+| minecraft circles | 9,900 | 47 |
+| pixel circle generator | 6,600 | 29 |
+| circle generator | 4,400 | 31 |
+| mc circle maker | 4,400 | 41 |
+| minecraft circle gen | 3,600 | 36 |
+| pixel circle maker | 3,600 | 30 |
+| pixel circle | 3,600 | 24 |
+| circle minecraft generator | 1,600 | 38 |
+| minecraft circle maker | 1,300 | 39 |
+| minecraft circle calculator | 1,000 | 25 |
+| minecraft circle calc | 1,000 | 24 |
+| minecraft pixel circle generator | 1,000 | 27 |
+| circle calculator minecraft | 880 | 30 |
+| minecraft circle creator | 720 | 37 |
+| mc circle gen | 590 | 25 |
+| circle generator mc | 590 | 25 |
+| minecraft circle schematic maker | 480 | 31 |
+| circle builder minecraft | 170 | 19 |
+
+这些全部由首页承接。
+
+禁止建立：
+
+```text
+/mc-circle-generator
+/pixel-circle-generator
+/minecraft-circle-maker
+/minecraft-circle-calculator
+```
+
+---
+
+# 13. 首页 SEO
+
+推荐 Title：
+
+> **Minecraft Circle Generator – Block Blueprint & Build Guide | VoxelCurve**
+
+H1：
+
+> **Minecraft Circle Generator**
+
+这里 SEO 页面允许把核心查询放在第一位。
+
+品牌放 Title 后面。
+
+Meta Description：
+
+> Generate accurate Minecraft circles with exact block layouts, row-by-row instructions, material counts and guided build progress. Free online tool by VoxelCurve.
+
+Brand：
+
+> VoxelCurve
+
+OG Site Name：
+
+> VoxelCurve
+
+Canonical：
+
+```text
+https://voxelcurve.com/
+```
+
+---
+
+# 14. 首页搜索意图
+
+用户搜索：
+
+> minecraft circle generator
+
+他真正希望：
+
+1. 输入尺寸；
+2. 马上看到 Circle；
+3. 知道每一行怎么搭；
+4. 知道需要多少材料。
+
+因此首屏必须直接提供工具。
+
+不能出现：
+
+```text
+Hero Image
+↓
+Features
+↓
+Marketing
+↓
+2000字文章
+↓
+Generator
+```
+
+必须：
+
+```text
+Header
+↓
+H1
+↓
+一句说明
+↓
+Generator
+↓
+Blueprint
+```
+
+---
+
+# 15. Circle Chart 页面
+
+URL：
+
+```text
+/minecraft-circle-chart
+```
+
+Primary：
+
+**minecraft circle chart — 6,600 / KD32**
+
+Secondary：
+
+- minecraft circle diagram
+- circle chart minecraft
+- minecraft circle template
+- minecraft circles chart
+- minecraft circle graph
+- circle template minecraft
+- circle chart for minecraft
+- minecraft circle grid
+
+推荐 Title：
+
+> **Minecraft Circle Chart – Block Templates from 5×5 to 100×100 | VoxelCurve**
+
+H1：
+
+> Minecraft Circle Chart
+
+---
+
+# 16. Circle Chart 内容
+
+必须直接显示：
+
+```text
+5×5
+7×7
+9×9
+11×11
+15×15
+21×21
+31×31
+41×41
+51×51
+64×64
+75×75
+100×100
+```
+
+每个尺寸：
+
+- SVG/static preview
+- Diameter
+- Outline block count
+- Filled block count
+- Open in Generator
+
+数据必须存在于：
+
+**HTML**
+
+而不是只有 Canvas。
+
+---
+
+# 17. Circle Guide 页面
+
+URL：
+
+```text
+/how-to-make-a-circle-in-minecraft
+```
+
+Primary：
+
+**how to make a circle in minecraft — 4,400 / KD30**
+
+Secondary：
+
+- circle minecraft guide
+- how to make a minecraft circle
+- how to make circle in minecraft
+- how to build a circle in minecraft
+- minecraft how to make a circle
+- how to create a circle in minecraft
+- how to make a large circle in minecraft
+
+推荐 Title：
+
+> **How to Make a Circle in Minecraft – Step-by-Step Block Guide | VoxelCurve**
+
+H1：
+
+> How to Make a Circle in Minecraft
+
+---
+
+# 18. Guide 内容
+
+结构：
+
+```text
+What Makes a Minecraft Circle?
+↓
+Odd vs Even Sizes
+↓
+Choose the Diameter
+↓
+Find the Center
+↓
+Mark Four Anchors
+↓
+Understand Rows and Segments
+↓
+Build One Quarter
+↓
+Mirror the Pattern
+↓
+Large Circle Tips
+↓
+Common Mistakes
+↓
+Use the Circle Generator
+```
+
+重点使用：
+
+- 11×11
+- 21×21
+- 31×31
+
+真实例子。
+
+---
+
+# 19. Dome 页面
+
+URL：
+
+```text
+/minecraft-dome-generator
+```
+
+Primary：
+
+**minecraft dome generator — 1,900 / KD16**
+
+Secondary：
+
+- minecraft dome
+- minecraft dome maker
+- dome generator minecraft
+- minecraft how to build a dome
+- mc dome
+- minecraft dome creator
+- minecraft dome guide
+
+推荐 Title：
+
+> **Minecraft Dome Generator – Layer-by-Layer Block Blueprint | VoxelCurve**
+
+H1：
+
+> Minecraft Dome Generator
+
+---
+
+# 20. Oval 页面
+
+URL：
+
+```text
+/minecraft-oval-generator
+```
+
+Primary：
+
+**minecraft oval generator — 480 / KD18**
+
+Secondary：
+
+- oval generator minecraft
+- oval minecraft
+- minecraft oval
+
+推荐 Title：
+
+> **Minecraft Oval Generator – Block-by-Block Oval Blueprint | VoxelCurve**
+
+H1：
+
+> Minecraft Oval Generator
+
+---
+
+# 21. Circle Generator 输入
+
+核心参数：
+
+```text
+Diameter
+Style
+Thickness
+```
+
+Diameter：
+
+```text
+3–512
+```
+
+Quick Presets：
+
+```text
+7
+9
+11
+15
+21
+31
+41
+51
+64
+100
+```
+
+Style：
+
+```text
+Thin
+Thick
+Filled
+```
+
+显示：
+
+```text
+Grid
+Center
+Axis
+Row Numbers
+Segment Labels
+```
+
+---
+
+# 22. Oval Generator
+
+输入：
+
+```text
+Width
+Height
+Style
+Thickness
+```
+
+范围：
+
+```text
+3–512
+```
+
+支持：
+
+- Thin
+- Thick
+- Filled
+
+全部复用：
+
+- Canvas
+- Segment Builder
+- Materials
+- Progress
+- PNG
+- TXT
+
+---
+
+# 23. Dome Generator
+
+输入统一为：
+
+```text
+Width
+Depth
+Height
+Shell
+```
+
+默认：
+
+```text
+Width = Depth
+```
+
+常用模式：
+
+### Hemisphere
+
+例如：
+
+```text
+Width: 31
+Depth: 31
+Height: 16
+```
+
+允许用户建立：
+
+- Low Dome
+- Hemisphere
+- Tall Dome
+- Elliptical Dome
+
+不再采用不一致的 Diameter + Height 与 Width/Depth/Height 两套输入。
+
+---
+
+# 24. Geometry Engine
+
+整个项目只有一个几何核心。
+
+目录：
+
+```text
+/core/geometry
+```
+
+输出：
+
+```text
+ShapeResult
+├── type
+├── dimensions
+├── bounds
+├── rows
+│   └── spans
+├── layers
+│   └── rows
+│       └── spans
+├── blockCount
+└── geometryVersion
+```
+
+Canvas、材料数、TXT、Chart、Litematic：
+
+全部消费同一个结果。
+
+---
+
+# 25. Circle 中心定义
+
+对于：
+
+```text
+N × N
+```
+
+中心：
+
+```text
+cx = (N - 1) / 2
+cy = (N - 1) / 2
+```
+
+Odd size：
+
+例如：
+
+```text
+21×21
+```
+
+中心位于一个 block。
+
+Even size：
+
+例如：
+
+```text
+20×20
+```
+
+中心位于中间四个 block 之间。
+
+这一规则全站一致。
+
+---
+
+# 26. Filled Circle
+
+每一个 block 使用中心点判定。
+
+```text
+dx = x - cx
+dy = y - cy
+```
+
+有效半径：
+
+```text
+R = N / 2
+```
+
+基础判定：
+
+```text
+dx² + dy² <= R²
+```
+
+然后经过：
+
+- symmetry check
+- bounds check
+- duplicate check
+
+---
+
+# 27. Thin / Thick Circle
+
+Thin 不使用一套完全不同逻辑。
+
+采用：
+
+```text
+Outer Disk
+-
+Inner Disk
+```
+
+外半径：
+
+```text
+R_outer = N / 2
+```
+
+内半径：
+
+```text
+R_inner = max(0, R_outer - thickness)
+```
+
+Thin：
+
+```text
+thickness = 1
+```
+
+然后执行连通性修正。
+
+---
+
+# 28. 连通规则
+
+最终 Circle 轮廓必须：
+
+- 四向对称；
+- 不存在孤立 block；
+- 不产生明显视觉断点；
+- 不因算法顺序产生随机结果。
+
+同时建立：
+
+Golden Fixtures：
+
+```text
+5
+7
+9
+11
+15
+21
+31
+41
+51
+64
+```
+
+与 Minecraft 社区常见 Circle Chart 做视觉比较。
+
+目的是：
+
+> 数学合理 + Minecraft 玩家看起来也合理。
+
+---
+
+# 29. Geometry Version
+
+固定：
+
+```text
+geometryVersion
+```
+
+例如：
+
+```text
+1
+```
+
+任何以后改变算法的情况：
+
+必须：
+
+```text
+geometryVersion++
+```
+
+防止旧 Progress 使用新 Blueprint。
+
+---
+
+# 30. Oval 算法
+
+使用：
+
+```text
+(dx/Rx)² + (dy/Ry)² <= 1
+```
+
+其中：
+
+```text
+Rx = Width / 2
+Ry = Height / 2
+```
+
+Thin/Thick：
+
+仍然为：
+
+外部 Ellipse - 内部 Ellipse。
+
+---
+
+# 31. Dome 算法
+
+Dome 基于 Ellipsoid。
+
+禁止建立：
+
+```text
+N × N × N
+```
+
+完整 voxel array。
+
+内部使用：
+
+```text
+Layer
+↓
+Row
+↓
+Span
+```
+
+按 layer 生成。
+
+这样：
+
+- 内存低；
+- 移动端稳定；
+- TXT 容易生成；
+- Litematic 容易展开。
+
+---
+
+# 32. Hollow Dome
+
+不能采用：
+
+> 每层简单做 Thin Circle。
+
+真正 Hollow Dome：
+
+```text
+Outer Ellipsoid
+-
+Inner Ellipsoid
+```
+
+这样顶部可以自然形成：
+
+- 单 block
+- 实心小片
+- 小型环
+
+而不会出现错误空洞。
+
+---
+
+# 33. Blueprint Canvas
+
+二维显示使用：
+
+**Canvas**
+
+不是几十万个 HTML div。
+
+支持：
+
+- Zoom
+- Pan
+- Fit
+- Grid
+- Row highlight
+- Segment highlight
+- Completion state
+
+---
+
+# 34. Guided Build Navigator
+
+这是 VoxelCurve 最重要的产品功能。
+
+Circle / Oval：
+
+```text
+Row
+↓
+Segment
+```
+
+Dome：
+
+```text
+Layer
+↓
+Row
+↓
+Segment
+```
+
+---
+
+# 35. Segment Instruction
+
+不要只显示：
+
+```text
+2 + 2
+```
+
+显示：
+
+```text
+Row 8 / 31
+
+Segment 1 / 2
+
+Start:
+10 blocks left of center
+
+Place:
+2 blocks
+
+Gap:
+19 blocks
+
+Segment 2:
+Place 2 blocks
+```
+
+用户不需要自己计算间隔。
+
+---
+
+# 36. Edge Mode
+
+允许显示：
+
+```text
+Columns 4–5
+Columns 27–28
+```
+
+适合从 Blueprint 左边开始数。
+
+---
+
+# 37. Center Mode
+
+默认模式。
+
+显示：
+
+```text
+10 left → place 2
+
+10 right → place 2
+```
+
+Minecraft Builder 现场更容易使用。
+
+---
+
+# 38. Dome Guided Build
+
+显示：
+
+```text
+Layer 7 / 16
+
+Row 9 / 31
+
+Segment 1 / 2
+
+Blocks this layer:
+88
+
+Layer completed:
+64%
+```
+
+提供：
+
+```text
+Previous Layer
+Previous Row
+Complete Segment
+Next Row
+Next Layer
+```
+
+---
+
+# 39. Progress
+
+默认完成单位：
+
+Circle/Oval：
+
+**Segment**
+
+Dome：
+
+**Row / Layer**
+
+避免让用户逐个点击几千个 Block。
+
+---
+
+# 40. Progress Storage
+
+保存：
+
+```text
+geometryVersion
+shape
+dimensions
+style
+thickness
+completedSegments
+completedRows
+completedLayers
+currentPosition
+timestamp
+```
+
+使用：
+
+**localStorage**
+
+只存：
+
+- IDs
+- compact arrays
+- bitsets
+
+不存完整 Block JSON。
+
+---
+
+# 41. Materials
+
+实时输出：
+
+```text
+Total Blocks
+Full Stacks
+Loose Blocks
+```
+
+例如：
+
+```text
+1,486 blocks
+
+23 stacks
+14 blocks
+```
+
+允许用户输入材料名：
+
+```text
+Stone Bricks
+Quartz
+Glass
+Custom
+```
+
+仅用于施工清单。
+
+---
+
+# 42. Share URL
+
+使用 URL Fragment。
+
+例如：
+
+```text
+https://voxelcurve.com/#c-31-t1
+```
+
+Dome：
+
+```text
+https://voxelcurve.com/minecraft-dome-generator#31-31-16-h1
+```
+
+Fragment：
+
+不作为 SEO 页面。
+
+Canonical 永远指：
+
+对应正式工具 URL。
+
+---
+
+# 43. QR
+
+按钮：
+
+> **Send to Phone**
+
+直接将当前 Share URL 转成 QR。
+
+不调用付费 API。
+
+进度不会跨设备同步。
+
+界面明确说明：
+
+> Build progress stays on this device.
+
+---
+
+# 44. PNG Export
+
+导出：
+
+当前 Blueprint。
+
+提供：
+
+```text
+Blueprint only
+Blueprint + grid
+Blueprint + row numbers
+```
+
+不增加复杂图片编辑能力。
+
+---
+
+# 45. Print
+
+不建立独立 PDF Engine。
+
+使用：
+
+```text
+@media print
+```
+
+打印：
+
+- Blueprint
+- dimensions
+- materials
+- row instructions
+
+---
+
+# 46. TXT Build Plan
+
+格式示例：
+
+```text
+VoxelCurve Build Plan
+
+Shape: Circle
+Diameter: 31
+Style: Thin
+
+Total Blocks: 84
+
+Row 1
+Segment 1: x=13..17
+
+Row 2
+Segment 1: x=9..11
+Segment 2: x=19..21
+...
+```
+
+Dome：
+
+增加 Layer。
+
+---
+
+# 47. Litematic
+
+唯一 Minecraft 专用导出格式：
+
+```text
+.litematic
+```
+
+必须明确：
+
+用于 Java Edition + Litematica 工作流。
+
+不要承诺所有版本兼容。
+
+---
+
+# 48. Litematic 实际验收
+
+测试：
+
+```text
+Circle 11
+Circle 20
+Circle 31
+Thin
+Thick
+Filled
+Oval
+Dome
+Hollow Dome
+Filled Dome
+```
+
+必须真实导入。
+
+验收：
+
+```text
+Web Block Count
+=
+TXT Block Count
+=
+Litematic Block Count
+```
+
+---
+
+# 49. 首页布局
+
+桌面：
+
+```text
+Header
+
+H1
+Short Description
+
+┌ Controls ┐ ┌──── Blueprint ────┐ ┌ Build / Stats ┐
+
+Common Sizes
+
+How It Works
+
+Odd vs Even
+
+Thin / Thick / Filled
+
+Examples
+
+FAQ
+
+Related Tools
+
+Footer
+```
+
+---
+
+# 50. 移动端
+
+375px：
+
+```text
+Header
+H1
+Compact Controls
+Blueprint
+Current Instruction
+Build Buttons
+Progress
+Materials
+Content
+```
+
+Blueprint 是主要区域。
+
+移动端必须真正能施工。
+
+---
+
+# 51. 移动手势
+
+支持：
+
+- Pinch zoom
+- Drag
+- Fit
+- Tap
+
+必须区分：
+
+Tap
+
+与：
+
+Drag。
+
+超过移动阈值后：
+
+不能触发完成标记。
+
+---
+
+# 52. UI 视觉定位
+
+品牌感：
+
+> **Professional voxel building utility**
+
+不是：
+
+> Minecraft fan site。
+
+建议：
+
+- Neutral off-white / dark surfaces
+- Emerald accent
+- 清晰 Grid
+- 大数字
+- 简洁 controls
+- 极少 Voxel 装饰元素
+
+---
+
+# 53. Logo
+
+推荐：
+
+**简单几何 V + Curve 图形。**
+
+例如：
+
+由几个 Block 构成一个：
+
+弯曲的 V / arc。
+
+不要使用：
+
+- Creeper
+- Minecraft Logo
+- Grass block
+- 官方字体
+- Steve
+
+品牌文字：
+
+**VoxelCurve**
+
+---
+
+# 54. 导航
+
+Desktop：
+
+```text
+VoxelCurve
+
+Circle
+Circle Chart
+Dome
+Oval
+Guide
+```
+
+不要塞：
+
+10+ 菜单。
+
+---
+
+# 55. Footer
+
+第一列：
+
+VoxelCurve
+
+第二列：
+
+Tools
+
+第三列：
+
+Resources
+
+第四列：
+
+Legal
+
+同时加入明显：
+
+非官方 Minecraft 产品声明。
+
+---
+
+# 56. About 页面
+
+说明：
+
+VoxelCurve 是独立开发的 Minecraft building geometry tool。
+
+重点：
+
+- 免费
+- 无需注册
+- Browser-based
+- 提供 Blueprint / Guided Build
+
+不要编造：
+
+“全球领先”。
+
+---
+
+# 57. Contact
+
+简单 Contact 页面。
+
+初期：
+
+Email link 即可。
+
+不需要后端表单系统。
+
+---
+
+# 58. 技术栈
+
+推荐：
+
+**Astro + TypeScript + Preact Islands**
+
+原因：
+
+- 页面静态；
+- SEO 强；
+- JS 输出小；
+- Generator 可独立 hydrate；
+- Cloudflare Pages 兼容。
+
+---
+
+# 59. 不使用数据库
+
+不使用：
+
+- Supabase
+- Firebase
+- PostgreSQL
+- MongoDB
+
+用户状态：
+
+浏览器本地。
+
+---
+
+# 60. 不使用付费 API
+
+Generator：
+
+纯客户端算法。
+
+PNG：
+
+客户端。
+
+TXT：
+
+客户端。
+
+QR：
+
+客户端。
+
+Litematic：
+
+客户端。
+
+固定 API 成本：
+
+```text
+$0
+```
+
+---
+
+# 61. 性能预算
+
+首页 Initial JS：
+
+目标：
+
+```text
+<150 KB gzip
+```
+
+不使用：
+
+- Three.js
+- 大型 animation library
+- Heavy chart library
+- UI mega framework
+
+---
+
+# 62. Lighthouse 目标
+
+上线前：
+
+| 指标 | 目标 |
+|---|---:|
+| Performance | ≥95 |
+| SEO | ≥95 |
+| Accessibility | ≥95 |
+| Best Practices | ≥95 |
+
+同时目标：
+
+```text
+LCP <1.8s
+CLS <0.05
+INP <200ms
+```
+
+真实 CWV：
+
+上线后再看用户数据。
+
+---
+
+# 63. SEO 页面原则
+
+每页必须：
+
+- Unique Title
+- Unique H1
+- Unique Description
+- Unique Search Intent
+- self canonical
+- Breadcrumb
+- internal links
+- crawlable HTML
+- mobile usable
+
+---
+
+# 64. Canonical
+
+首页：
+
+```text
+<link rel="canonical"
+href="https://voxelcurve.com/">
+```
+
+Dome：
+
+```text
+https://voxelcurve.com/minecraft-dome-generator
+```
+
+Oval：
+
+```text
+https://voxelcurve.com/minecraft-oval-generator
+```
+
+Chart：
+
+```text
+https://voxelcurve.com/minecraft-circle-chart
+```
+
+Guide：
+
+```text
+https://voxelcurve.com/how-to-make-a-circle-in-minecraft
+```
+
+Fragment 状态不改变 canonical。
+
+---
+
+# 65. Structured Data
+
+首页 / Tool：
+
+```text
+WebSite
+Organization
+SoftwareApplication
+BreadcrumbList
+```
+
+Guide：
+
+```text
+Article
+BreadcrumbList
+```
+
+不要堆无意义 Schema。
+
+---
+
+# 66. AI Search / GEO
+
+不另建所谓“AI SEO 系统”。
+
+真正做：
+
+- 明确答案
+- 真实数据
+- HTML 表格
+- 静态例子
+- FAQ
+- Blueprint alt text
+- 合理 heading
+- internal links
+
+让内容天然可被搜索引擎与 AI 系统读取。
+
+---
+
+# 67. 内链
+
+首页：
+
+→ Circle Chart  
+→ Guide  
+→ Dome  
+→ Oval
+
+Chart：
+
+→ Circle Generator
+
+Guide：
+
+→ Circle Generator
+
+Dome：
+
+→ Circle
+
+Oval：
+
+→ Circle
+
+形成非常清晰：
+
+```text
+Circle Hub
+↓
+Geometry Tools
+```
+
+---
+
+# 68. 广告
+
+上线初期：
+
+可以先不加。
+
+AdSense 批准后：
+
+### Build Mode
+
+0 广告。
+
+### Controls 与 Blueprint 中间
+
+0 广告。
+
+### 第一个广告
+
+工具完成区域之后。
+
+### 正文
+
+最多增加 1–2 个。
+
+---
+
+# 69. 广告位
+
+预留固定高度容器。
+
+防止：
+
+Ad Load
+
+→ Content Shift。
+
+没有广告返回时也注意布局处理。
+
+---
+
+# 70. Analytics
+
+使用轻量 Analytics。
+
+事件：
+
+```text
+generate_circle
+generate_oval
+generate_dome
+enter_build_mode
+complete_segment
+complete_layer
+share
+download_png
+download_txt
+download_litematic
+```
+
+目标不是监控用户。
+
+目标是知道：
+
+> 工具有没有被真正使用。
+
+---
+
+# 71. 一次性冷启动推广
+
+正式上线不采用：
+
+> Submit Sitemap → 等。
+
+而是完成一轮 Launch Distribution。
+
+---
+
+# 72. 演示素材
+
+制作一个：
+
+**30–60 秒 GIF / Video**
+
+内容：
+
+```text
+Diameter 31
+↓
+Circle appears
+↓
+Guided Row
+↓
+Segment instruction
+↓
+Complete
+↓
+Litematic
+```
+
+一个素材多渠道复用。
+
+---
+
+# 73. Reddit
+
+只在允许相关内容的 Minecraft / building 社区发一轮。
+
+内容角度：
+
+> “I kept miscounting large circles, so I built a tool that tells you exactly where each row segment starts.”
+
+不是：
+
+> “Visit my SEO website.”
+
+---
+
+# 74. Minecraft 社区
+
+选择：
+
+- Builder Communities
+- Resource directories
+- Minecraft building Discords
+- Planet Minecraft 类平台
+
+发布：
+
+实用教程 / 工具。
+
+不是垃圾外链。
+
+---
+
+# 75. YouTube Shorts
+
+只需要少量展示内容。
+
+例如：
+
+> **How to build a 31×31 Minecraft circle without counting blocks**
+
+视频里展示：
+
+VoxelCurve。
+
+目的：
+
+- discovery
+- brand search
+- link opportunities
+
+不是建立长期 YouTube 项目。
+
+---
+
+# 76. Outreach
+
+一次性找：
+
+**10–20 个高度相关页面**
+
+关键词：
+
+```text
+minecraft circle guide
+minecraft building tools
+minecraft dome
+minecraft blueprint
+```
+
+优先中小网站。
+
+Outreach 理由：
+
+> 已有文章可以增加一个真正有用的 Interactive Builder。
+
+不买链接。
+
+---
+
+# 77. 品牌搜索统一
+
+全网品牌统一：
+
+```text
+VoxelCurve
+```
+
+不要出现：
+
+Voxel Curve Tool
+
+VoxelCurve Lab
+
+Voxel Shapes
+
+多套名称。
+
+目标是未来 Google Brand Query：
+
+```text
+voxelcurve
+```
+
+只对应本站。
+
+---
+
+# 78. 法律与品牌
+
+正式域名：
+
+`VoxelCurve.com`
+
+页面可以合理描述：
+
+Minecraft Circle Generator。
+
+但：
+
+VoxelCurve 不暗示：
+
+- Mojang 官方
+- Microsoft 官方
+- Minecraft 官方合作
+
+Footer 和 Disclaimer 必须说明独立关系。
+
+---
+
+# 79. Robots
+
+Production：
+
+正常允许抓取核心页面。
+
+Staging / Preview：
+
+禁止索引。
+
+避免 Cloudflare Preview URL 被 Google 收录。
+
+---
+
+# 80. 404
+
+404 页面不要只是：
+
+“Page not found”。
+
+提供：
+
+```text
+Circle Generator
+Circle Chart
+Dome Generator
+Oval Generator
+```
+
+让用户继续使用。
+
+---
+
+# 81. Geometry QA
+
+Circle 测试：
+
+```text
+3
+4
+5
+7
+9
+11
+15
+20
+21
+31
+41
+51
+64
+100
+512
+```
+
+验证：
+
+- symmetry
+- bounds
+- uniqueness
+- continuity
+- row count
+- total count
+
+---
+
+# 82. Oval QA
+
+测试：
+
+```text
+11×21
+21×11
+20×40
+31×15
+100×20
+```
+
+重点检查极端比例。
+
+---
+
+# 83. Dome QA
+
+测试：
+
+```text
+11×11×6
+20×20×10
+31×31×16
+31×31×10
+31×31×24
+```
+
+覆盖：
+
+- Low Dome
+- Hemisphere
+- Tall Dome
+- Hollow
+- Filled
+
+---
+
+# 84. Build Navigator QA
+
+必须：
+
+```text
+Sum(Row Segments)
+=
+Row Block Count
+```
+
+Dome：
+
+```text
+Sum(Rows)
+=
+Layer Block Count
+```
+
+以及：
+
+```text
+Sum(Layers)
+=
+Total Block Count
+```
+
+---
+
+# 85. Progress QA
+
+改变：
+
+- Diameter
+- Width
+- Height
+- Thickness
+- Style
+- Shape
+- geometryVersion
+
+后：
+
+不能错误恢复上一结构的 Progress。
+
+---
+
+# 86. Mobile QA
+
+必须实测：
+
+- iPhone Safari
+- Android Chrome
+- Chrome Desktop
+- Edge
+- Firefox
+
+重点不是页面“能打开”。
+
+而是：
+
+**能不能真正施工。**
+
+测试：
+
+- Pan
+- Zoom
+- Tap
+- Complete
+- Undo
+- Resume
+- Share
+- PNG
+- TXT
+
+---
+
+# 87. SEO QA
+
+每一个正式页面检查：
+
+```text
+Title
+H1
+Description
+Canonical
+Schema
+Indexability
+Internal Links
+Image alt
+Mobile
+404
+Content
+```
+
+不能存在：
+
+- 空专题
+- Placeholder
+- Broken image
+- Dead link
+- Duplicate title
+- Orphan page
+
+---
+
+# 88. Cloudflare 部署
+
+正式结构：
+
+```text
+GitHub
+↓
+Cloudflare Pages
+↓
+VoxelCurve.com
+```
+
+Production Branch：
+
+```text
+main
+```
+
+每次 main 更新：
+
+自动部署。
+
+---
+
+# 89. Google Search Console
+
+正式添加：
+
+```text
+https://voxelcurve.com/
+```
+
+建议：
+
+Domain Property。
+
+提交：
+
+```text
+https://voxelcurve.com/sitemap.xml
+```
+
+---
+
+# 90. Bing Webmaster Tools
+
+同样添加：
+
+VoxelCurve.com
+
+提交 Sitemap。
+
+完成后：
+
+网站进入观察状态。
+
+---
+
+# 91. 开发顺序
+
+这不是版本。
+
+只是一次完整开发的施工顺序。
+
+```text
+01 域名 VoxelCurve.com
+02 GitHub / Cloudflare 项目
+03 Geometry Specification
+04 Golden Circle Fixtures
+05 Design System
+06 Astro Skeleton
+07 Circle Engine
+08 Canvas
+09 Guided Build
+10 Progress
+11 Materials
+12 Share / QR
+13 PNG / Print / TXT
+14 Oval
+15 Circle Chart
+16 Circle Guide
+17 Dome Engine
+18 Dome Layer Builder
+19 Litematic
+20 SEO Content
+21 Schema
+22 Canonical / Sitemap / Robots
+23 Legal Pages
+24 Mobile QA
+25 Geometry QA
+26 Export QA
+27 Performance QA
+28 404 / Link Audit
+29 Production
+30 GSC / Bing
+31 Launch Distribution
+32 Final Audit
+```
+
+---
+
+# 92. 上线后第 2 周
+
+只检查：
+
+- Indexing
+- Sitemap
+- Canonical
+- Crawl
+- 404
+- CWV
+
+不因为排名低就改网站。
+
+---
+
+# 93. 第 6 周
+
+看：
+
+- Impressions
+- First queries
+- Which URLs rank
+- Query relevance
+
+判断 Google 是否理解网站主题。
+
+---
+
+# 94. 第 12 周
+
+第一次 SEO Review。
+
+可以调整：
+
+- Title
+- Description
+- 内链
+- 个别内容
+
+不重做：
+
+产品和 UI。
+
+---
+
+# 95. 第 6 个月
+
+第一次真正商业判断。
+
+如果：
+
+### 有稳定增长
+
+继续放。
+
+### 有明显流量和收入
+
+考虑加码。
+
+### 有 Impressions 但排名弱
+
+优化对应 Cluster。
+
+### 基本没有信号
+
+停止继续投入。
+
+站仍然保持在线。
+
+继续机会雷达其他项目。
+
+---
+
+# 96. 什么情况下才重新开发 VoxelCurve
+
+只有：
+
+- 某词进入 Top20
+- 流量开始明显增长
+- 出现稳定收入
+- 用户反复要求同一功能
+- 新关键词出现明显机会
+- Google 收录问题
+- 重大 Bug
+
+才回来。
+
+否则：
+
+**不继续折腾。**
+
+---
+
+# 97. 最终完成标准
+
+只有以下全部完成，才叫：
+
+**VoxelCurve 已完成。**
+
+## Product
+
+Circle ✓  
+Oval ✓  
+Dome ✓  
+Guided Build ✓  
+Progress ✓  
+Materials ✓  
+Share ✓  
+QR ✓  
+PNG ✓  
+Print ✓  
+TXT ✓  
+Litematic ✓
+
+## SEO
+
+首页 ✓  
+Circle Chart ✓  
+Circle Guide ✓  
+Dome ✓  
+Oval ✓  
+Title/H1 ✓  
+Canonical ✓  
+Schema ✓  
+Sitemap ✓  
+Robots ✓  
+Internal Links ✓
+
+## Technical
+
+Mobile ✓  
+Geometry tests ✓  
+Export tests ✓  
+No broken links ✓  
+404 ✓  
+Performance ✓  
+HTTPS ✓
+
+## Deployment
+
+VoxelCurve.com ✓  
+GitHub main ✓  
+Cloudflare Pages ✓  
+GSC ✓  
+Bing ✓
+
+## Launch
+
+一次性社区推广 ✓  
+相关 Outreach ✓  
+演示素材 ✓
+
+全部完成之后：
+
+> **停止开发 VoxelCurve，进入观察状态，转下一个机会雷达网站。**
+
+---
+
+# 98. 最终网站定位总结
+
+**品牌：**
+
+> VoxelCurve
+
+**域名：**
+
+> VoxelCurve.com
+
+**核心 SEO 入口：**
+
+> Minecraft Circle Generator
+
+**核心产品差异化：**
+
+> Guided Row / Segment / Layer Building
+
+**第二搜索机会：**
+
+> Minecraft Dome Generator
+
+**低成本补充：**
+
+> Minecraft Oval Generator
+
+**内容入口：**
+
+> Circle Chart + Circle Guide
+
+**技术策略：**
+
+> Static-first + Browser calculation + Zero database + Zero paid API
+
+**推广策略：**
+
+> 一次性的社区曝光 + Outreach
+
+**运营策略：**
+
+> 上线后低频检查，不持续开发。
+
+---
+
+# 99. 最终一句话
+
+> **VoxelCurve helps Minecraft builders turn circles, ovals and domes into exact block-by-block building plans—without counting every block by hand.**
+
+这就是 VoxelCurve.com 的最终完整建设方案。

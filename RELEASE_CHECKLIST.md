@@ -2,6 +2,8 @@
 
 This checklist is intentionally short. VoxelCurve is designed to be finished, deployed and then monitored at low frequency rather than continuously redesigned.
 
+The user's unique final standard is `FINAL_STANDARD.txt`. This checklist implements its acceptance gates and cannot expand or reduce product scope. Latest user decision (2026-10-04): analytics is temporarily deferred. No provider is configured; analytics is not a current release blocker and must not be reported as enabled.
+
 ## 1. Automated gates
 
 A release is not ready unless GitHub Actions is green.
@@ -174,11 +176,13 @@ Check:
 - [ ] Cloudflare Bulk Redirect: `www.voxelcurve.com/*` → `https://voxelcurve.com/:splat` with 301
 - [ ] Cloudflare Bulk Redirect: `voxelcurve.pages.dev/*` → `https://voxelcurve.com/:splat` with 301
 - [ ] Preserve query string + subpath/path suffix on both Bulk Redirects
+- [ ] Disable Include subdomains so Pages commit/branch previews remain accessible and noindex
 - [ ] Preview Pages hosts are noindex
 - [ ] CSP does not block the tool
 - [ ] QR dynamic import works under CSP
 - [ ] Litematic dynamic import works under CSP
 - [ ] static hashed assets receive immutable cache headers
+- [ ] `npm run release:check` passes against the production domain and redirects
 
 ## 11. Search
 

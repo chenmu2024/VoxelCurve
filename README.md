@@ -43,6 +43,8 @@ Explicitly out of scope unless future search data justifies a new decision:
 
 ## Source-of-truth documents
 
+`FINAL_STANDARD.txt` is the user's locked final product and acceptance standard. Earlier plans, recommendations and implemented features do not override it. The documents below describe its implementation and must remain consistent with it. Only an explicit user decision can change scope. The user has temporarily deferred analytics; no analytics provider should be enabled until requested.
+
 Before changing product behavior or UI, read:
 
 - `DESIGN.md` — VoxelCurve visual system and responsive rules
@@ -140,6 +142,8 @@ npm test
 npm run build
 npm run audit
 ```
+
+After deploying the release to the custom domain, run `npm run release:check` to verify production HTTPS, canonical URLs, indexability, geometry version, Sitemap, robots, 404 and host redirects. This read-only check fails when production still serves an older geometry version or a required domain is unavailable. It does not replace real-device/game tests, search-platform submissions or launch distribution.
 
 Production dependency security is a release gate: `npm audit --omit=dev --audit-level=moderate` must pass before deployment.
 

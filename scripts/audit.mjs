@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
+import { createHash } from 'node:crypto';
 
 const dist = path.resolve('dist');
 const required = [
@@ -39,6 +40,12 @@ function walk(dir) {
 walk(dist);
 
 const errors = [];
+const standardFile=path.resolve('FINAL_STANDARD.txt');
+const standardHash='00abdf97d7899a1968e615617b2c51ccb449228c5c831f65eeaef6f5972b83a5';
+if(!exists(standardFile)) errors.push('Missing locked FINAL_STANDARD.txt');
+else if(createHash('sha256').update(fs.readFileSync(standardFile)).digest('hex')!==standardHash) {
+  errors.push('FINAL_STANDARD.txt differs from the user-approved snapshot');
+}
 for (const url of required) {
   if (!pageFile(url)) errors.push(`Missing required page: ${url}`);
 }

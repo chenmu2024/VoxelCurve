@@ -45,9 +45,9 @@ Enable:
 - Preserve query string
 - Subpath matching
 - Preserve path suffix
-- Include subdomains
+- Include subdomains: **disabled**
 
-This sends `voxelcurve.pages.dev/foo` to `https://voxelcurve.com/foo` and also covers preview subdomains when Cloudflare applies Include subdomains.
+This sends `voxelcurve.pages.dev/foo` to `https://voxelcurve.com/foo`. Keep Include subdomains disabled so commit and branch preview hosts remain available for verifying changes before release. Preview hosts retain `X-Robots-Tag: noindex`. Cloudflare's [parameter reference](https://developers.cloudflare.com/rules/url-forwarding/bulk-redirects/reference/parameters/) confirms that enabling this option also matches subdomains.
 
 ### 2. www → apex
 
@@ -70,7 +70,7 @@ Enable:
 - Preserve query string
 - Subpath matching
 - Preserve path suffix
-- Include subdomains
+- Include subdomains: **disabled**
 
 Ensure `www` has a proxied Cloudflare DNS record so the redirect rule can execute.
 
@@ -103,3 +103,5 @@ Expected:
 - `pages.dev` returns 301 to apex;
 - sitemap and robots return 200;
 - fragment blueprint URLs remain client-side state and are never listed in Sitemap.
+
+Run `npm run release:check` after deployment. Its nonzero exit status means a production gate failed; an unreachable custom domain must not be counted as successful merely because a Pages preview works. The command makes no account changes and does not submit URLs to search engines.
