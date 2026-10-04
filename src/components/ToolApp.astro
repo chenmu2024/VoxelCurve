@@ -141,7 +141,7 @@ if (root) {
   }
   buildModeButton?.addEventListener('click',()=>setBuildMode(!buildMode));
   document.addEventListener('keydown',(event)=>{
-    if(event.key==='Escape'&&buildMode)setBuildMode(false);
+    if(event.key==='Escape'&&buildMode&&!q('[data-qr-dialog]')?.open)setBuildMode(false);
   });
 
   const num = (name, fallback) => Number(q(`[data-input="${name}"]`)?.value ?? fallback);
@@ -785,8 +785,13 @@ if (root) {
   window.addEventListener('hashchange',()=>{
     parseFragment();
     regenerate(true);
+    updateFragment();
     root.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   });
-  new ResizeObserver(resize).observe(wrap);parseFragment();regenerate(true);resize();
+  new ResizeObserver(resize).observe(wrap);
+  parseFragment();
+  regenerate(true);
+  if(location.hash) updateFragment();
+  resize();
 }
 </script>
