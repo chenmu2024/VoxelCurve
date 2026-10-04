@@ -44,6 +44,7 @@ for (const url of required) {
 }
 
 const titles = new Map();
+const descriptions = new Map();
 const canonicals = new Map();
 for (const file of htmlFiles) {
   const html = fs.readFileSync(file, 'utf8');
@@ -60,12 +61,31 @@ for (const file of htmlFiles) {
     titles.set(title, rel);
   }
 
+  const description = html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)/i)?.[1]?.trim()
+    ?? html.match(/<meta[^>]+content=["']([^"']*)["'][^>]+name=["']description["']/i)?.[1]?.trim();
+  if (!description) errors.push(`Missing meta description in ${rel}`);
+  else {
+    if (descriptions.has(description)) errors.push(`Duplicate meta description in ${rel} and ${descriptions.get(description)}`);
+    descriptions.set(description, rel);
+  }
+
+  const h1Count = (html.match(/<h1\b/gi) || []).length;
+  if (h1Count !== 1) errors.push(`Expected exactly one H1 in ${rel}, found ${h1Count}`);
+
   const canonical = html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)/i)?.[1]
     ?? html.match(/<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["']/i)?.[1];
   if (!canonical) errors.push(`Missing canonical in ${rel}`);
+  else if (!canonical.startsWith('https://voxelcurve.com/')) errors.push(`Canonical uses unexpected host in ${rel}: ${canonical}`);
   else if (!rel.startsWith('404')) {
     if (canonicals.has(canonical)) errors.push(`Duplicate canonical in ${rel} and ${canonicals.get(canonical)}: ${canonical}`);
     canonicals.set(canonical, rel);
+  }
+
+  for (const match of html.matchAll(/src=["']([^"']+)["']/gi)) {
+    const src = match[1];
+    if (!src.startsWith('/') || src.startsWith('//') || src.startsWith('/_astro/')) continue;
+    const local = path.join(dist, src.replace(/^\//, ''));
+    if (!exists(local)) errors.push(`Missing local asset in ${rel}: ${src}`);
   }
 
   for (const match of html.matchAll(/href=["']([^"']+)["']/gi)) {
@@ -135,5 +155,5 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`VoxelCurve audit passed: ${htmlFiles.length} HTML pages, ${titles.size} unique titles, ${canonicals.size} unique canonicals.`);
+console.log(`VoxelCurve audit passed: ${htmlFiles.length} HTML pages, ${titles.size} unique titles, ${descriptions.size} unique descriptions, ${canonicals.size} unique canonicals.`);
 console.log(`Asset budget: ${Math.round(totalJsGzip/1024)}KB total JS gzip, ${Math.round(totalCssGzip/1024)}KB total CSS gzip.`);
