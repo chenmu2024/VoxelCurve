@@ -1274,7 +1274,7 @@ body.vc-build-mode .tool-shell .stats{
 body.vc-build-mode .tool-shell .export-heading,
 body.vc-build-mode .tool-shell .export-actions,
 body.vc-build-mode .tool-shell .nav-separator,
-body.vc-build-mode .tool-shell .stats>.notice:not(.layer-progress-note):not(.layer-delta-note),
+body.vc-build-mode .tool-shell .stats>.notice:not(.progress-note):not(.layer-progress-note):not(.layer-delta-note),
 body.vc-build-mode .tool-shell .size-warning{
   display:none!important
 }
