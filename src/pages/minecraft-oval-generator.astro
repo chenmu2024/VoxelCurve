@@ -1,9 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'; import ToolApp from '../components/ToolApp.astro';
+import { breadcrumbSchema, softwareSchema } from '../lib/schema';
 const title='Minecraft Oval Generator – Block-by-Block Oval Blueprint | VoxelCurve';
 const description='Create Minecraft oval and ellipse blueprints with exact row segments, block counts and guided build progress. Free browser-based builder tool.';
+const schemas=[
+  breadcrumbSchema([{name:'VoxelCurve',url:'https://voxelcurve.com/'},{name:'Minecraft Oval Generator',url:'https://voxelcurve.com/minecraft-oval-generator'}]),
+  softwareSchema({name:'VoxelCurve Minecraft Oval Generator',url:'https://voxelcurve.com/minecraft-oval-generator',description,featureList:['Minecraft oval blueprint','Custom width and height','Guided row and segment building','Material count','PNG and TXT export']})
+];
 ---
-<BaseLayout {title} {description} canonical="https://voxelcurve.com/minecraft-oval-generator">
+<BaseLayout {title} {description} canonical="https://voxelcurve.com/minecraft-oval-generator" {schemas}>
 <section class="product-stage">
   <div class="hero container"><span class="eyebrow">Building geometry</span><div class="hero-grid"><div><h1>Minecraft Oval Generator</h1><p>Set the width and height, then follow exact row segments to build an oval without guessing the curve.</p></div><div class="hero-side-note"><span class="mono-label">ELLIPSE WORKSPACE</span><strong>Width × height, resolved</strong><span>Turn elliptical geometry into exact buildable row segments.</span></div></div></div>
   <ToolApp shape="oval" />
