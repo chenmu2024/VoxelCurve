@@ -79,7 +79,8 @@ export function generate2D(type: 'circle'|'oval', width: number, height: number,
   const w = clampInt(width, 3, 512);
   const h = clampInt(height, 3, 512);
   const maxT = Math.max(1, Math.floor(Math.min(w, h) / 2));
-  const t = clampInt(thickness, 1, maxT);
+  const requestedT = clampInt(thickness, 1, maxT);
+  const t = style === 'thin' || style === 'filled' ? 1 : Math.min(maxT, Math.max(2, requestedT));
   const outer = disk(w, h, 0, 0);
   let grid: boolean[][];
   if (style === 'filled' || t >= maxT) {
@@ -143,7 +144,9 @@ export function generateDome(width: number, depth: number, height: number, style
   const w = clampInt(width, 3, 256);
   const d = clampInt(depth, 3, 256);
   const h = clampInt(height, 2, 256);
-  const t = clampInt(thickness, 1, Math.max(1, Math.floor(Math.min(w, d, h) / 2)));
+  const maxT = Math.max(1, Math.floor(Math.min(w, d, h) / 2));
+  const requestedT = clampInt(thickness, 1, maxT);
+  const t = style === 'thin' || style === 'filled' ? 1 : Math.min(maxT, Math.max(2, requestedT));
   const layers: LayerPlan[] = [];
   let total = 0;
 
