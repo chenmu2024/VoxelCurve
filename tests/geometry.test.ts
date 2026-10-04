@@ -1,6 +1,7 @@
 import { describe,it,expect } from 'vitest';
 import { generateCircle,generateOval,generateDome } from '../src/lib/geometry';
 import { exportLitematic } from '../src/lib/litematic';
+import { buildTextPlan } from '../src/lib/buildPlan';
 import { gunzipSync } from 'fflate';
 
 function cells2d(r:any){const s=new Set<string>();for(const row of r.rows)for(const span of row.spans)for(let x=span.start;x<=span.end;x++)s.add(`${x},${row.y}`);return s}
@@ -21,6 +22,12 @@ describe('geometry',()=>{
   it('oval stays in bounds',()=>{const r=generateOval(31,15,'thin',1);expect(r.rows).toHaveLength(15);expect(r.blockCount).toBeGreaterThan(0)});
   it('dome layer sums equal total',()=>{const r=generateDome(31,31,16,'thin',1);expect(r.layers.reduce((n,l)=>n+l.count,0)).toBe(r.blockCount);expect(r.blockCount).toBeGreaterThan(0)});
   it('filled dome has more blocks than hollow',()=>{expect(generateDome(21,21,11,'filled').blockCount).toBeGreaterThan(generateDome(21,21,11,'thin').blockCount)});
+  it('text plan uses the same total block count as geometry',()=>{
+    const r=generateDome(21,21,11,'thin',1);
+    const plan=buildTextPlan(r,'Stone Bricks');
+    expect(plan).toContain(`Total Blocks: ${r.blockCount}`);
+    expect(plan).toContain('Layer 1');
+  });
   it('litematic export is gzipped NBT with expected metadata',()=>{
     const bytes=exportLitematic(generateCircle(11,'thin',1),'VoxelCurve Test','minecraft:stone');
     expect(bytes[0]).toBe(0x1f);
