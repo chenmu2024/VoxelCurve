@@ -3,8 +3,12 @@ interface Props { shape:'circle'|'oval'|'dome'; }
 const { shape } = Astro.props;
 ---
 <section class="tool-shell container" data-tool data-shape={shape}>
+  <div class="workspace-topbar">
+    <div class="workspace-id"><span class="workspace-dot"></span><span>VOXELCURVE / BUILD WORKSPACE</span></div>
+    <div class="workspace-meta"><span>LOCAL ENGINE</span><span>GEOMETRY V1</span></div>
+  </div>
   <aside class="panel controls" aria-label="Generator controls">
-    <p class="panel-title">Generator controls</p>
+    <div class="panel-heading"><p class="panel-title">01 / Controls</p><span>Shape setup</span></div>
     {shape === 'circle' && <div class="field"><label for="diameter">Diameter <small>3–512 blocks</small></label><input id="diameter" data-input="diameter" type="number" min="3" max="512" value="31" /><div class="preset-row" style="margin-top:8px">{[7,9,11,15,21,31,41,51,64,100].map(n=><button class="chip" type="button" data-preset={n}>{n}</button>)}</div></div>}
     {shape === 'oval' && <><div class="field"><label for="width">Width <small>3–512</small></label><input id="width" data-input="width" type="number" min="3" max="512" value="31" /></div><div class="field"><label for="height">Height <small>3–512</small></label><input id="height" data-input="height" type="number" min="3" max="512" value="21" /></div></>}
     {shape === 'dome' && <><div class="field"><label for="width">Width <small>3–256</small></label><input id="width" data-input="width" type="number" min="3" max="256" value="31" /></div><div class="field"><label for="depth">Depth <small>3–256</small></label><input id="depth" data-input="depth" type="number" min="3" max="256" value="31" /></div><div class="field"><label for="height">Height <small>2–256</small></label><input id="height" data-input="height" type="number" min="2" max="256" value="16" /></div></>}
@@ -16,12 +20,12 @@ const { shape } = Astro.props;
   </aside>
 
   <section class="panel canvas-panel" aria-label="Blueprint">
-    <div class="canvas-toolbar"><strong data-blueprint-title>Blueprint</strong><div class="actions"><button class="btn" type="button" data-fit>Fit</button><button class="btn" type="button" data-zoom-out>−</button><button class="btn" type="button" data-zoom-in>+</button><button class="btn" type="button" data-print>Print</button></div></div>
+    <div class="canvas-toolbar"><div class="blueprint-heading"><span>02 / BLUEPRINT</span><strong data-blueprint-title>Blueprint</strong></div><div class="actions"><button class="btn" type="button" data-fit>Fit</button><button class="btn" type="button" data-zoom-out>−</button><button class="btn" type="button" data-zoom-in>+</button><button class="btn" type="button" data-print>Print</button></div></div>
     <div class="canvas-wrap" data-canvas-wrap><canvas data-canvas aria-label="Generated block blueprint"></canvas></div>
   </section>
 
   <aside class="panel stats">
-    <p class="panel-title">Build navigator</p>
+    <div class="panel-heading"><p class="panel-title">03 / Build</p><span>Guided placement</span></div>
     <div class="stat-grid"><div class="stat"><b data-blocks>0</b><span>Blocks</span></div><div class="stat"><b data-stacks>0</b><span>Stacks</span></div>{shape==='dome' && <><div class="stat"><b data-layer>1</b><span>Layer</span></div><div class="stat"><b data-layer-blocks>0</b><span>Layer blocks</span></div></>}</div>
     <div class="instruction"><strong data-instruction-title>Generating…</strong><span data-instruction-body></span></div>
     <div class="progress" aria-label="Build progress"><i data-progress-bar></i></div><div class="notice"><span data-progress-label>0% complete</span></div>
