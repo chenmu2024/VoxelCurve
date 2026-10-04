@@ -754,3 +754,20 @@ tr:last-child td{border-bottom:0}
   from{opacity:0;transform:translateY(-3px)}
   to{opacity:1;transform:translateY(0)}
 }
+
+
+/* ===== Static chart previews ===== */
+.circle-mini-preview{
+  width:54px;
+  height:54px;
+  display:block;
+  color:var(--accent-2);
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:5px
+}
+.blueprint-table td:first-child{width:76px}
+@media(max-width:640px){
+  .circle-mini-preview{width:46px;height:46px}
+}
