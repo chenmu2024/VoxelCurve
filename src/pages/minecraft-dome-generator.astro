@@ -1,9 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'; import ToolApp from '../components/ToolApp.astro';
+import { breadcrumbSchema, softwareSchema } from '../lib/schema';
 const title='Minecraft Dome Generator – Layer-by-Layer Block Blueprint | VoxelCurve';
 const description='Generate Minecraft domes layer by layer with exact row segments, material counts and guided build progress. Create low, hemispherical or tall domes.';
+const schemas=[
+  breadcrumbSchema([{name:'VoxelCurve',url:'https://voxelcurve.com/'},{name:'Minecraft Dome Generator',url:'https://voxelcurve.com/minecraft-dome-generator'}]),
+  softwareSchema({name:'VoxelCurve Minecraft Dome Generator',url:'https://voxelcurve.com/minecraft-dome-generator',description,featureList:['Layer-by-layer dome blueprint','Hollow and filled domes','Guided row and segment building','Material count','Litematic export']})
+];
 ---
-<BaseLayout {title} {description} canonical="https://voxelcurve.com/minecraft-dome-generator">
+<BaseLayout {title} {description} canonical="https://voxelcurve.com/minecraft-dome-generator" {schemas}>
 <section class="product-stage">
   <div class="hero container"><span class="eyebrow">Layer-by-layer builder</span><div class="hero-grid"><div><h1>Minecraft Dome Generator</h1><p>Generate a hollow or filled dome and build it one layer, row and segment at a time.</p></div><div class="hero-side-note"><span class="mono-label">LAYERED GEOMETRY</span><strong>Plan every layer</strong><span>Track the current layer, row and segment while you build.</span></div></div></div>
   <ToolApp shape="dome" />
