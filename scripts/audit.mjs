@@ -105,6 +105,17 @@ const corePages = [
   '/minecraft-oval-generator'
 ];
 
+const generatorPages = ['/', '/minecraft-dome-generator', '/minecraft-oval-generator'];
+for (const url of generatorPages) {
+  const file=pageFile(url);
+  if(!file) continue;
+  const html=fs.readFileSync(file,'utf8');
+  if(!html.includes('data-build-mode')) errors.push(`Missing Build Mode control on generator page: ${url}`);
+  if(/GEOMETRY V1/i.test(html)) errors.push(`Stale geometry version label on generator page: ${url}`);
+}
+
+
+
 for (const url of corePages) {
   const file=pageFile(url);
   if(!file) continue;
