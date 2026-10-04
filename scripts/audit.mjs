@@ -92,7 +92,7 @@ for (const file of htmlFiles) {
   if (!canonical) errors.push(`Missing canonical in ${rel}`);
   else if (!canonical.startsWith('https://voxelcurve.com/')) errors.push(`Canonical uses unexpected host in ${rel}: ${canonical}`);
   else if (!rel.startsWith('404')) {
-    const pagePath=rel.replaceAll(path.sep,'/').replace(/\/index\.html$/,'').replace(/^index\.html$/,'');
+    const pagePath=rel.replaceAll(path.sep,'/').replace(/\/index\.html$/,'').replace(/^index\.html$/,'').replace(/\.html$/,'');
     const expectedCanonical=`https://voxelcurve.com/${pagePath}`;
     if(canonical!==expectedCanonical)errors.push(`Canonical is not self-referencing in ${rel}: ${canonical}`);
     if (canonicals.has(canonical)) errors.push(`Duplicate canonical in ${rel} and ${canonicals.get(canonical)}: ${canonical}`);

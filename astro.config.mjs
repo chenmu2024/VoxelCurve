@@ -4,5 +4,5 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'never',
   compressHTML: true,
-  build: { format: 'directory' }
+  build: { format: 'file' }
 });
