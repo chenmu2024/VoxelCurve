@@ -287,7 +287,7 @@ if (root) {
     const rect=wrap.getBoundingClientRect(); const cw=rect.width,ch=rect.height;
     ctx.save();ctx.clearRect(0,0,cw,ch);ctx.fillStyle='#fcfcfc';ctx.fillRect(0,0,cw,ch);
     const rows=activeRows(); const gw=result.width; const gh=shape==='dome'?result.depth:result.height;
-    const base=Math.max(2,Math.min((cw-42)/gw,(ch-42)/gh)); const cell=base*zoom;
+    const base=Math.max(.2,Math.min((cw-42)/gw,(ch-42)/gh)); const cell=base*zoom;
     const ox=(cw-gw*cell)/2+panX, oy=(ch-gh*cell)/2+panY;
     const current=steps[stepIndex];
     const layerIdx=shape==='dome'?currentLayer:0;
@@ -299,7 +299,7 @@ if (root) {
       for(const row of ghostRows){
         for(const s of row.spans){
           if(cell<2.5){
-            ctx.fillRect(ox+s.start*cell,oy+row.y*cell,Math.max(1,(s.end-s.start+1)*cell),Math.max(1,cell));
+            ctx.fillRect(ox+s.start*cell,oy+row.y*cell,Math.max(.75,(s.end-s.start+1)*cell),Math.max(.75,cell));
             continue;
           }
           const inset=Math.min(1,cell*.08);
@@ -311,10 +311,25 @@ if (root) {
     }
     for(const row of rows){
       row.spans.forEach((s,si)=>{
-        const key=activeKeys.get(`${row.y}:${si}`); const isDone=key&&completed.has(key); const isCurrent=current&&current.layer===layerIdx&&current.row.y===row.y&&current.si===si;
+        const key=activeKeys.get(`${row.y}:${si}`);
+        const isDone=key&&completed.has(key);
+        const isCurrent=current&&current.layer===layerIdx&&current.row.y===row.y&&current.si===si;
+        ctx.fillStyle=isCurrent?'#171717':isDone?'#a7f3d0':'#34d399';
+
+        if(cell<2.5){
+          ctx.fillRect(
+            ox+s.start*cell,
+            oy+row.y*cell,
+            Math.max(.75,(s.end-s.start+1)*cell),
+            Math.max(.75,cell)
+          );
+          return;
+        }
+
+        const inset=Math.min(1,cell*.08);
+        const size=Math.max(1,cell-Math.min(2,cell*.16));
         for(let x=s.start;x<=s.end;x++){
-          ctx.fillStyle=isCurrent?'#171717':isDone?'#a7f3d0':'#34d399';
-          ctx.fillRect(ox+x*cell+Math.min(1,cell*.08),oy+row.y*cell+Math.min(1,cell*.08),Math.max(1,cell-Math.min(2,cell*.16)),Math.max(1,cell-Math.min(2,cell*.16)));
+          ctx.fillRect(ox+x*cell+inset,oy+row.y*cell+inset,size,size);
         }
       })
     }
