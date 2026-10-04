@@ -105,6 +105,11 @@ describe('geometry',()=>{
     const states=readBlockStates(raw);
     expect(countPaletteIndexOne(states,circle.width*circle.height)).toBe(circle.blockCount);
   });
+  it('rejects impractically large filled litematic exports before packing',()=>{
+    const huge=generateDome(256,256,256,'filled',1);
+    expect(huge.blockCount).toBeGreaterThan(5_000_000);
+    expect(()=>exportLitematic(huge,'Huge Test','minecraft:stone')).toThrow(/5,000,000 blocks/);
+  });
   it('dome litematic palette count matches geometry block count',()=>{
     const dome=generateDome(21,21,11,'thin',1);
     const raw=gunzipSync(exportLitematic(dome,'VoxelCurve Dome Test','minecraft:stone'));
