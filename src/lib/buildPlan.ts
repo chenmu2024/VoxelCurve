@@ -1,18 +1,39 @@
 import type { ShapeResult, RowPlan, Span } from './geometry';
 
 export function spanInstruction(span: Span, width: number) {
-  const cx = (width - 1) / 2;
   const len = span.end - span.start + 1;
-  const center = (span.start + span.end) / 2;
-  const offset = center - cx;
-  const side = Math.abs(offset) < 0.001 ? 'center' : offset < 0 ? 'left' : 'right';
-  const distance = Math.round(Math.abs(offset));
+  const odd = width % 2 === 1;
+
+  let center: string;
+  if (odd) {
+    const centerIndex = Math.floor(width / 2);
+    if (span.start <= centerIndex && span.end >= centerIndex) {
+      center = `Across center · place ${len}`;
+    } else if (span.end < centerIndex) {
+      const distance = centerIndex - span.start;
+      center = `Start ${distance} block${distance === 1 ? '' : 's'} left of center · place ${len} right`;
+    } else {
+      const distance = span.start - centerIndex;
+      center = `Start ${distance} block${distance === 1 ? '' : 's'} right of center · place ${len} right`;
+    }
+  } else {
+    const rightOfGap = width / 2;
+    const leftOfGap = rightOfGap - 1;
+    if (span.start <= leftOfGap && span.end >= rightOfGap) {
+      center = `Across center gap · place ${len}`;
+    } else if (span.end <= leftOfGap) {
+      const distance = rightOfGap - span.start;
+      center = `Start ${distance} block${distance === 1 ? '' : 's'} left of center gap · place ${len} right`;
+    } else {
+      const distance = span.start - rightOfGap + 1;
+      center = `Start ${distance} block${distance === 1 ? '' : 's'} right of center gap · place ${len} right`;
+    }
+  }
+
   return {
-    edge: `Columns ${span.start + 1}–${span.end + 1}`,
-    center: side === 'center' ? `Center · place ${len}` : `${distance} ${side} of center · place ${len}`,
-    len,
-    side,
-    distance
+    edge: `Columns ${span.start + 1}–${span.end + 1} · place ${len}`,
+    center,
+    len
   };
 }
 
