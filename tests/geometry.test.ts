@@ -57,7 +57,35 @@ describe('geometry',()=>{
     expect(thick.blockCount).toBeGreaterThan(thin.blockCount);
   });
   it('oval stays in bounds',()=>{const r=generateOval(31,15,'thin',1);expect(r.rows).toHaveLength(15);expect(r.blockCount).toBeGreaterThan(0)});
+  it('handles extreme oval ratios',()=>{
+    const wide=generateOval(100,3,'thin',1);
+    const tall=generateOval(3,100,'thin',1);
+    expect(wide.width).toBe(100); expect(wide.height).toBe(3); expect(wide.blockCount).toBeGreaterThan(0);
+    expect(tall.width).toBe(3); expect(tall.height).toBe(100); expect(tall.blockCount).toBeGreaterThan(0);
+  });
+  it('thickness reaching the center degrades to filled',()=>{
+    expect(generateCircle(11,'thick',99).blockCount).toBe(generateCircle(11,'filled').blockCount);
+    expect(generateOval(15,9,'thick',99).blockCount).toBe(generateOval(15,9,'filled').blockCount);
+  });
+  it('supports minimum and maximum 2D bounds',()=>{
+    expect(generateCircle(3,'thin').blockCount).toBeGreaterThan(0);
+    const max=generateCircle(512,'thin');
+    expect(max.width).toBe(512);
+    expect(max.rows).toHaveLength(512);
+    expect(max.blockCount).toBeGreaterThan(0);
+  });
   it('dome layer sums equal total',()=>{const r=generateDome(31,31,16,'thin',1);expect(r.layers.reduce((n,l)=>n+l.count,0)).toBe(r.blockCount);expect(r.blockCount).toBeGreaterThan(0)});
+  it('supports low, tall and maximum dome bounds',()=>{
+    const low=generateDome(11,11,2,'thin',1);
+    const tall=generateDome(11,11,64,'thin',1);
+    const max=generateDome(256,256,256,'thin',1);
+    expect(low.blockCount).toBeGreaterThan(0);
+    expect(tall.layers.length).toBeGreaterThan(2);
+    expect(max.width).toBe(256);
+    expect(max.depth).toBe(256);
+    expect(max.height).toBe(256);
+    expect(max.blockCount).toBeGreaterThan(0);
+  });
   it('filled dome has more blocks than hollow',()=>{expect(generateDome(21,21,11,'filled').blockCount).toBeGreaterThan(generateDome(21,21,11,'thin').blockCount)});
   it('locks common 31x31x16 hollow dome count',()=>{
     expect(generateDome(31,31,16,'thin',1).blockCount).toBe(1353);
