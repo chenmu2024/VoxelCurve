@@ -450,25 +450,26 @@ if (root) {
   }
   function parseFragment(){
     const state=parseBlueprintFragment(location.hash);
-    if(!state||state.shape!==shape)return;
+    if(!state||state.shape!==shape)return false;
     if(state.shape==='circle'){
       q('[data-input="diameter"]').value=String(state.diameter);
       q('[data-input="style"]').value=state.style;
       q('[data-input="thickness"]').value=String(state.thickness);
-      return;
+      return true;
     }
     if(state.shape==='oval'){
       q('[data-input="width"]').value=String(state.width);
       q('[data-input="height"]').value=String(state.height);
       q('[data-input="style"]').value=state.style;
       q('[data-input="thickness"]').value=String(state.thickness);
-      return;
+      return true;
     }
     q('[data-input="width"]').value=String(state.width);
     q('[data-input="depth"]').value=String(state.depth);
     q('[data-input="height"]').value=String(state.height);
     q('[data-input="style"]').value=state.style;
     q('[data-input="thickness"]').value=String(state.thickness);
+    return true;
   }
 
   let statusTimer=0;
@@ -783,15 +784,15 @@ if (root) {
   wrap.addEventListener('pointercancel',pointerEnd);
 
   window.addEventListener('hashchange',()=>{
-    parseFragment();
+    if(!parseFragment())return;
     regenerate(true);
     updateFragment();
     root.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   });
   new ResizeObserver(resize).observe(wrap);
-  parseFragment();
+  const restoredFromFragment=parseFragment();
   regenerate(true);
-  if(location.hash) updateFragment();
+  if(restoredFromFragment) updateFragment();
   resize();
 }
 </script>
