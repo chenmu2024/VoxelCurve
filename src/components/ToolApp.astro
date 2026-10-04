@@ -420,6 +420,10 @@ if (root) {
     history.replaceState(null,'',`${location.pathname}#${fragment}`);
     return canonicalBlueprintUrl(location.pathname,p);
   }
+  function regenerateAndSync(resetView=false){
+    regenerate(resetView);
+    updateFragment();
+  }
   function parseFragment(){
     const state=parseBlueprintFragment(location.hash);
     if(!state||state.shape!==shape)return;
@@ -529,7 +533,9 @@ if (root) {
 
   settingsButton?.addEventListener('click',()=>setMobileControlsState(!root.querySelector('.controls')?.classList.contains('mobile-collapsed')));
   mobileControls.addEventListener?.('change',(event)=>setMobileControlsState(event.matches));
-    qa('[data-input]').filter(el=>el.getAttribute('type')!=='hidden').forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>regenerate(true)));
+  qa('[data-input]')
+    .filter(el=>el.getAttribute('type')!=='hidden'&&el.dataset.input!=='material')
+    .forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>regenerateAndSync(true)));
   qa('[data-style]').forEach(el=>el.addEventListener('click',()=>{
     const style=el.dataset.style;
     q('[data-input="style"]').value=style;
@@ -538,9 +544,9 @@ if (root) {
       if(style==='thin'||style==='filled') thickness.value='1';
       if(style==='thick'&&Number(thickness.value)<2) thickness.value='2';
     }
-    regenerate(false);
+    regenerateAndSync(false);
   }));
-  qa('[data-preset]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="diameter"]').value=el.dataset.preset;regenerate(true)}));
+  qa('[data-preset]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="diameter"]').value=el.dataset.preset;regenerateAndSync(true)}));
   qa('[data-toggle]').forEach(el=>el.addEventListener('click',()=>{const k=el.dataset.toggle;display[k]=!display[k];el.setAttribute('aria-pressed',String(display[k]));draw()}));
   qa('[data-instruction-mode]').forEach(el=>el.addEventListener('click',()=>{instructionMode=el.dataset.instructionMode;qa('[data-instruction-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn===el)));renderInstruction()}));
   q('[data-world-toggle]')?.addEventListener('click',(event)=>{
@@ -554,7 +560,7 @@ if (root) {
     renderInstruction();
   });
   qa('[data-world]').forEach(el=>el.addEventListener('input',()=>renderInstruction()));
-  q('[data-hemisphere]')?.addEventListener('click',()=>{const w=num('width',31);q('[data-input="depth"]').value=String(w);q('[data-input="height"]').value=String(Math.ceil(w/2));regenerate(true)});
+  q('[data-hemisphere]')?.addEventListener('click',()=>{const w=num('width',31);q('[data-input="depth"]').value=String(w);q('[data-input="height"]').value=String(Math.ceil(w/2));regenerateAndSync(true)});
   q('[data-fit]').addEventListener('click',fit);
   q('[data-zoom-in]').addEventListener('click',()=>{zoom=Math.min(8,zoom*1.2);draw()});
   q('[data-zoom-out]').addEventListener('click',()=>{zoom=Math.max(.25,zoom/1.2);draw()});
