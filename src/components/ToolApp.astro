@@ -79,6 +79,10 @@ if (root) {
   let result;
   let currentLayer = 0;
   let steps = [];
+  let stepsByLayer = new Map();
+  let stepsByRow = new Map();
+  let stepKeysByLayer = new Map();
+  let stepIndexByKey = new Map();
   let stepIndex = 0;
   let completed = new Set();
   let zoom = 1, panX = 0, panY = 0;
@@ -163,6 +167,22 @@ if (root) {
     } else result.rows.forEach(row=>row.spans.forEach((span,si)=>out.push({key:`R${row.y}S${si}`,layer:0,row,span,si})));
     return out;
   }
+  function indexSteps(){
+    stepsByLayer=new Map();
+    stepsByRow=new Map();
+    stepKeysByLayer=new Map();
+    stepIndexByKey=new Map();
+    steps.forEach((step,index)=>{
+      stepIndexByKey.set(step.key,index);
+      if(!stepsByLayer.has(step.layer))stepsByLayer.set(step.layer,[]);
+      stepsByLayer.get(step.layer).push(step);
+      const rowKey=`${step.layer}:${step.row.y}`;
+      if(!stepsByRow.has(rowKey))stepsByRow.set(rowKey,[]);
+      stepsByRow.get(rowKey).push(step);
+      if(!stepKeysByLayer.has(step.layer))stepKeysByLayer.set(step.layer,new Map());
+      stepKeysByLayer.get(step.layer).set(`${step.row.y}:${step.si}`,step.key);
+    });
+  }
   function activeRows(){ return shape==='dome' ? (result.layers[currentLayer]?.rows||[]) : result.rows; }
 
   function fit(){ zoom=1;panX=0;panY=0;draw(); }
@@ -177,17 +197,20 @@ if (root) {
     const ox=(cw-gw*cell)/2+panX, oy=(ch-gh*cell)/2+panY;
     const current=steps[stepIndex];
     const layerIdx=shape==='dome'?currentLayer:0;
-    const activeKeys=new Map();
-    steps.forEach(s=>{if(s.layer===layerIdx) activeKeys.set(`${s.row.y}:${s.si}`,s.key)});
+    const activeKeys=stepKeysByLayer.get(layerIdx)||new Map();
     if(display.grid&&cell>=5){ctx.strokeStyle='#eeeeee';ctx.lineWidth=1;for(let x=0;x<=gw;x++){ctx.beginPath();ctx.moveTo(ox+x*cell,oy);ctx.lineTo(ox+x*cell,oy+gh*cell);ctx.stroke()}for(let y=0;y<=gh;y++){ctx.beginPath();ctx.moveTo(ox,oy+y*cell);ctx.lineTo(ox+gw*cell,oy+y*cell);ctx.stroke()}}
     if(shape==='dome'&&display.ghost&&layerIdx>0){
       const ghostRows=result.layers[layerIdx-1]?.rows||[];
       ctx.save();ctx.globalAlpha=.2;ctx.fillStyle='#34d399';
       for(const row of ghostRows){
         for(const s of row.spans){
-          for(let x=s.start;x<=s.end;x++){
-            ctx.fillRect(ox+x*cell+Math.min(1,cell*.08),oy+row.y*cell+Math.min(1,cell*.08),Math.max(1,cell-Math.min(2,cell*.16)),Math.max(1,cell-Math.min(2,cell*.16)));
+          if(cell<2.5){
+            ctx.fillRect(ox+s.start*cell,oy+row.y*cell,Math.max(1,(s.end-s.start+1)*cell),Math.max(1,cell));
+            continue;
           }
+          const inset=Math.min(1,cell*.08);
+          const size=Math.max(1,cell-Math.min(2,cell*.16));
+          for(let x=s.start;x<=s.end;x++) ctx.fillRect(ox+x*cell+inset,oy+row.y*cell+inset,size,size);
         }
       }
       ctx.restore();
@@ -219,7 +242,7 @@ if (root) {
     if(shape==='dome'){
       setText('[data-layer]',`${currentLayer+1}/${result.layers.length}`);
       setText('[data-layer-blocks]',result.layers[currentLayer]?.count||0);
-      const layerSteps=steps.filter(step=>step.layer===currentLayer);
+      const layerSteps=stepsByLayer.get(currentLayer)||[];
       const layerDone=layerSteps.filter(step=>completed.has(step.key)).length;
       const layerPct=layerSteps.length?Math.round(layerDone/layerSteps.length*100):0;
       setText('[data-layer-progress]',`Layer ${currentLayer+1}: ${layerPct}% · ${layerDone}/${layerSteps.length} segments`);
@@ -288,7 +311,7 @@ if (root) {
   }
 
   function regenerate(resetView=false){
-    result=makeResult();normalizeInputs();steps=createSteps();loadProgress();if(resetView){zoom=1;panX=0;panY=0}renderStats();renderInstruction();
+    result=makeResult();normalizeInputs();steps=createSteps();indexSteps();loadProgress();if(resetView){zoom=1;panX=0;panY=0}renderStats();renderInstruction();
     q('[data-thickness-wrap]').style.display=result.style==='thick'?'':'none';
     qa('[data-style]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.style===text('style'))));
     if(shape==='circle'){
@@ -457,7 +480,7 @@ if (root) {
   q('[data-undo]').addEventListener('click',()=>{if(!completed.size)return;const arr=[...completed];const key=arr[arr.length-1];completed.delete(key);const idx=steps.findIndex(s=>s.key===key);if(idx>=0)stepIndex=idx;saveProgress();renderInstruction()});
   q('[data-complete-row]').addEventListener('click',()=>{
     const current=steps[stepIndex]; if(!current)return;
-    const rowSteps=steps.filter(step=>step.layer===current.layer&&step.row.y===current.row.y);
+    const rowSteps=stepsByRow.get(`${current.layer}:${current.row.y}`)||[];
     rowSteps.forEach(step=>completed.add(step.key));
     const next=steps.findIndex((step,index)=>index>stepIndex&&!completed.has(step.key)&&(step.layer!==current.layer||step.row.y!==current.row.y));
     if(next>=0) stepIndex=next; else stepIndex=steps.length-1;
@@ -465,7 +488,7 @@ if (root) {
   });
   q('[data-complete-layer]')?.addEventListener('click',()=>{
     const current=steps[stepIndex]; if(!current)return;
-    steps.filter(step=>step.layer===current.layer).forEach(step=>completed.add(step.key));
+    (stepsByLayer.get(current.layer)||[]).forEach(step=>completed.add(step.key));
     const next=steps.findIndex((step,index)=>index>stepIndex&&!completed.has(step.key)&&step.layer!==current.layer);
     if(next>=0) stepIndex=next; else stepIndex=steps.length-1;
     saveProgress();renderInstruction();
@@ -480,10 +503,12 @@ if (root) {
   function goToLayer(target){
     if(shape!=='dome')return;
     target=Math.max(0,Math.min(result.layers.length-1,target));
-    const layerIndexes=steps.map((step,index)=>({step,index})).filter(item=>item.step.layer===target);
-    const firstIncomplete=layerIndexes.find(item=>!completed.has(item.step.key));
-    const chosen=firstIncomplete||layerIndexes[0];
-    if(chosen){stepIndex=chosen.index;saveProgress();renderInstruction()}
+    const layerSteps=stepsByLayer.get(target)||[];
+    const chosen=layerSteps.find(step=>!completed.has(step.key))||layerSteps[0];
+    if(chosen){
+      stepIndex=stepIndexByKey.get(chosen.key)??0;
+      saveProgress();renderInstruction();
+    }
   }
   q('[data-layer-prev]')?.addEventListener('click',()=>goToLayer(currentLayer-1));
   q('[data-layer-next]')?.addEventListener('click',()=>goToLayer(currentLayer+1));
