@@ -1,0 +1,61 @@
+name: Export bug
+description: Report a PNG, TXT, Print, QR or Litematic export problem.
+title: "[Export] "
+labels: ["export"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not attach private world files, credentials or confidential data.
+  - type: dropdown
+    id: export
+    attributes:
+      label: Export type
+      options:
+        - PNG
+        - Print
+        - TXT build plan
+        - QR / Send to phone
+        - Litematic
+        - Copy link
+    validations:
+      required: true
+  - type: input
+    id: shape
+    attributes:
+      label: Shape and dimensions
+      placeholder: "Dome 31×31×16 Thin"
+    validations:
+      required: true
+  - type: input
+    id: material
+    attributes:
+      label: Material label
+      description: Include this for Litematic issues.
+      placeholder: "Stone Bricks"
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the shortest sequence that reliably triggers the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Error or incorrect result
+      description: Paste the visible error message or describe the incorrect file.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: "Safari on iPhone / Chrome on Windows"
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Litematic compatibility details
+      description: For Litematic, include Minecraft and Litematica versions and whether the file imports.
