@@ -65,6 +65,7 @@ const { shape } = Astro.props;
 <script>
 import { generateCircle, generateOval, generateDome } from '../lib/geometry';
 import { buildTextPlan, rowInstruction } from '../lib/buildPlan';
+import { canonicalBlueprintUrl, parseBlueprintFragment, serializeBlueprintState } from '../lib/state';
 
 const root = document.querySelector('[data-tool]');
 if (root) {
@@ -261,8 +262,34 @@ if (root) {
     }
   }
 
-  function updateFragment(){ const p=params(); let v=''; if(shape==='circle')v=`c-${p.diameter}-${p.style}-${p.thickness}`; if(shape==='oval')v=`o-${p.width}-${p.height}-${p.style}-${p.thickness}`; if(shape==='dome')v=`d-${p.width}-${p.depth}-${p.height}-${p.style}-${p.thickness}`;history.replaceState(null,'',`${location.pathname}#${v}`);return `https://voxelcurve.com${location.pathname}#${v}`; }
-  function parseFragment(){const h=location.hash.slice(1).split('-');if(!h.length)return;try{if(shape==='circle'&&h[0]==='c'){q('[data-input="diameter"]').value=h[1];q('[data-input="style"]').value=h[2];q('[data-input="thickness"]').value=h[3];}if(shape==='oval'&&h[0]==='o'){q('[data-input="width"]').value=h[1];q('[data-input="height"]').value=h[2];q('[data-input="style"]').value=h[3];q('[data-input="thickness"]').value=h[4];}if(shape==='dome'&&h[0]==='d'){q('[data-input="width"]').value=h[1];q('[data-input="depth"]').value=h[2];q('[data-input="height"]').value=h[3];q('[data-input="style"]').value=h[4];q('[data-input="thickness"]').value=h[5];}}catch{}}
+  function updateFragment(){
+    const p=params();
+    const fragment=serializeBlueprintState(p);
+    history.replaceState(null,'',`${location.pathname}#${fragment}`);
+    return canonicalBlueprintUrl(location.pathname,p);
+  }
+  function parseFragment(){
+    const state=parseBlueprintFragment(location.hash);
+    if(!state||state.shape!==shape)return;
+    if(state.shape==='circle'){
+      q('[data-input="diameter"]').value=String(state.diameter);
+      q('[data-input="style"]').value=state.style;
+      q('[data-input="thickness"]').value=String(state.thickness);
+      return;
+    }
+    if(state.shape==='oval'){
+      q('[data-input="width"]').value=String(state.width);
+      q('[data-input="height"]').value=String(state.height);
+      q('[data-input="style"]').value=state.style;
+      q('[data-input="thickness"]').value=String(state.thickness);
+      return;
+    }
+    q('[data-input="width"]').value=String(state.width);
+    q('[data-input="depth"]').value=String(state.depth);
+    q('[data-input="height"]').value=String(state.height);
+    q('[data-input="style"]').value=state.style;
+    q('[data-input="thickness"]').value=String(state.thickness);
+  }
 
   let statusTimer=0;
   function showStatus(message,kind='ok'){
