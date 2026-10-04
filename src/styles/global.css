@@ -1042,3 +1042,24 @@ tr:last-child td{border-bottom:0}
     transition-duration:.001ms!important
   }
 }
+
+
+/* ===== Dome layer navigation ===== */
+.layer-nav{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:8px
+}
+.layer-nav .btn{
+  min-height:36px;
+  padding:7px 8px;
+  font-size:10px
+}
+.layer-delta-note{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  color:#6f7772
+}
+@media(max-width:800px){
+  .layer-nav .btn{min-height:44px;font-size:11px}
+}
