@@ -45,6 +45,8 @@ Before changing product behavior or UI, read:
 - `DESIGN.md` — VoxelCurve visual system and responsive rules
 - `GEOMETRY.md` — normative geometry conventions and invariants
 - `SEO.md` — canonical keyword clusters and page ownership
+- `RELEASE_CHECKLIST.md` — production and post-launch verification gates
+- `SECURITY.md` — security reporting rules
 
 Do not introduce a new geometry convention, design language or synonym landing page without explicitly revising the corresponding source-of-truth document.
 
@@ -79,7 +81,9 @@ src/
 │   ├── buildPlan.ts
 │   ├── geometry.ts
 │   ├── litematic.ts
-│   └── schema.ts
+│   ├── progress.ts
+│   ├── schema.ts
+│   └── state.ts
 ├── pages/
 └── styles/
 ```
@@ -93,7 +97,7 @@ Canvas, material counts, TXT plans, print output and Litematic export must consu
 Use Node.js 22.
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -118,6 +122,10 @@ Current regression coverage includes:
 - Litematic NBT smoke validation
 - Litematic occupied-palette count vs geometry
 - oversized Litematic safety guards
+- blueprint URL fragment round-trips and malformed-state rejection
+- canonical production share URLs
+- compact progress bitset round-trips
+- legacy progress migration and stale-key filtering
 
 ## Production build
 
