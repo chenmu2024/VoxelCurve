@@ -72,7 +72,7 @@ const { shape } = Astro.props;
     <h2>Build instructions</h2>
     <pre data-print-plan></pre>
   </section>
-  <dialog class="qr-dialog" data-qr-dialog aria-labelledby="qr-dialog-title"><button class="btn" style="float:right" data-qr-close aria-label="Close QR dialog">Close</button><h3 id="qr-dialog-title">Send blueprint to phone</h3><canvas data-qr-canvas></canvas><p class="notice">Scan to open the same dimensions on your phone.</p></dialog>
+  <dialog class="qr-dialog" data-qr-dialog aria-labelledby="qr-dialog-title"><button class="btn" style="float:right" data-qr-close aria-label="Close QR dialog">Close</button><h3 id="qr-dialog-title">Send blueprint to phone</h3><canvas data-qr-canvas role="img" aria-label="QR code for the current VoxelCurve blueprint"></canvas><p class="notice">Scan to open the same dimensions on your phone.</p><p class="qr-link-row"><a class="text-link" data-qr-link href="/" rel="noopener">Open blueprint link →</a></p></dialog>
 </section>
 
 <script>
@@ -682,6 +682,8 @@ if (root) {
       const QRCode=(await import('qrcode')).default;
       const qc=q('[data-qr-canvas]');
       await QRCode.toCanvas(qc,url,{width:240,margin:1});
+      const qrLink=q('[data-qr-link]');
+      if(qrLink) qrLink.href=url;
       q('[data-qr-dialog]').showModal();
       showStatus('QR code created for voxelcurve.com.');
     }catch{
