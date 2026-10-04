@@ -25,7 +25,7 @@ export function softwareSchema(input: {
     name: input.name,
     url: input.url,
     description: input.description,
-    applicationCategory: 'GameApplication',
+    applicationCategory: 'UtilitiesApplication',
     operatingSystem: 'Web',
     browserRequirements: 'Requires a modern web browser with JavaScript enabled.',
     isAccessibleForFree: true,
