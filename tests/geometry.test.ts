@@ -1,7 +1,7 @@
 import { describe,it,expect } from 'vitest';
 import { generateCircle,generateOval,generateDome } from '../src/lib/geometry';
 import { exportLitematic } from '../src/lib/litematic';
-import { buildTextPlan } from '../src/lib/buildPlan';
+import { buildTextPlan, spanInstruction } from '../src/lib/buildPlan';
 import { gunzipSync } from 'fflate';
 
 function cells2d(r:any){const s=new Set<string>();for(const row of r.rows)for(const span of row.spans)for(let x=span.start;x<=span.end;x++)s.add(`${x},${row.y}`);return s}
@@ -28,6 +28,11 @@ describe('geometry',()=>{
     const top=hollow.layers[hollow.layers.length-1];
     expect(top.index).toBe(15);
     expect(top.count).toBeGreaterThan(0);
+  });
+  it('center instructions use the segment start, not segment midpoint',()=>{
+    expect(spanInstruction({start:9,end:11},31).center).toBe('Start 6 blocks left of center · place 3 right');
+    expect(spanInstruction({start:19,end:21},31).center).toBe('Start 4 blocks right of center · place 3 right');
+    expect(spanInstruction({start:8,end:11},20).center).toContain('center gap');
   });
   it('text plan uses the same total block count as geometry',()=>{
     const r=generateDome(21,21,11,'thin',1);
