@@ -1,0 +1,162 @@
+---
+interface Props { shape:'circle'|'oval'|'dome'; }
+const { shape } = Astro.props;
+---
+<section class="tool-shell container" data-tool data-shape={shape}>
+  <aside class="panel controls" aria-label="Generator controls">
+    <p class="panel-title">Generator controls</p>
+    {shape === 'circle' && <div class="field"><label for="diameter">Diameter <small>3–512 blocks</small></label><input id="diameter" data-input="diameter" type="number" min="3" max="512" value="31" /><div class="preset-row" style="margin-top:8px">{[7,9,11,15,21,31,41,51,64,100].map(n=><button class="chip" type="button" data-preset={n}>{n}</button>)}</div></div>}
+    {shape === 'oval' && <><div class="field"><label for="width">Width <small>3–512</small></label><input id="width" data-input="width" type="number" min="3" max="512" value="31" /></div><div class="field"><label for="height">Height <small>3–512</small></label><input id="height" data-input="height" type="number" min="3" max="512" value="21" /></div></>}
+    {shape === 'dome' && <><div class="field"><label for="width">Width <small>3–256</small></label><input id="width" data-input="width" type="number" min="3" max="256" value="31" /></div><div class="field"><label for="depth">Depth <small>3–256</small></label><input id="depth" data-input="depth" type="number" min="3" max="256" value="31" /></div><div class="field"><label for="height">Height <small>2–256</small></label><input id="height" data-input="height" type="number" min="2" max="256" value="16" /></div></>}
+    <div class="field"><label for="style">Build style</label><select id="style" data-input="style"><option value="thin">Thin / Hollow</option><option value="thick">Thick wall</option><option value="filled">Filled</option></select></div>
+    <div class="field" data-thickness-wrap><label for="thickness">Thickness <small>blocks inward</small></label><input id="thickness" data-input="thickness" type="number" min="1" max="32" value="1" /></div>
+    <div class="field"><label for="material">Material <small>optional</small></label><input id="material" data-input="material" type="text" value="Stone Bricks" maxlength="60" /></div>
+    <div class="field"><label>Display</label><div class="toggle-row"><button type="button" class="toggle" data-toggle="grid" aria-pressed="true">Grid</button><button type="button" class="toggle" data-toggle="center" aria-pressed="true">Center</button><button type="button" class="toggle" data-toggle="labels" aria-pressed="true">Labels</button></div></div>
+    {shape === 'dome' && <button type="button" class="btn" data-hemisphere>Use hemisphere height</button>}
+  </aside>
+
+  <section class="panel canvas-panel" aria-label="Blueprint">
+    <div class="canvas-toolbar"><strong data-blueprint-title>Blueprint</strong><div class="actions"><button class="btn" type="button" data-fit>Fit</button><button class="btn" type="button" data-zoom-out>−</button><button class="btn" type="button" data-zoom-in>+</button><button class="btn" type="button" data-print>Print</button></div></div>
+    <div class="canvas-wrap" data-canvas-wrap><canvas data-canvas aria-label="Generated block blueprint"></canvas></div>
+  </section>
+
+  <aside class="panel stats">
+    <p class="panel-title">Build navigator</p>
+    <div class="stat-grid"><div class="stat"><b data-blocks>0</b><span>Blocks</span></div><div class="stat"><b data-stacks>0</b><span>Stacks</span></div>{shape==='dome' && <><div class="stat"><b data-layer>1</b><span>Layer</span></div><div class="stat"><b data-layer-blocks>0</b><span>Layer blocks</span></div></>}</div>
+    <div class="instruction"><strong data-instruction-title>Generating…</strong><span data-instruction-body></span></div>
+    <div class="progress" aria-label="Build progress"><i data-progress-bar></i></div><div class="notice"><span data-progress-label>0% complete</span></div>
+    <div class="builder-actions"><button class="btn" type="button" data-prev>← Previous</button><button class="btn accent" type="button" data-complete>Complete</button><button class="btn" type="button" data-next>Next →</button><button class="btn" type="button" data-undo>Undo</button></div>
+    <div style="height:1px;background:var(--line);margin:16px 0"></div>
+    <div class="builder-actions"><button class="btn" type="button" data-share>Copy link</button><button class="btn" type="button" data-qr>Send to phone</button><button class="btn" type="button" data-png>PNG</button><button class="btn" type="button" data-txt>TXT plan</button><button class="btn primary" style="grid-column:1/-1" type="button" data-litematic>.litematic</button></div>
+    <div class="notice">Progress is stored only in this browser. Shared links carry blueprint settings, not completion state.</div>
+  </aside>
+  <dialog class="qr-dialog" data-qr-dialog><button class="btn" style="float:right" data-qr-close>Close</button><h3>Send blueprint to phone</h3><canvas data-qr-canvas></canvas><p class="notice">Scan to open the same dimensions on your phone.</p></dialog>
+</section>
+
+<script>
+import { generateCircle, generateOval, generateDome } from '../lib/geometry';
+import { buildTextPlan, rowInstruction } from '../lib/buildPlan';
+
+const root = document.querySelector('[data-tool]');
+if (root) {
+  const shape = root.dataset.shape;
+  const q = (s) => root.querySelector(s);
+  const qa = (s) => [...root.querySelectorAll(s)];
+  const canvas = q('[data-canvas]');
+  const wrap = q('[data-canvas-wrap]');
+  const ctx = canvas.getContext('2d');
+  let result;
+  let currentLayer = 0;
+  let steps = [];
+  let stepIndex = 0;
+  let completed = new Set();
+  let zoom = 1, panX = 0, panY = 0;
+  let pointers = new Map(), dragStart = null, pinchStart = null;
+  const display = { grid:true, center:true, labels:true };
+
+  const num = (name, fallback) => Number(q(`[data-input="${name}"]`)?.value ?? fallback);
+  const text = (name, fallback='') => String(q(`[data-input="${name}"]`)?.value ?? fallback);
+  const setText = (sel, value) => { const el=q(sel); if(el) el.textContent=String(value); };
+  const clamp = (n,min,max) => Math.max(min, Math.min(max, Math.round(Number.isFinite(n)?n:min)));
+
+  function params(){
+    const style=text('style','thin'); const thickness=clamp(num('thickness',1),1,32);
+    if(shape==='circle') return {shape, diameter:clamp(num('diameter',31),3,512), style, thickness};
+    if(shape==='oval') return {shape, width:clamp(num('width',31),3,512), height:clamp(num('height',21),3,512), style, thickness};
+    return {shape, width:clamp(num('width',31),3,256), depth:clamp(num('depth',31),3,256), height:clamp(num('height',16),2,256), style, thickness};
+  }
+  function makeResult(){
+    const p=params();
+    if(shape==='circle') return generateCircle(p.diameter,p.style,p.thickness);
+    if(shape==='oval') return generateOval(p.width,p.height,p.style,p.thickness);
+    return generateDome(p.width,p.depth,p.height,p.style,p.thickness);
+  }
+  function stateKey(){ const p=params(); return `vc-progress-v${result.geometryVersion}-${JSON.stringify(p)}`; }
+  function saveProgress(){ try{localStorage.setItem(stateKey(),JSON.stringify({completed:[...completed],stepIndex}));}catch{} }
+  function loadProgress(){ completed=new Set();stepIndex=0;try{const raw=localStorage.getItem(stateKey());if(raw){const s=JSON.parse(raw);completed=new Set(s.completed||[]);stepIndex=Math.min(s.stepIndex||0,Math.max(0,steps.length-1));}}catch{} }
+
+  function createSteps(){
+    const out=[];
+    if(shape==='dome'){
+      result.layers.forEach((layer,li)=>layer.rows.forEach((row)=>row.spans.forEach((span,si)=>out.push({key:`L${li}R${row.y}S${si}`,layer:li,row,span,si}))));
+    } else result.rows.forEach(row=>row.spans.forEach((span,si)=>out.push({key:`R${row.y}S${si}`,layer:0,row,span,si})));
+    return out;
+  }
+  function activeRows(){ return shape==='dome' ? (result.layers[currentLayer]?.rows||[]) : result.rows; }
+
+  function fit(){ zoom=1;panX=0;panY=0;draw(); }
+  function resize(){ const r=wrap.getBoundingClientRect(); const dpr=Math.min(2,window.devicePixelRatio||1); canvas.width=Math.max(1,Math.round(r.width*dpr));canvas.height=Math.max(1,Math.round(r.height*dpr));canvas.style.width=`${r.width}px`;canvas.style.height=`${r.height}px`;ctx.setTransform(dpr,0,0,dpr,0,0);draw(); }
+
+  function draw(){
+    if(!result||!ctx) return;
+    const rect=wrap.getBoundingClientRect(); const cw=rect.width,ch=rect.height;
+    ctx.save();ctx.clearRect(0,0,cw,ch);ctx.fillStyle='#f3f6f4';ctx.fillRect(0,0,cw,ch);
+    const rows=activeRows(); const gw=result.width; const gh=shape==='dome'?result.depth:result.height;
+    const base=Math.max(2,Math.min((cw-42)/gw,(ch-42)/gh)); const cell=base*zoom;
+    const ox=(cw-gw*cell)/2+panX, oy=(ch-gh*cell)/2+panY;
+    const current=steps[stepIndex];
+    const layerIdx=shape==='dome'?currentLayer:0;
+    const activeKeys=new Map();
+    steps.forEach(s=>{if(s.layer===layerIdx) activeKeys.set(`${s.row.y}:${s.si}`,s.key)});
+    if(display.grid&&cell>=5){ctx.strokeStyle='#dce4df';ctx.lineWidth=1;for(let x=0;x<=gw;x++){ctx.beginPath();ctx.moveTo(ox+x*cell,oy);ctx.lineTo(ox+x*cell,oy+gh*cell);ctx.stroke()}for(let y=0;y<=gh;y++){ctx.beginPath();ctx.moveTo(ox,oy+y*cell);ctx.lineTo(ox+gw*cell,oy+y*cell);ctx.stroke()}}
+    for(const row of rows){
+      row.spans.forEach((s,si)=>{
+        const key=activeKeys.get(`${row.y}:${si}`); const isDone=key&&completed.has(key); const isCurrent=current&&current.layer===layerIdx&&current.row.y===row.y&&current.si===si;
+        for(let x=s.start;x<=s.end;x++){
+          ctx.fillStyle=isCurrent?'#0c1712':isDone?'#92dbb7':'#22a669';
+          ctx.fillRect(ox+x*cell+Math.min(1,cell*.08),oy+row.y*cell+Math.min(1,cell*.08),Math.max(1,cell-Math.min(2,cell*.16)),Math.max(1,cell-Math.min(2,cell*.16)));
+        }
+      })
+    }
+    if(display.center){ctx.strokeStyle='#f39b3b';ctx.lineWidth=1.5;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(ox+gw*cell/2,oy);ctx.lineTo(ox+gw*cell/2,oy+gh*cell);ctx.moveTo(ox,oy+gh*cell/2);ctx.lineTo(ox+gw*cell,oy+gh*cell/2);ctx.stroke();ctx.setLineDash([])}
+    if(display.labels&&cell>=13){ctx.fillStyle='#65766c';ctx.font='10px system-ui';ctx.textAlign='right';ctx.textBaseline='middle';for(const row of rows){if(row.count)ctx.fillText(String(row.y+1),ox-5,oy+(row.y+.5)*cell)}}
+    ctx.restore();
+  }
+
+  function renderInstruction(){
+    if(!steps.length){setText('[data-instruction-title]','No blocks generated');setText('[data-instruction-body]','Try a different size.');return;}
+    stepIndex=Math.max(0,Math.min(stepIndex,steps.length-1)); const s=steps[stepIndex]; currentLayer=s.layer;
+    const inst=rowInstruction(s.row,result.width)[s.si];
+    const title=shape==='dome'?`Layer ${s.layer+1} · Row ${s.row.y+1} · Segment ${s.si+1}`:`Row ${s.row.y+1} · Segment ${s.si+1}`;
+    const gap= s.si<s.row.spans.length-1 ? s.row.spans[s.si+1].start-s.span.end-1 : 0;
+    const body=`${inst.center}. ${inst.edge}. ${gap>0?`Then skip ${gap} block${gap===1?'':'s'}.`:''}`;
+    setText('[data-instruction-title]',title);setText('[data-instruction-body]',body);
+    const done=completed.size; const pct=steps.length?Math.round(done/steps.length*100):0; q('[data-progress-bar]').style.width=`${pct}%`;setText('[data-progress-label]',`${pct}% complete · ${done}/${steps.length} segments`);
+    if(shape==='dome'){setText('[data-layer]',`${currentLayer+1}/${result.layers.length}`);setText('[data-layer-blocks]',result.layers[currentLayer]?.count||0)}
+    q('[data-complete]').textContent=completed.has(s.key)?'Completed ✓':'Complete';
+    draw();
+  }
+
+  function renderStats(){setText('[data-blocks]',result.blockCount.toLocaleString()); const stacks=Math.floor(result.blockCount/64),loose=result.blockCount%64;setText('[data-stacks]',loose?`${stacks}+${loose}`:String(stacks)); const p=params();setText('[data-blueprint-title]',shape==='circle'?`${p.diameter}×${p.diameter} Circle`:shape==='oval'?`${p.width}×${p.height} Oval`:`${p.width}×${p.depth}×${p.height} Dome`)}
+
+  function regenerate(resetView=false){
+    result=makeResult();steps=createSteps();loadProgress();if(resetView){zoom=1;panX=0;panY=0}renderStats();renderInstruction();
+    q('[data-thickness-wrap]').style.display=text('style')==='filled'?'none':'';
+  }
+
+  function updateFragment(){ const p=params(); let v=''; if(shape==='circle')v=`c-${p.diameter}-${p.style}-${p.thickness}`; if(shape==='oval')v=`o-${p.width}-${p.height}-${p.style}-${p.thickness}`; if(shape==='dome')v=`d-${p.width}-${p.depth}-${p.height}-${p.style}-${p.thickness}`;history.replaceState(null,'',`${location.pathname}#${v}`);return location.href; }
+  function parseFragment(){const h=location.hash.slice(1).split('-');if(!h.length)return;try{if(shape==='circle'&&h[0]==='c'){q('[data-input="diameter"]').value=h[1];q('[data-input="style"]').value=h[2];q('[data-input="thickness"]').value=h[3];}if(shape==='oval'&&h[0]==='o'){q('[data-input="width"]').value=h[1];q('[data-input="height"]').value=h[2];q('[data-input="style"]').value=h[3];q('[data-input="thickness"]').value=h[4];}if(shape==='dome'&&h[0]==='d'){q('[data-input="width"]').value=h[1];q('[data-input="depth"]').value=h[2];q('[data-input="height"]').value=h[3];q('[data-input="style"]').value=h[4];q('[data-input="thickness"]').value=h[5];}}catch{}}
+
+  qa('[data-input]').forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>regenerate(true)));
+  qa('[data-preset]').forEach(el=>el.addEventListener('click',()=>{q('[data-input="diameter"]').value=el.dataset.preset;regenerate(true)}));
+  qa('[data-toggle]').forEach(el=>el.addEventListener('click',()=>{const k=el.dataset.toggle;display[k]=!display[k];el.setAttribute('aria-pressed',String(display[k]));draw()}));
+  q('[data-hemisphere]')?.addEventListener('click',()=>{const w=num('width',31);q('[data-input="depth"]').value=String(w);q('[data-input="height"]').value=String(Math.ceil(w/2));regenerate(true)});
+  q('[data-fit]').addEventListener('click',fit);q('[data-zoom-in]').addEventListener('click',()=>{zoom=Math.min(8,zoom*1.2);draw()});q('[data-zoom-out]').addEventListener('click',()=>{zoom=Math.max(.25,zoom/1.2);draw()});q('[data-print]').addEventListener('click',()=>window.print());
+  q('[data-prev]').addEventListener('click',()=>{stepIndex=Math.max(0,stepIndex-1);saveProgress();renderInstruction()});
+  q('[data-next]').addEventListener('click',()=>{stepIndex=Math.min(steps.length-1,stepIndex+1);saveProgress();renderInstruction()});
+  q('[data-complete]').addEventListener('click',()=>{const s=steps[stepIndex];if(!s)return;if(completed.has(s.key))completed.delete(s.key);else{completed.add(s.key);if(stepIndex<steps.length-1)stepIndex++}saveProgress();renderInstruction()});
+  q('[data-undo]').addEventListener('click',()=>{if(!completed.size)return;const arr=[...completed];completed.delete(arr[arr.length-1]);saveProgress();renderInstruction()});
+  q('[data-share]').addEventListener('click',async()=>{const url=updateFragment();try{await navigator.clipboard.writeText(url);q('[data-share]').textContent='Copied ✓';setTimeout(()=>q('[data-share]').textContent='Copy link',1200)}catch{prompt('Copy this link:',url)}});
+  q('[data-qr]').addEventListener('click',async()=>{const url=updateFragment();const QRCode=(await import('qrcode')).default;const qc=q('[data-qr-canvas]');await QRCode.toCanvas(qc,url,{width:240,margin:1});q('[data-qr-dialog]').showModal()});q('[data-qr-close]').addEventListener('click',()=>q('[data-qr-dialog]').close());
+  q('[data-png]').addEventListener('click',()=>{const a=document.createElement('a');a.download=`voxelcurve-${shape}.png`;a.href=canvas.toDataURL('image/png');a.click()});
+  q('[data-txt]').addEventListener('click',()=>{const blob=new Blob([buildTextPlan(result,text('material','Blocks'))],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`voxelcurve-${shape}-build-plan.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
+  q('[data-litematic]').addEventListener('click',async()=>{const btn=q('[data-litematic]');const old=btn.textContent;btn.textContent='Building file…';btn.disabled=true;try{const {exportLitematic}=await import('../lib/litematic');const safe=(text('material','stone').toLowerCase().replace(/[^a-z0-9_]/g,'_')||'stone');const bytes=exportLitematic(result,`VoxelCurve ${shape}`,`minecraft:${safe}`);const blob=new Blob([bytes],{type:'application/octet-stream'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`voxelcurve-${shape}.litematic`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}catch(e){alert(e?.message||'Could not create litematic file.')}finally{btn.textContent=old;btn.disabled=false}});
+
+  wrap.addEventListener('wheel',(e)=>{e.preventDefault();zoom=Math.max(.25,Math.min(8,zoom*(e.deltaY<0?1.1:.9)));draw()},{passive:false});
+  wrap.addEventListener('pointerdown',(e)=>{wrap.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===1)dragStart={x:e.clientX,y:e.clientY,px:panX,py:panY,moved:false};if(pointers.size===2){const a=[...pointers.values()];pinchStart={dist:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),zoom}}});
+  wrap.addEventListener('pointermove',(e)=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===2&&pinchStart){const a=[...pointers.values()];const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);zoom=Math.max(.25,Math.min(8,pinchStart.zoom*d/pinchStart.dist));draw();return}if(pointers.size===1&&dragStart){const dx=e.clientX-dragStart.x,dy=e.clientY-dragStart.y;if(Math.hypot(dx,dy)>5)dragStart.moved=true;panX=dragStart.px+dx;panY=dragStart.py+dy;draw()}});
+  const pointerEnd=(e)=>{pointers.delete(e.pointerId);if(pointers.size<2)pinchStart=null;if(!pointers.size)dragStart=null};wrap.addEventListener('pointerup',pointerEnd);wrap.addEventListener('pointercancel',pointerEnd);
+
+  new ResizeObserver(resize).observe(wrap);parseFragment();regenerate(true);resize();
+}
+</script>
