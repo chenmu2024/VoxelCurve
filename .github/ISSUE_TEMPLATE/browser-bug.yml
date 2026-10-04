@@ -1,0 +1,54 @@
+name: Browser or UI bug
+description: Report a layout, interaction, mobile or browser-specific problem.
+title: "[Browser] "
+labels: ["browser"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe a reproducible UI or browser issue. Do not include private information.
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      placeholder: "https://voxelcurve.com/minecraft-dome-generator"
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: "Firefox 145"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device / OS
+      placeholder: "Pixel 9 / Android 17 or Windows 11 desktop"
+    validations:
+      required: true
+  - type: input
+    id: viewport
+    attributes:
+      label: Viewport
+      description: Approximate width is enough for mobile problems.
+      placeholder: "375 px wide"
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
