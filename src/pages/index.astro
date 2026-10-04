@@ -1,12 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ToolApp from '../components/ToolApp.astro';
+import { softwareSchema } from '../lib/schema';
 const title='Minecraft Circle Generator – Block Blueprint & Build Guide | VoxelCurve';
 const description='Generate accurate Minecraft circles with exact block layouts, row-by-row instructions, material counts and guided build progress. Free online tool by VoxelCurve.';
-const appSchema={ '@context':'https://schema.org','@type':'SoftwareApplication',name:'VoxelCurve Minecraft Circle Generator',applicationCategory:'GameApplication',operatingSystem:'Web',url:'https://voxelcurve.com/',description,offers:{'@type':'Offer',price:'0',priceCurrency:'USD'} };
+const schemas=[softwareSchema({
+  name:'VoxelCurve Minecraft Circle Generator',
+  url:'https://voxelcurve.com/',
+  description,
+  featureList:['Minecraft circle blueprint','Guided row and segment building','Material count','PNG export','TXT build plan','Litematic export']
+})];
 ---
-<BaseLayout {title} {description} canonical="https://voxelcurve.com/">
-  <script type="application/ld+json" set:html={JSON.stringify(appSchema)} />
+<BaseLayout {title} {description} canonical="https://voxelcurve.com/" {schemas}>
   <section class="product-stage">
     <div class="hero container">
       <span class="eyebrow">Free browser tool · No sign-up</span>
