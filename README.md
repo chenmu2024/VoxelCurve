@@ -19,6 +19,7 @@ Core tools:
 - Browser-local build progress
 - Material and stack counts
 - Share URL + QR
+- progressive screen Wake Lock during build mode
 - PNG export
 - Printable build plan
 - TXT guided build plan
