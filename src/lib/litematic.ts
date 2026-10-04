@@ -18,39 +18,54 @@ class NbtWriter {
   bytes(){ const n=this.chunks.reduce((s,c)=>s+c.length,0); const out=new Uint8Array(n); let o=0; for(const c of this.chunks){out.set(c,o);o+=c.length;} return out; }
 }
 
-function volumeBits(result: ShapeResult): Uint8Array {
-  const sx=result.width, sy=result.type==='dome'?result.height:1, sz=result.type==='dome'?result.depth:result.height;
+function packResultPalette(result: ShapeResult, bitsPerEntry=2): bigint[] {
+  const sx=result.width;
+  const sy=result.type==='dome'?result.height:1;
+  const sz=result.type==='dome'?result.depth:result.height;
   const volume=sx*sy*sz;
-  if(volume>20_000_000) throw new Error('Structure is too large for browser export. Reduce its dimensions.');
-  const bits=new Uint8Array(volume);
-  const set=(x:number,y:number,z:number)=>{ bits[x + z*sx + y*sx*sz]=1; };
-  if(result.type==='dome'){
-    for(const layer of result.layers) for(const row of layer.rows) for(const s of row.spans) for(let x=s.start;x<=s.end;x++) set(x,layer.index,row.y);
-  } else {
-    for(const row of result.rows) for(const s of row.spans) for(let x=s.start;x<=s.end;x++) set(x,0,row.y);
-  }
-  return bits;
-}
 
-function packPaletteIndices(indices: Uint8Array, bitsPerEntry=2): bigint[] {
-  const totalBits=indices.length*bitsPerEntry;
+  if(volume>20_000_000) {
+    throw new Error('Structure is too large for browser export. Reduce its dimensions.');
+  }
+
+  const totalBits=volume*bitsPerEntry;
   const longs=Array<bigint>(Math.ceil(totalBits/64)).fill(0n);
-  const mask=(1n<<BigInt(bitsPerEntry))-1n;
-  for(let i=0;i<indices.length;i++){
-    const value=BigInt(indices[i]) & mask;
-    const bitIndex=i*bitsPerEntry;
+  const value=1n; // palette index 1 = selected block; 0 remains air
+
+  const setIndex=(index:number)=>{
+    const bitIndex=index*bitsPerEntry;
     const li=Math.floor(bitIndex/64);
     const offset=bitIndex%64;
     longs[li] |= value << BigInt(offset);
-    if(offset+bitsPerEntry>64) longs[li+1] |= value >> BigInt(64-offset);
+    if(offset+bitsPerEntry>64) {
+      longs[li+1] |= value >> BigInt(64-offset);
+    }
+  };
+
+  if(result.type==='dome'){
+    for(const layer of result.layers){
+      for(const row of layer.rows){
+        for(const span of row.spans){
+          const base=row.y*sx + layer.index*sx*sz;
+          for(let x=span.start;x<=span.end;x++) setIndex(base+x);
+        }
+      }
+    }
+  } else {
+    for(const row of result.rows){
+      for(const span of row.spans){
+        const base=row.y*sx;
+        for(let x=span.start;x<=span.end;x++) setIndex(base+x);
+      }
+    }
   }
+
   return longs.map(v=>BigInt.asIntN(64,v));
 }
 
 export function exportLitematic(result: ShapeResult, name='VoxelCurve Build', blockName='minecraft:stone'): Uint8Array {
   const sx=result.width, sy=result.type==='dome'?result.height:1, sz=result.type==='dome'?result.depth:result.height;
-  const occupied=volumeBits(result);
-  const packed=packPaletteIndices(occupied,2);
+  const packed=packResultPalette(result,2);
   const now=BigInt(Date.now());
   const w=new NbtWriter();
   w.u8(10); w.str('');
