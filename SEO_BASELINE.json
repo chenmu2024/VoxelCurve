@@ -1,0 +1,1655 @@
+{
+  "measuredAt": "2026-10-05T01:59:38.597Z",
+  "sourceCommit": "c7debb1b4ec8eab32adeff24c6e4d4238619eb0f",
+  "origin": "https://voxelcurve.com",
+  "keywordLockHash": "d6168850a1136ffbc115299a2b8a8d45c62fa8e7d89cc0ea27bd9328aacacc9f",
+  "fieldData": "GSC, Bing, CrUX and field INP unavailable; analytics deferred",
+  "pages": [
+    {
+      "path": "/",
+      "status": 200,
+      "finalURL": "https://voxelcurve.com/",
+      "title": "Minecraft Circle Generator – Block Blueprint & Build Guide | VoxelCurve",
+      "description": "Generate accurate Minecraft circles with exact block layouts, row-by-row instructions, material counts and guided build progress. Free online tool by VoxelCurve.",
+      "h1": [
+        "Minecraft Circle Generator"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "text": "Minecraft Circle Generator"
+        },
+        {
+          "level": 2,
+          "text": "Build instructions"
+        },
+        {
+          "level": 3,
+          "text": "Send blueprint to phone"
+        },
+        {
+          "level": 2,
+          "text": "Build the circle, not the spreadsheet."
+        },
+        {
+          "level": 3,
+          "text": "Exact row segments"
+        },
+        {
+          "level": 3,
+          "text": "Materials before building"
+        },
+        {
+          "level": 3,
+          "text": "Java build export"
+        },
+        {
+          "level": 2,
+          "text": "Choose a size for your Minecraft circles"
+        },
+        {
+          "level": 2,
+          "text": "Choose the outside diameter"
+        },
+        {
+          "level": 2,
+          "text": "What is a Minecraft circle generator?"
+        },
+        {
+          "level": 2,
+          "text": "From a pixel circle to a block blueprint"
+        },
+        {
+          "level": 2,
+          "text": "Count materials before placing blocks"
+        },
+        {
+          "level": 2,
+          "text": "Save a schematic or a manual build plan"
+        },
+        {
+          "level": 2,
+          "text": "Odd vs. even circle sizes"
+        },
+        {
+          "level": 2,
+          "text": "Thin, thick or filled?"
+        },
+        {
+          "level": 2,
+          "text": "Follow the plan and save your place"
+        },
+        {
+          "level": 2,
+          "text": "Java and Bedrock"
+        },
+        {
+          "level": 2,
+          "text": "How is this blueprint calculated?"
+        },
+        {
+          "level": 3,
+          "text": "Circle grid and material counts"
+        },
+        {
+          "level": 3,
+          "text": "Computed examples in blocks"
+        },
+        {
+          "level": 3,
+          "text": "What is included in the result?"
+        },
+        {
+          "level": 2,
+          "text": "Related Minecraft building tools"
+        },
+        {
+          "level": 3,
+          "text": "Dome Generator"
+        },
+        {
+          "level": 3,
+          "text": "Oval Generator"
+        },
+        {
+          "level": 3,
+          "text": "Circle Building Guide"
+        },
+        {
+          "level": 2,
+          "text": "Frequently asked questions"
+        }
+      ],
+      "canonical": "https://voxelcurve.com/",
+      "robots": "index,follow,max-image-preview:large",
+      "hreflang": [],
+      "schema": [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://voxelcurve.com/#website",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "description": "Guided block-by-block geometry tools for Minecraft builders.",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://voxelcurve.com/#organization",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "logo": "https://voxelcurve.com/favicon.svg",
+          "email": "contact@VoxelCurve.com",
+          "sameAs": [
+            "https://github.com/chenmu2024/VoxelCurve"
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://voxelcurve.com/#webpage",
+          "url": "https://voxelcurve.com/",
+          "name": "Minecraft Circle Generator – Block Blueprint & Build Guide | VoxelCurve",
+          "description": "Generate accurate Minecraft circles with exact block layouts, row-by-row instructions, material counts and guided build progress. Free online tool by VoxelCurve.",
+          "inLanguage": "en",
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          },
+          "mainEntity": {
+            "@id": "https://voxelcurve.com/#software"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "@id": "https://voxelcurve.com/#software",
+          "name": "VoxelCurve Minecraft Circle Generator",
+          "url": "https://voxelcurve.com/",
+          "description": "Generate accurate Minecraft circles with exact block layouts, row-by-row instructions, material counts and guided build progress. Free online tool by VoxelCurve.",
+          "inLanguage": "en",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "Web",
+          "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+          "isAccessibleForFree": true,
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          },
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "featureList": "Minecraft circle blueprint, Guided row and segment building, Material count, PNG export, TXT build plan, Litematic export"
+        }
+      ],
+      "contentFingerprint": "f87bf7feff135c411ff37bbfa3458794a04d0971d7b1ffffed5808ea85094753",
+      "wordCount": 1316,
+      "sitemapMember": true,
+      "incoming": [
+        "/minecraft-circle-chart",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/about",
+        "/contact",
+        "/privacy",
+        "/terms",
+        "/disclaimer"
+      ],
+      "internalLinkCount": 40,
+      "criticalLinks": [
+        "/",
+        "/about",
+        "/contact",
+        "/disclaimer",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-circle-chart",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/privacy",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/minecraft-circle-chart",
+      "status": 200,
+      "finalURL": "https://voxelcurve.com/minecraft-circle-chart",
+      "title": "Minecraft Circle Chart – Block Templates from 5×5 to 100×100 | VoxelCurve",
+      "description": "Use this Minecraft circle chart for common block-circle sizes from 5×5 to 100×100, with outline counts, filled counts and direct links to editable blueprints.",
+      "h1": [
+        "Minecraft Circle Chart"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "text": "Minecraft Circle Chart"
+        },
+        {
+          "level": 2,
+          "text": "Which circle size should you use?"
+        },
+        {
+          "level": 3,
+          "text": "5–15 blocks"
+        },
+        {
+          "level": 3,
+          "text": "21–41 blocks"
+        },
+        {
+          "level": 3,
+          "text": "51–100 blocks"
+        },
+        {
+          "level": 2,
+          "text": "How to read a Minecraft circle chart"
+        },
+        {
+          "level": 2,
+          "text": "Need a different size?"
+        },
+        {
+          "level": 2,
+          "text": "Choose a template for your build"
+        },
+        {
+          "level": 3,
+          "text": "Which Minecraft circle template fits a small tower?"
+        },
+        {
+          "level": 3,
+          "text": "How do I read the Minecraft circle graph?"
+        },
+        {
+          "level": 3,
+          "text": "What if my diameter is not in the table?"
+        },
+        {
+          "level": 2,
+          "text": "Turn the chart into a build plan"
+        },
+        {
+          "level": 3,
+          "text": "Circle Generator"
+        },
+        {
+          "level": 3,
+          "text": "Circle Building Guide"
+        },
+        {
+          "level": 3,
+          "text": "Dome Generator"
+        }
+      ],
+      "canonical": "https://voxelcurve.com/minecraft-circle-chart",
+      "robots": "index,follow,max-image-preview:large",
+      "hreflang": [],
+      "schema": [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://voxelcurve.com/#website",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "description": "Guided block-by-block geometry tools for Minecraft builders.",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://voxelcurve.com/#organization",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "logo": "https://voxelcurve.com/favicon.svg",
+          "email": "contact@VoxelCurve.com",
+          "sameAs": [
+            "https://github.com/chenmu2024/VoxelCurve"
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://voxelcurve.com/minecraft-circle-chart#webpage",
+          "url": "https://voxelcurve.com/minecraft-circle-chart",
+          "name": "Minecraft Circle Chart – Block Templates from 5×5 to 100×100 | VoxelCurve",
+          "description": "Use this Minecraft circle chart for common block-circle sizes from 5×5 to 100×100, with outline counts, filled counts and direct links to editable blueprints.",
+          "inLanguage": "en",
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "VoxelCurve",
+              "item": "https://voxelcurve.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Minecraft Circle Chart",
+              "item": "https://voxelcurve.com/minecraft-circle-chart"
+            }
+          ]
+        }
+      ],
+      "contentFingerprint": "2574cc8afb178ee6dc83cf9c1ad34fc56b29a584e19040430f0428ed8670d530",
+      "wordCount": 522,
+      "sitemapMember": true,
+      "incoming": [
+        "/",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/about",
+        "/contact",
+        "/privacy",
+        "/terms",
+        "/disclaimer"
+      ],
+      "internalLinkCount": 39,
+      "criticalLinks": [
+        "/",
+        "/about",
+        "/contact",
+        "/disclaimer",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-circle-chart",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/privacy",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/how-to-make-a-circle-in-minecraft",
+      "status": 200,
+      "finalURL": "https://voxelcurve.com/how-to-make-a-circle-in-minecraft",
+      "title": "How to Make a Circle in Minecraft – Step-by-Step Block Guide | VoxelCurve",
+      "description": "Learn how to make a circle in Minecraft using center points, anchors, row segments and symmetry. Includes practical 11×11, 21×21 and 31×31 building examples.",
+      "h1": [
+        "How to Make a Circle in Minecraft"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "text": "How to Make a Circle in Minecraft"
+        },
+        {
+          "level": 2,
+          "text": "What makes a Minecraft circle?"
+        },
+        {
+          "level": 2,
+          "text": "Odd vs. even sizes"
+        },
+        {
+          "level": 2,
+          "text": "Choose the diameter"
+        },
+        {
+          "level": 2,
+          "text": "Find the center"
+        },
+        {
+          "level": 2,
+          "text": "Mark four anchors"
+        },
+        {
+          "level": 2,
+          "text": "Understand rows and segments"
+        },
+        {
+          "level": 2,
+          "text": "Build one quarter"
+        },
+        {
+          "level": 2,
+          "text": "Mirror the pattern"
+        },
+        {
+          "level": 2,
+          "text": "Real examples: 11×11, 21×21 and 31×31"
+        },
+        {
+          "level": 3,
+          "text": "11×11"
+        },
+        {
+          "level": 3,
+          "text": "21×21"
+        },
+        {
+          "level": 3,
+          "text": "31×31"
+        },
+        {
+          "level": 2,
+          "text": "How to make a large circle in Minecraft"
+        },
+        {
+          "level": 2,
+          "text": "Common mistakes"
+        },
+        {
+          "level": 2,
+          "text": "How to make a Minecraft circle for your first tower"
+        },
+        {
+          "level": 2,
+          "text": "How to build a circle in Minecraft without recounting rows"
+        },
+        {
+          "level": 2,
+          "text": "How to create a circle in Minecraft with a filled floor"
+        },
+        {
+          "level": 3,
+          "text": "Where should a beginner start?"
+        },
+        {
+          "level": 2,
+          "text": "Use the circle generator"
+        },
+        {
+          "level": 2,
+          "text": "Use the method with a live blueprint"
+        },
+        {
+          "level": 3,
+          "text": "Circle Generator"
+        },
+        {
+          "level": 3,
+          "text": "Circle Chart"
+        },
+        {
+          "level": 3,
+          "text": "Dome Generator"
+        }
+      ],
+      "canonical": "https://voxelcurve.com/how-to-make-a-circle-in-minecraft",
+      "robots": "index,follow,max-image-preview:large",
+      "hreflang": [],
+      "schema": [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://voxelcurve.com/#website",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "description": "Guided block-by-block geometry tools for Minecraft builders.",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://voxelcurve.com/#organization",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "logo": "https://voxelcurve.com/favicon.svg",
+          "email": "contact@VoxelCurve.com",
+          "sameAs": [
+            "https://github.com/chenmu2024/VoxelCurve"
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://voxelcurve.com/how-to-make-a-circle-in-minecraft#webpage",
+          "url": "https://voxelcurve.com/how-to-make-a-circle-in-minecraft",
+          "name": "How to Make a Circle in Minecraft – Step-by-Step Block Guide | VoxelCurve",
+          "description": "Learn how to make a circle in Minecraft using center points, anchors, row segments and symmetry. Includes practical 11×11, 21×21 and 31×31 building examples.",
+          "inLanguage": "en",
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          },
+          "mainEntity": {
+            "@id": "https://voxelcurve.com/how-to-make-a-circle-in-minecraft#article"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "VoxelCurve",
+              "item": "https://voxelcurve.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "How to Make a Circle in Minecraft",
+              "item": "https://voxelcurve.com/how-to-make-a-circle-in-minecraft"
+            }
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "@id": "https://voxelcurve.com/how-to-make-a-circle-in-minecraft#article",
+          "headline": "How to Make a Circle in Minecraft",
+          "url": "https://voxelcurve.com/how-to-make-a-circle-in-minecraft",
+          "description": "Learn how to make a circle in Minecraft using center points, anchors, row segments and symmetry. Includes practical 11×11, 21×21 and 31×31 building examples.",
+          "inLanguage": "en",
+          "dateModified": "2026-10-05",
+          "image": "https://voxelcurve.com/og.png",
+          "author": {
+            "@id": "https://voxelcurve.com/#organization"
+          },
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          },
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "mainEntityOfPage": {
+            "@id": "https://voxelcurve.com/how-to-make-a-circle-in-minecraft#webpage"
+          }
+        }
+      ],
+      "contentFingerprint": "ea166ab793d4675eefc79b5317ba04cea8ea8429a8995be40ecfcf7166f33118",
+      "wordCount": 1174,
+      "sitemapMember": true,
+      "incoming": [
+        "/",
+        "/minecraft-circle-chart",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/about",
+        "/contact",
+        "/privacy",
+        "/terms",
+        "/disclaimer"
+      ],
+      "internalLinkCount": 35,
+      "criticalLinks": [
+        "/",
+        "/about",
+        "/contact",
+        "/disclaimer",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-circle-chart",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/privacy",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/minecraft-dome-generator",
+      "status": 200,
+      "finalURL": "https://voxelcurve.com/minecraft-dome-generator",
+      "title": "Minecraft Dome Generator – Layer-by-Layer Block Blueprint | VoxelCurve",
+      "description": "Generate Minecraft domes layer by layer with exact row segments, material counts and guided build progress. Create low, hemispherical or tall domes.",
+      "h1": [
+        "Minecraft Dome Generator"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "text": "Minecraft Dome Generator"
+        },
+        {
+          "level": 2,
+          "text": "Build instructions"
+        },
+        {
+          "level": 3,
+          "text": "Send blueprint to phone"
+        },
+        {
+          "level": 2,
+          "text": "Build a Minecraft dome without losing your layer"
+        },
+        {
+          "level": 2,
+          "text": "Hemisphere, low dome or tall dome"
+        },
+        {
+          "level": 2,
+          "text": "Hollow domes are true shells"
+        },
+        {
+          "level": 2,
+          "text": "Layer navigation"
+        },
+        {
+          "level": 2,
+          "text": "How is this blueprint calculated?"
+        },
+        {
+          "level": 3,
+          "text": "Layer sampling and hollow caps"
+        },
+        {
+          "level": 3,
+          "text": "Computed examples in blocks"
+        },
+        {
+          "level": 3,
+          "text": "What is included in the result?"
+        },
+        {
+          "level": 2,
+          "text": "Useful starting dimensions"
+        },
+        {
+          "level": 2,
+          "text": "Keep building"
+        },
+        {
+          "level": 3,
+          "text": "Circle Generator"
+        },
+        {
+          "level": 3,
+          "text": "Oval Generator"
+        },
+        {
+          "level": 3,
+          "text": "Circle Guide"
+        },
+        {
+          "level": 2,
+          "text": "Minecraft dome guide: from footprint to roof"
+        },
+        {
+          "level": 3,
+          "text": "Can the Minecraft dome maker plan an observatory roof?"
+        },
+        {
+          "level": 3,
+          "text": "How do I make a flatter roof?"
+        },
+        {
+          "level": 3,
+          "text": "Does the tool build the roof in-game?"
+        },
+        {
+          "level": 3,
+          "text": "Where should I start construction?"
+        }
+      ],
+      "canonical": "https://voxelcurve.com/minecraft-dome-generator",
+      "robots": "index,follow,max-image-preview:large",
+      "hreflang": [],
+      "schema": [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://voxelcurve.com/#website",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "description": "Guided block-by-block geometry tools for Minecraft builders.",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://voxelcurve.com/#organization",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "logo": "https://voxelcurve.com/favicon.svg",
+          "email": "contact@VoxelCurve.com",
+          "sameAs": [
+            "https://github.com/chenmu2024/VoxelCurve"
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://voxelcurve.com/minecraft-dome-generator#webpage",
+          "url": "https://voxelcurve.com/minecraft-dome-generator",
+          "name": "Minecraft Dome Generator – Layer-by-Layer Block Blueprint | VoxelCurve",
+          "description": "Generate Minecraft domes layer by layer with exact row segments, material counts and guided build progress. Create low, hemispherical or tall domes.",
+          "inLanguage": "en",
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          },
+          "mainEntity": {
+            "@id": "https://voxelcurve.com/minecraft-dome-generator#software"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "VoxelCurve",
+              "item": "https://voxelcurve.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Minecraft Dome Generator",
+              "item": "https://voxelcurve.com/minecraft-dome-generator"
+            }
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "@id": "https://voxelcurve.com/minecraft-dome-generator#software",
+          "name": "VoxelCurve Minecraft Dome Generator",
+          "url": "https://voxelcurve.com/minecraft-dome-generator",
+          "description": "Generate Minecraft domes layer by layer with exact row segments, material counts and guided build progress. Create low, hemispherical or tall domes.",
+          "inLanguage": "en",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "Web",
+          "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+          "isAccessibleForFree": true,
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          },
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "featureList": "Layer-by-layer dome blueprint, Hollow and filled domes, Guided row and segment building, Material count, PNG export, Litematic export"
+        }
+      ],
+      "contentFingerprint": "dfdec17bd553d110c850522d4f50ea99eb7c78d11cb3d63416b66144cc9d18f9",
+      "wordCount": 912,
+      "sitemapMember": true,
+      "incoming": [
+        "/",
+        "/minecraft-circle-chart",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-oval-generator",
+        "/about",
+        "/contact",
+        "/privacy",
+        "/terms",
+        "/disclaimer"
+      ],
+      "internalLinkCount": 38,
+      "criticalLinks": [
+        "/",
+        "/about",
+        "/contact",
+        "/disclaimer",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-circle-chart",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/privacy",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/minecraft-oval-generator",
+      "status": 200,
+      "finalURL": "https://voxelcurve.com/minecraft-oval-generator",
+      "title": "Minecraft Oval Generator – Block-by-Block Oval Blueprint | VoxelCurve",
+      "description": "Create Minecraft oval and ellipse blueprints with exact row segments, block counts and guided build progress. Free browser-based builder tool.",
+      "h1": [
+        "Minecraft Oval Generator"
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "text": "Minecraft Oval Generator"
+        },
+        {
+          "level": 2,
+          "text": "Build instructions"
+        },
+        {
+          "level": 3,
+          "text": "Send blueprint to phone"
+        },
+        {
+          "level": 2,
+          "text": "How the Minecraft oval generator works"
+        },
+        {
+          "level": 2,
+          "text": "Where ovals are useful"
+        },
+        {
+          "level": 2,
+          "text": "Thin, thick and filled ovals"
+        },
+        {
+          "level": 2,
+          "text": "How is this blueprint calculated?"
+        },
+        {
+          "level": 3,
+          "text": "Ellipse sampling and narrow footprints"
+        },
+        {
+          "level": 3,
+          "text": "Computed examples in blocks"
+        },
+        {
+          "level": 3,
+          "text": "What is included in the result?"
+        },
+        {
+          "level": 2,
+          "text": "Useful oval footprints"
+        },
+        {
+          "level": 2,
+          "text": "Keep building"
+        },
+        {
+          "level": 3,
+          "text": "Circle Generator"
+        },
+        {
+          "level": 3,
+          "text": "Dome Generator"
+        },
+        {
+          "level": 3,
+          "text": "Circle Chart"
+        },
+        {
+          "level": 2,
+          "text": "Plan a Minecraft oval for an arena"
+        },
+        {
+          "level": 3,
+          "text": "What happens when width and height are equal?"
+        },
+        {
+          "level": 3,
+          "text": "How do I keep both sides symmetric?"
+        }
+      ],
+      "canonical": "https://voxelcurve.com/minecraft-oval-generator",
+      "robots": "index,follow,max-image-preview:large",
+      "hreflang": [],
+      "schema": [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://voxelcurve.com/#website",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "description": "Guided block-by-block geometry tools for Minecraft builders.",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://voxelcurve.com/#organization",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "logo": "https://voxelcurve.com/favicon.svg",
+          "email": "contact@VoxelCurve.com",
+          "sameAs": [
+            "https://github.com/chenmu2024/VoxelCurve"
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://voxelcurve.com/minecraft-oval-generator#webpage",
+          "url": "https://voxelcurve.com/minecraft-oval-generator",
+          "name": "Minecraft Oval Generator – Block-by-Block Oval Blueprint | VoxelCurve",
+          "description": "Create Minecraft oval and ellipse blueprints with exact row segments, block counts and guided build progress. Free browser-based builder tool.",
+          "inLanguage": "en",
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          },
+          "mainEntity": {
+            "@id": "https://voxelcurve.com/minecraft-oval-generator#software"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "VoxelCurve",
+              "item": "https://voxelcurve.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Minecraft Oval Generator",
+              "item": "https://voxelcurve.com/minecraft-oval-generator"
+            }
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "@id": "https://voxelcurve.com/minecraft-oval-generator#software",
+          "name": "VoxelCurve Minecraft Oval Generator",
+          "url": "https://voxelcurve.com/minecraft-oval-generator",
+          "description": "Create Minecraft oval and ellipse blueprints with exact row segments, block counts and guided build progress. Free browser-based builder tool.",
+          "inLanguage": "en",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "Web",
+          "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+          "isAccessibleForFree": true,
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          },
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "featureList": "Minecraft oval blueprint, Custom width and height, Guided row and segment building, Material count, PNG and TXT export"
+        }
+      ],
+      "contentFingerprint": "530e7a81f327fb34ea5a74b149bd95a90ae4d85265c5e94e82663f134cbcf747",
+      "wordCount": 665,
+      "sitemapMember": true,
+      "incoming": [
+        "/",
+        "/minecraft-circle-chart",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-dome-generator",
+        "/about",
+        "/contact",
+        "/privacy",
+        "/terms",
+        "/disclaimer"
+      ],
+      "internalLinkCount": 38,
+      "criticalLinks": [
+        "/",
+        "/about",
+        "/contact",
+        "/disclaimer",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-circle-chart",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/privacy",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/about",
+      "status": 200,
+      "finalURL": "https://voxelcurve.com/about",
+      "title": "About VoxelCurve",
+      "description": "About VoxelCurve, a local-first Minecraft building geometry workspace for circles, ovals and domes.",
+      "h1": [
+        "Built for precise block construction."
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "text": "Built for precise block construction."
+        },
+        {
+          "level": 2,
+          "text": "What VoxelCurve does"
+        },
+        {
+          "level": 2,
+          "text": "Local-first by design"
+        },
+        {
+          "level": 2,
+          "text": "One geometry source"
+        },
+        {
+          "level": 2,
+          "text": "Open maintenance"
+        },
+        {
+          "level": 2,
+          "text": "Independent project"
+        }
+      ],
+      "canonical": "https://voxelcurve.com/about",
+      "robots": "index,follow,max-image-preview:large",
+      "hreflang": [],
+      "schema": [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://voxelcurve.com/#website",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "description": "Guided block-by-block geometry tools for Minecraft builders.",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://voxelcurve.com/#organization",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "logo": "https://voxelcurve.com/favicon.svg",
+          "email": "contact@VoxelCurve.com",
+          "sameAs": [
+            "https://github.com/chenmu2024/VoxelCurve"
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://voxelcurve.com/about#webpage",
+          "url": "https://voxelcurve.com/about",
+          "name": "About VoxelCurve",
+          "description": "About VoxelCurve, a local-first Minecraft building geometry workspace for circles, ovals and domes.",
+          "inLanguage": "en",
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "VoxelCurve",
+              "item": "https://voxelcurve.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "About",
+              "item": "https://voxelcurve.com/about"
+            }
+          ]
+        }
+      ],
+      "contentFingerprint": "b0996abb541b7e5c15bf8baf35130621bd16c13a54a5046048a14a6d8444cf41",
+      "wordCount": 260,
+      "sitemapMember": true,
+      "incoming": [
+        "/",
+        "/minecraft-circle-chart",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/contact",
+        "/privacy",
+        "/terms",
+        "/disclaimer"
+      ],
+      "internalLinkCount": 27,
+      "criticalLinks": [
+        "/",
+        "/about",
+        "/contact",
+        "/disclaimer",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-circle-chart",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/privacy",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/contact",
+      "status": 200,
+      "finalURL": "https://voxelcurve.com/contact",
+      "title": "Contact VoxelCurve",
+      "description": "Contact VoxelCurve by email for questions and feedback, or report reproducible geometry, export and browser issues through GitHub.",
+      "h1": [
+        "Report a reproducible problem."
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "text": "Report a reproducible problem."
+        },
+        {
+          "level": 2,
+          "text": "Get in touch"
+        },
+        {
+          "level": 3,
+          "text": "Geometry issue"
+        },
+        {
+          "level": 3,
+          "text": "Export issue"
+        },
+        {
+          "level": 3,
+          "text": "Browser issue"
+        },
+        {
+          "level": 2,
+          "text": "Keep private reports private"
+        }
+      ],
+      "canonical": "https://voxelcurve.com/contact",
+      "robots": "index,follow,max-image-preview:large",
+      "hreflang": [],
+      "schema": [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://voxelcurve.com/#website",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "description": "Guided block-by-block geometry tools for Minecraft builders.",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://voxelcurve.com/#organization",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "logo": "https://voxelcurve.com/favicon.svg",
+          "email": "contact@VoxelCurve.com",
+          "sameAs": [
+            "https://github.com/chenmu2024/VoxelCurve"
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://voxelcurve.com/contact#webpage",
+          "url": "https://voxelcurve.com/contact",
+          "name": "Contact VoxelCurve",
+          "description": "Contact VoxelCurve by email for questions and feedback, or report reproducible geometry, export and browser issues through GitHub.",
+          "inLanguage": "en",
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "VoxelCurve",
+              "item": "https://voxelcurve.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Contact",
+              "item": "https://voxelcurve.com/contact"
+            }
+          ]
+        }
+      ],
+      "contentFingerprint": "62994bfacc902a07f5ede964f144697c93ed18e6614536feff9db03b5b4057e9",
+      "wordCount": 148,
+      "sitemapMember": true,
+      "incoming": [
+        "/",
+        "/minecraft-circle-chart",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/about",
+        "/privacy",
+        "/terms",
+        "/disclaimer"
+      ],
+      "internalLinkCount": 27,
+      "criticalLinks": [
+        "/",
+        "/about",
+        "/contact",
+        "/disclaimer",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-circle-chart",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/privacy",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/privacy",
+      "status": 200,
+      "finalURL": "https://voxelcurve.com/privacy",
+      "title": "Privacy Policy | VoxelCurve",
+      "description": "How VoxelCurve handles local build progress, blueprint links, browser-generated exports and hosting data.",
+      "h1": [
+        "Local-first by default."
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "text": "Local-first by default."
+        },
+        {
+          "level": 2,
+          "text": "No account required"
+        },
+        {
+          "level": 2,
+          "text": "Geometry and exports"
+        },
+        {
+          "level": 2,
+          "text": "Local build progress"
+        },
+        {
+          "level": 2,
+          "text": "Shared blueprint links"
+        },
+        {
+          "level": 2,
+          "text": "Hosting and network data"
+        },
+        {
+          "level": 2,
+          "text": "Analytics and advertising"
+        },
+        {
+          "level": 2,
+          "text": "Public issue tracker"
+        },
+        {
+          "level": 2,
+          "text": "Your controls"
+        }
+      ],
+      "canonical": "https://voxelcurve.com/privacy",
+      "robots": "index,follow,max-image-preview:large",
+      "hreflang": [],
+      "schema": [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://voxelcurve.com/#website",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "description": "Guided block-by-block geometry tools for Minecraft builders.",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://voxelcurve.com/#organization",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "logo": "https://voxelcurve.com/favicon.svg",
+          "email": "contact@VoxelCurve.com",
+          "sameAs": [
+            "https://github.com/chenmu2024/VoxelCurve"
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://voxelcurve.com/privacy#webpage",
+          "url": "https://voxelcurve.com/privacy",
+          "name": "Privacy Policy | VoxelCurve",
+          "description": "How VoxelCurve handles local build progress, blueprint links, browser-generated exports and hosting data.",
+          "inLanguage": "en",
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "VoxelCurve",
+              "item": "https://voxelcurve.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Privacy Policy",
+              "item": "https://voxelcurve.com/privacy"
+            }
+          ]
+        }
+      ],
+      "contentFingerprint": "72131634c0b0b0652ce3911270c0b917f1f0245a5719968e2a6ea548049e96ac",
+      "wordCount": 374,
+      "sitemapMember": true,
+      "incoming": [
+        "/",
+        "/minecraft-circle-chart",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/about",
+        "/contact",
+        "/terms",
+        "/disclaimer"
+      ],
+      "internalLinkCount": 23,
+      "criticalLinks": [
+        "/",
+        "/about",
+        "/contact",
+        "/disclaimer",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-circle-chart",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/privacy",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/terms",
+      "status": 200,
+      "finalURL": "https://voxelcurve.com/terms",
+      "title": "Terms of Use | VoxelCurve",
+      "description": "Terms governing use of VoxelCurve building geometry tools and generated export files.",
+      "h1": [
+        "Use the plans, verify the build."
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "text": "Use the plans, verify the build."
+        },
+        {
+          "level": 2,
+          "text": "Service provided as available"
+        },
+        {
+          "level": 2,
+          "text": "Verify generated plans"
+        },
+        {
+          "level": 2,
+          "text": "Third-party compatibility"
+        },
+        {
+          "level": 2,
+          "text": "Your files and worlds"
+        },
+        {
+          "level": 2,
+          "text": "Acceptable use"
+        },
+        {
+          "level": 2,
+          "text": "External services"
+        }
+      ],
+      "canonical": "https://voxelcurve.com/terms",
+      "robots": "index,follow,max-image-preview:large",
+      "hreflang": [],
+      "schema": [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://voxelcurve.com/#website",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "description": "Guided block-by-block geometry tools for Minecraft builders.",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://voxelcurve.com/#organization",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "logo": "https://voxelcurve.com/favicon.svg",
+          "email": "contact@VoxelCurve.com",
+          "sameAs": [
+            "https://github.com/chenmu2024/VoxelCurve"
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://voxelcurve.com/terms#webpage",
+          "url": "https://voxelcurve.com/terms",
+          "name": "Terms of Use | VoxelCurve",
+          "description": "Terms governing use of VoxelCurve building geometry tools and generated export files.",
+          "inLanguage": "en",
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "VoxelCurve",
+              "item": "https://voxelcurve.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Terms of Use",
+              "item": "https://voxelcurve.com/terms"
+            }
+          ]
+        }
+      ],
+      "contentFingerprint": "05177d9b7875048fd7c447c44c5e51f3f253dc73a51db9e525e2898eac300dc5",
+      "wordCount": 212,
+      "sitemapMember": true,
+      "incoming": [
+        "/",
+        "/minecraft-circle-chart",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/about",
+        "/contact",
+        "/privacy",
+        "/disclaimer"
+      ],
+      "internalLinkCount": 23,
+      "criticalLinks": [
+        "/",
+        "/about",
+        "/contact",
+        "/disclaimer",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-circle-chart",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/privacy",
+        "/terms"
+      ]
+    },
+    {
+      "path": "/disclaimer",
+      "status": 200,
+      "finalURL": "https://voxelcurve.com/disclaimer",
+      "title": "Minecraft Trademark Disclaimer | VoxelCurve",
+      "description": "VoxelCurve is an independent fan-made building utility and is not affiliated with Mojang Studios or Microsoft.",
+      "h1": [
+        "Independent builder utility."
+      ],
+      "headings": [
+        {
+          "level": 1,
+          "text": "Independent builder utility."
+        },
+        {
+          "level": 2,
+          "text": "Minecraft references"
+        },
+        {
+          "level": 2,
+          "text": "VoxelCurve branding"
+        },
+        {
+          "level": 2,
+          "text": "Third-party tools"
+        }
+      ],
+      "canonical": "https://voxelcurve.com/disclaimer",
+      "robots": "index,follow,max-image-preview:large",
+      "hreflang": [],
+      "schema": [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://voxelcurve.com/#website",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "description": "Guided block-by-block geometry tools for Minecraft builders.",
+          "inLanguage": "en",
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://voxelcurve.com/#organization",
+          "name": "VoxelCurve",
+          "url": "https://voxelcurve.com/",
+          "logo": "https://voxelcurve.com/favicon.svg",
+          "email": "contact@VoxelCurve.com",
+          "sameAs": [
+            "https://github.com/chenmu2024/VoxelCurve"
+          ]
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://voxelcurve.com/disclaimer#webpage",
+          "url": "https://voxelcurve.com/disclaimer",
+          "name": "Minecraft Trademark Disclaimer | VoxelCurve",
+          "description": "VoxelCurve is an independent fan-made building utility and is not affiliated with Mojang Studios or Microsoft.",
+          "inLanguage": "en",
+          "isPartOf": {
+            "@id": "https://voxelcurve.com/#website"
+          },
+          "publisher": {
+            "@id": "https://voxelcurve.com/#organization"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "VoxelCurve",
+              "item": "https://voxelcurve.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Disclaimer",
+              "item": "https://voxelcurve.com/disclaimer"
+            }
+          ]
+        }
+      ],
+      "contentFingerprint": "f82fcb8fea3427ae3d5a723db0f8b95c6dc62ed86744e110fcd4ceb11f4db6cb",
+      "wordCount": 101,
+      "sitemapMember": true,
+      "incoming": [
+        "/",
+        "/minecraft-circle-chart",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/about",
+        "/contact",
+        "/privacy",
+        "/terms"
+      ],
+      "internalLinkCount": 23,
+      "criticalLinks": [
+        "/",
+        "/about",
+        "/contact",
+        "/disclaimer",
+        "/how-to-make-a-circle-in-minecraft",
+        "/minecraft-circle-chart",
+        "/minecraft-dome-generator",
+        "/minecraft-oval-generator",
+        "/privacy",
+        "/terms"
+      ]
+    }
+  ]
+}

@@ -7,7 +7,8 @@ const lockHash=createHash('sha256').update(JSON.stringify(lock.keywords)).digest
 if(lockHash!=='d6168850a1136ffbc115299a2b8a8d45c62fa8e7d89cc0ea27bd9328aacacc9f')throw new Error('Owner-approved keywords or page destinations changed');
 const pages=[...Object.keys(lock.keywords),'/about','/contact','/privacy','/terms','/disclaimer'];
 const errors=[];
-const text=html=>html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/g,' ').replace(/\s+/g,' ').trim();
+const text=html=>html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<[^>]*>/g,' ').replace(/&nbsp;|&#160;/g,' ').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/\s+/g,' ').trim();
+const baseline=JSON.parse(fs.readFileSync('SEO_BASELINE.json','utf8'));
 const entries=[];
 for(const pathname of pages){
  const html=fs.readFileSync(`dist/${pathname==='/'?'index':pathname.slice(1)}.html`,'utf8');
@@ -19,6 +20,10 @@ for(const pathname of pages){
  check(!/hreflang=/i.test(html),'unvalidated multilingual alternates');
  check(/<meta\b[^>]*name="twitter:image:alt"/i.test(html),'missing social image description');
  const headings=[...main.matchAll(/<h([1-6])\b[^>]*>(.*?)<\/h\1>/gis)].map(m=>({level:Number(m[1]),text:text(m[2])}));
+ const accepted=baseline.pages.find(page=>page.path===pathname);
+ check(accepted?.status===200&&accepted?.sitemapMember===true,'missing accepted production baseline');
+ check(accepted?.title===text(html.match(/<title>(.*?)<\/title>/is)?.[1]||''),'title drift from accepted baseline');
+ check(JSON.stringify(accepted?.h1)===JSON.stringify(headings.filter(h=>h.level===1).map(h=>h.text)),'H1 drift from accepted baseline');
  for(let i=1;i<headings.length;i++)check(headings[i].level<=headings[i-1].level+1,'heading level skipped at '+headings[i].text);
  for(const keyword of lock.keywords[pathname]||[]){const escaped=keyword.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');check(new RegExp('\\b'+escaped+'\\b','i').test(body),'approved keyword missing from raw main: '+keyword);}
  const schemas=[...html.matchAll(/<script\b[^>]*type="application\/ld\+json"[^>]*>(.*?)<\/script>/gis)].map(m=>JSON.parse(m[1]));

@@ -270,3 +270,9 @@ Material suggestions match the Litematic block palette. Custom TXT/print labels 
 Litematic generation runs in a cancellable Web Worker using a snapshot of the blueprint and material at export start. Navigation and subsequent input changes do not change that file. Limits remain 20,000,000 bounding cells and 5,000,000 occupied blocks. The download panel includes placement steps and axes; real-device and in-game validation are still required.
 
 Geometry v4 preserves the digital outer boundary of oval outlines and dome shells, preventing disconnected runs and floating caps. Circle v3 fixtures remain unchanged. Earlier-version saved progress is intentionally not reused.
+
+## SEO / GEO verification
+
+`SEO_GEO_GATE.md` applies the owner's Website-Starter-Standard quality gate to this site's existing architecture. `SEO_KEYWORDS.json` locks all 52 approved phrases and their page destinations; `npm run audit` checks their presence in raw HTML along with headings, robots, entity references, visible breadcrumbs and tool methods.
+
+`SEO_BASELINE.json` records the verified production metadata, headings, canonicals, schemas, content fingerprints, links and sitemap membership for future drift checks. Baseline dates are measurement dates, not invented publication dates. Performance reports and full release evidence are separate delivery artifacts; GSC/Bing, CrUX field data and real-device/game checks are not inferred from these automated checks. Analytics remains deferred.
