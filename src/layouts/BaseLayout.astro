@@ -20,6 +20,8 @@ const {
   schemas=[],
   noindex=false
 } = Astro.props;
+const breadcrumbs=(schemas.find(schema=>schema['@type']==='BreadcrumbList')?.itemListElement ?? []) as Array<{name:string;item:string}>;
+const entity=schemas.find(schema=>schema['@type']==='SoftwareApplication'||schema['@type']==='Article');
 const baseSchemas = [
   {
     '@context':'https://schema.org',
@@ -27,7 +29,9 @@ const baseSchemas = [
     '@id':'https://voxelcurve.com/#website',
     name:'VoxelCurve',
     url:'https://voxelcurve.com/',
-    description:'Guided block-by-block geometry tools for Minecraft builders.'
+    description:'Guided block-by-block geometry tools for Minecraft builders.',
+    inLanguage:'en',
+    publisher:{'@id':'https://voxelcurve.com/#organization'}
   },
   {
     '@context':'https://schema.org',
@@ -35,7 +39,21 @@ const baseSchemas = [
     '@id':'https://voxelcurve.com/#organization',
     name:'VoxelCurve',
     url:'https://voxelcurve.com/',
-    logo:'https://voxelcurve.com/favicon.svg'
+    logo:'https://voxelcurve.com/favicon.svg',
+    email:'contact@VoxelCurve.com',
+    sameAs:['https://github.com/chenmu2024/VoxelCurve']
+  },
+  {
+    '@context':'https://schema.org',
+    '@type':'WebPage',
+    '@id':`${canonical}#webpage`,
+    url:canonical,
+    name:title,
+    description,
+    inLanguage:'en',
+    isPartOf:{'@id':'https://voxelcurve.com/#website'},
+    publisher:{'@id':'https://voxelcurve.com/#organization'},
+    ...(entity ? {mainEntity:{'@id':entity['@id']}} : {})
   }
 ];
 ---
@@ -46,7 +64,7 @@ const baseSchemas = [
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content={description} />
-  {noindex && <meta name="robots" content="noindex,follow" />}
+  <meta name="robots" content={noindex?'noindex,follow':'index,follow,max-image-preview:large'} />
   <link rel="canonical" href={canonical} />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#0f1110" />
@@ -65,12 +83,16 @@ const baseSchemas = [
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={image} />
+  <meta name="twitter:image:alt" content="VoxelCurve — guided Minecraft building geometry tools" />
   {[...baseSchemas, ...schemas].map(schema => <script type="application/ld+json" set:html={JSON.stringify(schema)} />)}
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
   <Header />
-  <main id="main-content"><slot /></main>
+  <main id="main-content">
+    {breadcrumbs.length>1 && <nav class="breadcrumbs container" aria-label="Breadcrumb"><ol>{breadcrumbs.map((item,index)=><li>{index===breadcrumbs.length-1?<span aria-current="page">{item.name}</span>:<a href={item.item}>{item.name}</a>}</li>)}</ol></nav>}
+    <slot />
+  </main>
   <Footer />
 </body>
 </html>

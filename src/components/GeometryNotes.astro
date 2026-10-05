@@ -1,0 +1,40 @@
+---
+import { generateCircle, generateOval, generateDome, GEOMETRY_VERSION } from '../core/geometry';
+interface Props { shape:'circle'|'oval'|'dome'; }
+const {shape}=Astro.props;
+const examples=shape==='circle'?[11,21,31].map(n=>({label:`${n}×${n}`,thin:generateCircle(n).blockCount,filled:generateCircle(n,'filled').blockCount,href:`/#c-${n}-thin-1`})):
+  shape==='oval'?[{w:21,h:13},{w:31,h:21},{w:100,h:20}].map(({w,h})=>({label:`${w}×${h}`,thin:generateOval(w,h).blockCount,filled:generateOval(w,h,'filled').blockCount,href:`/minecraft-oval-generator#o-${w}-${h}-thin-1`})):
+  [{w:15,d:15,h:8},{w:31,d:31,h:16},{w:3,d:3,h:16}].map(({w,d,h})=>({label:`${w}×${d}×${h}`,thin:generateDome(w,d,h).blockCount,filled:generateDome(w,d,h,'filled').blockCount,href:`/minecraft-dome-generator#d-${w}-${d}-${h}-thin-1`}));
+---
+<section class="section" id="geometry-notes"><div class="container prose">
+  <h2>How is this blueprint calculated?</h2>
+  {shape==='circle' && <>
+    <p>The circle tool measures the outside diameter in blocks, from 3 to 512. A diameter of 21 means a 21-block-wide footprint, including both edge positions; it does not mean a radius of 21. The blueprint is a single horizontal layer, so a taller tower needs repeated layers in-game.</p>
+    <h3>Circle grid and material counts</h3>
+    <p>For diameter D, the grid center is (D − 1) / 2 and the sampling radius is D / 2. A block belongs to the filled disk when its center satisfies ((x − cx) / r)² + ((z − cz) / r)² ≤ 1. Integer x and z identify positions from 0 to D − 1; cx and cz are the center coordinates.</p>
+    <p>Thin removes the interior while retaining the exposed digital boundary. Thick increases the inward inset; Filled keeps every occupied disk cell. Small dimensions can make a thick outline solid. Material totals count occupied cells, rather than rounding a circumference formula.</p>
+  </>}
+  {shape==='oval' && <>
+    <p>The oval tool accepts outside width and height from 3 to 512 blocks independently. Both dimensions lie in the horizontal building plane: blueprint height is row depth in-game, not the height of a wall. A 31×21 input therefore describes a floor footprint 31 blocks wide and 21 blocks deep.</p>
+    <h3>Ellipse sampling and narrow footprints</h3>
+    <p>For width W and row depth H, cx = (W − 1) / 2, cz = (H − 1) / 2, rx = W / 2 and rz = H / 2. A filled cell satisfies ((x − cx) / rx)² + ((z − cz) / rz)² ≤ 1. Coordinates x and z are integer grid positions starting at zero.</p>
+    <p>Hollow styles subtract an inset ellipse but retain the exposed outer grid boundary. This prevents extreme proportions such as 100×20 from breaking into separate runs. Thin is a nominal one-block boundary; rasterization can produce wider spots on very narrow ovals. Boundary cells may connect diagonally as well as along edges.</p>
+  </>}
+  {shape==='dome' && <>
+    <p>A dome is the upper half of an ellipsoid sampled into blocks. Outside width and depth range from 3 to 256 blocks; height ranges from 2 to 256 and includes the bottom layer. Width and depth define the horizontal footprint, while height controls the vertical roof profile.</p>
+    <h3>Layer sampling and hollow caps</h3>
+    <p>For width W, depth D and height H, cx = (W − 1) / 2, cz = (D − 1) / 2, rx = W / 2, rz = D / 2 and ry = H − 0.5. Filled block centers satisfy ((x − cx) / rx)² + ((z − cz) / rz)² + (y / ry)² ≤ 1. Grid y starts at zero on the bottom layer; the displayed layer number is y + 1.</p>
+    <p>Thin and Thick remove an inner ellipsoid while retaining exposed side and cap cells; the base remains open inside. This creates a shell rather than stacking independent circle outlines. Narrow, tall shells retain connecting cells between layers. Even-width footprints can have an empty final sampled layer; the navigator skips empty layers and reports their actual height numbers.</p>
+  </>}
+  <h3>Computed examples in blocks</h3>
+  <div class="table-wrap" tabindex="0" role="region" aria-label={`${shape} geometry example counts`}><table>
+    <caption>Geometry V{GEOMETRY_VERSION}: {shape==='dome'?'width × depth × height':'width × row depth'}, with Thin thickness 1</caption>
+    <thead><tr><th scope="col">Outside dimensions</th><th scope="col">Thin blocks</th><th scope="col">Filled blocks</th></tr></thead>
+    <tbody>{examples.map(example=><tr><th scope="row"><a href={example.href}>{example.label}</a></th><td>{example.thin.toLocaleString('en-US')}</td><td>{example.filled.toLocaleString('en-US')}</td></tr>)}</tbody>
+  </table></div>
+  <h3>What is included in the result?</h3>
+  <p>Each occupied cell represents one block. Counts exclude scaffolding, temporary center markers and decorations; stack estimates use 64 blocks per stack. PNG and TXT are manual references for Java or Bedrock. A <code>.litematic</code> file is a schematic for compatible Java tools, not a WorldEdit <code>.schem</code> file or a Bedrock import.</p>
+  {shape==='dome' && <p>PNG exports the currently selected layer, while TXT and Litematic include the full dome. Very large filled structures can exceed the browser's safe Litematic export limit; reduce dimensions or choose a hollow shell when that warning appears.</p>}
+  <p>The formulas describe VoxelCurve's grid convention, not a universal Minecraft circle standard. Review the <a href="https://github.com/chenmu2024/VoxelCurve/blob/main/GEOMETRY.md">geometry specification</a> and <a href="https://github.com/chenmu2024/VoxelCurve/blob/main/src/core/geometry/index.ts">calculation source</a> for boundary handling. Consult the upstream <a href="https://github.com/maruohon/litematica">Litematica project</a> for compatible mod versions.</p>
+  <p>Maintained by <a href="/about">VoxelCurve</a> · Method reviewed <time datetime="2026-10-05">October 5, 2026</time>. Other generators can choose different boundary cells; game-version compatibility should be checked in your own installation.</p>
+</div></section>

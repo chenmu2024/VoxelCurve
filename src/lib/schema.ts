@@ -26,6 +26,7 @@ export function softwareSchema(input: {
     name: input.name,
     url: input.url,
     description: input.description,
+    inLanguage: 'en',
     applicationCategory: 'UtilitiesApplication',
     operatingSystem: 'Web',
     browserRequirements: 'Requires a modern web browser with JavaScript enabled.',
@@ -45,16 +46,21 @@ export function articleSchema(input: {
   headline: string;
   url: string;
   description: string;
+  dateModified: string;
 }): SchemaObject {
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
+    '@id': `${input.url}#article`,
     headline: input.headline,
     url: input.url,
     description: input.description,
+    inLanguage: 'en',
+    dateModified: input.dateModified,
+    image: 'https://voxelcurve.com/og.png',
     author: { '@id': 'https://voxelcurve.com/#organization' },
     publisher: { '@id': 'https://voxelcurve.com/#organization' },
     isPartOf: { '@id': 'https://voxelcurve.com/#website' },
-    mainEntityOfPage: input.url
+    mainEntityOfPage: { '@id': `${input.url}#webpage` }
   };
 }

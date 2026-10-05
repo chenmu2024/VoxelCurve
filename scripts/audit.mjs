@@ -67,7 +67,7 @@ for (const file of htmlFiles) {
   for(const match of html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>(.*?)<\/script>/gis)){
     try{schemas.push(JSON.parse(match[1]))}catch{errors.push(`Invalid structured-data JSON in ${rel}`)}
   }
-  if(!schemas.some(schema=>schema['@type']==='BreadcrumbList')&&!rel.startsWith('404'))errors.push(`Missing breadcrumb schema in ${rel}`);
+  if(!schemas.some(schema=>schema['@type']==='BreadcrumbList')&&rel!=='index.html'&&!rel.startsWith('404'))errors.push(`Missing breadcrumb schema in ${rel}`);
 
   const title = html.match(/<title>(.*?)<\/title>/is)?.[1]?.trim();
   if (!title) errors.push(`Missing title in ${rel}`);

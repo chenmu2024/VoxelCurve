@@ -1,10 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ToolApp from '../components/ToolApp.astro';
-import { breadcrumbSchema, softwareSchema } from '../lib/schema';
+import { softwareSchema } from '../lib/schema';
+import GeometryNotes from '../components/GeometryNotes.astro';
 const title='Minecraft Circle Generator – Block Blueprint & Build Guide | VoxelCurve';
 const description='Generate accurate Minecraft circles with exact block layouts, row-by-row instructions, material counts and guided build progress. Free online tool by VoxelCurve.';
-const schemas=[breadcrumbSchema([{name:'Minecraft Circle Generator',url:'https://voxelcurve.com/'}]),softwareSchema({
+const schemas=[softwareSchema({
   name:'VoxelCurve Minecraft Circle Generator',
   url:'https://voxelcurve.com/',
   description,
@@ -18,7 +19,7 @@ const schemas=[breadcrumbSchema([{name:'Minecraft Circle Generator',url:'https:/
       <div class="hero-grid">
         <div>
           <h1>Minecraft Circle Generator</h1>
-          <p>Turn a diameter into a precise block blueprint, then build it row by row without counting every block by hand.</p>
+          <p>Turn an outside diameter in blocks into a precise block blueprint, then build it row by row without counting every block by hand.</p>
         </div>
         <div class="hero-side-note">
           <span class="mono-label">PRECISION VOXEL WORKSPACE</span>
@@ -105,6 +106,7 @@ const schemas=[breadcrumbSchema([{name:'Minecraft Circle Generator',url:'https:/
       </div>
     </div>
   </section>
+  <GeometryNotes shape="circle" />
   <section class="section related-section"><div class="container">
     <div class="section-kicker">04 / Keep building</div>
     <h2>Related Minecraft building tools</h2>
