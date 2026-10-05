@@ -220,7 +220,7 @@ if (root) {
       localStorage.setItem(stateKey(),encodeProgress(completed,steps,stepIndex));
       pruneProgressStorage();
       const step=steps[stepIndex];
-      setText('[data-save-status]',`Saved on this device · ${shape==='dome'?`Layer ${step.layer+1} · `:''}Row ${step.row.y+1}.`);
+      setText('[data-save-status]',`Saved on this device · ${shape==='dome'?`Layer ${result.layers[step.layer].index+1} · `:''}Row ${step.row.y+1}.`);
     }catch{
       setText('[data-save-status]','Not saved · browser storage is unavailable. Keep this page open.');
       showStatus('Build progress could not be saved in this browser.','neutral');
@@ -236,7 +236,7 @@ if (root) {
       const probe=`vc-storage-check-${Date.now()}-${Math.random()}`;
       localStorage.setItem(probe,'1');localStorage.removeItem(probe);
       const step=steps[stepIndex];
-      setText('[data-save-status]',raw&&step&&(completed.size||stepIndex)?`Saved progress restored · ${shape==='dome'?`Layer ${step.layer+1} · `:''}Row ${step.row.y+1}.`:'Progress will be saved on this device.');
+      setText('[data-save-status]',raw&&step&&(completed.size||stepIndex)?`Saved progress restored · ${shape==='dome'?`Layer ${result.layers[step.layer].index+1} · `:''}Row ${step.row.y+1}.`:'Progress will be saved on this device.');
     }catch{
       setText('[data-save-status]','Not saved · browser storage is unavailable. Keep this page open.');
     }

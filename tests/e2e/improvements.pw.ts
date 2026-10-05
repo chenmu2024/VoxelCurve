@@ -128,6 +128,9 @@ test('narrow dome layer labels, progress and PNG names use physical layer number
   await expect(page.locator('[data-instruction-title]')).toContainText('Layer 16 / 16');
   await expect(page.locator('[data-layer]')).toHaveText('16/16');
   await expect(page.locator('[data-layer-progress]')).toContainText('Layer 16:');
+  await expect(page.locator('[data-save-status]')).toContainText('Layer 16');
+  await page.reload();
+  await expect(page.locator('[data-save-status]')).toContainText('restored · Layer 16');
   const downloading=page.waitForEvent('download');await page.locator('[data-png]').click();
   expect((await downloading).suggestedFilename()).toBe('voxelcurve-dome-3x3x16-thin-layer-16.png');
   await setup(page,'/minecraft-dome-generator#d-4-4-64-thin-1');
