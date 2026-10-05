@@ -9,8 +9,8 @@
       "path": "/",
       "status": 200,
       "finalURL": "https://voxelcurve.com/",
-      "title": "Minecraft Circle Generator – Block Blueprint & Build Guide | VoxelCurve",
-      "description": "Generate accurate Minecraft circles with exact block layouts, row-by-row instructions, material counts and guided build progress. Free online tool by VoxelCurve.",
+      "title": "Minecraft Circle Generator – Free Blueprints | VoxelCurve",
+      "description": "Create Minecraft circles with exact block counts and row-by-row instructions. Track progress and export PNG, TXT or Litematic files for your build.",
       "h1": [
         "Minecraft Circle Generator"
       ],
@@ -153,8 +153,8 @@
           "@type": "WebPage",
           "@id": "https://voxelcurve.com/#webpage",
           "url": "https://voxelcurve.com/",
-          "name": "Minecraft Circle Generator – Block Blueprint & Build Guide | VoxelCurve",
-          "description": "Generate accurate Minecraft circles with exact block layouts, row-by-row instructions, material counts and guided build progress. Free online tool by VoxelCurve.",
+          "name": "Minecraft Circle Generator – Free Blueprints | VoxelCurve",
+          "description": "Create Minecraft circles with exact block counts and row-by-row instructions. Track progress and export PNG, TXT or Litematic files for your build.",
           "inLanguage": "en",
           "isPartOf": {
             "@id": "https://voxelcurve.com/#website"
@@ -172,7 +172,7 @@
           "@id": "https://voxelcurve.com/#software",
           "name": "VoxelCurve Minecraft Circle Generator",
           "url": "https://voxelcurve.com/",
-          "description": "Generate accurate Minecraft circles with exact block layouts, row-by-row instructions, material counts and guided build progress. Free online tool by VoxelCurve.",
+          "description": "Create Minecraft circles with exact block counts and row-by-row instructions. Track progress and export PNG, TXT or Litematic files for your build.",
           "inLanguage": "en",
           "applicationCategory": "UtilitiesApplication",
           "operatingSystem": "Web",
