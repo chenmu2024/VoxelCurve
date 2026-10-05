@@ -62,10 +62,10 @@ function countPaletteIndexOne(longs:bigint[], volume:number, bitsPerEntry=2){
 }
 
 describe('geometry',()=>{
-  it('geometry version is pinned after the minimum-size thin outline correction',()=>{
-    expect(generateCircle(21,'thin').geometryVersion).toBe(3);
-    expect(generateOval(31,21,'thin').geometryVersion).toBe(3);
-    expect(generateDome(31,31,16,'thin').geometryVersion).toBe(3);
+  it('geometry version is pinned after outline and shell continuity corrections',()=>{
+    expect(generateCircle(21,'thin').geometryVersion).toBe(4);
+    expect(generateOval(31,21,'thin').geometryVersion).toBe(4);
+    expect(generateDome(31,31,16,'thin').geometryVersion).toBe(4);
   });
   it('locks common community-compatible circle counts',()=>{
     expect(generateCircle(11,'thin',1).blockCount).toBe(28);

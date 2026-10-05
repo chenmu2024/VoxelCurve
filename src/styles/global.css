@@ -125,6 +125,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,su
 .card h3{margin:0 0 7px;font-size:19px}
 .card p{color:var(--muted);font-size:14px;margin-bottom:0}
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff;margin-top:24px}
+.table-wrap:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
 table{border-collapse:collapse;width:100%;min-width:600px}
 th,td{text-align:left;padding:13px 15px;border-bottom:1px solid var(--line);font-size:14px}
 th{background:var(--surface-2);font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:650}

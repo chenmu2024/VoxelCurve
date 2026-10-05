@@ -19,7 +19,7 @@ export interface ShapeResult {
   geometryVersion: number;
 }
 
-export const GEOMETRY_VERSION = 3;
+export const GEOMETRY_VERSION = 4;
 
 const clampInt = (n: number, min: number, max: number) => Math.max(min, Math.min(max, Math.round(Number.isFinite(n) ? n : min)));
 
@@ -89,6 +89,11 @@ export function generate2D(type: 'circle'|'oval', width: number, height: number,
     grid = outer;
   } else {
     const inner = disk(w, h, t, t);
+    // Keep the digital outer boundary even where an eccentric inner ellipse
+    // reaches it. A center-sampled annulus alone can leave disconnected runs.
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+      if(inner[y][x]&&(!outer[y][x-1]||!outer[y][x+1]||!outer[y-1]?.[x]||!outer[y+1]?.[x]))inner[y][x]=false;
+    }
     grid = enforceSymmetry(subtract(outer, inner));
   }
   const rows = gridToRows(grid);
@@ -158,7 +163,23 @@ export function generateDome(width: number, depth: number, height: number, style
 
     for (let z = 0; z < d; z++) {
       const outer = rowSpanForEllipsoid(w, d, h, y, z, 0);
-      const inner = style === 'filled' ? null : rowSpanForEllipsoid(w, d, h, y, z, t);
+      let inner = style === 'filled' ? null : rowSpanForEllipsoid(w, d, h, y, z, t);
+      if(inner&&outer){
+        // Intersect the inner ellipsoid with the outer solid's digital interior.
+        // Preserve its side/top surface; the base intentionally remains open.
+        const limits=[
+          {start:outer.start+1,end:outer.end-1},
+          rowSpanForEllipsoid(w,d,h,y,z-1,0),
+          rowSpanForEllipsoid(w,d,h,y,z+1,0),
+          rowSpanForEllipsoid(w,d,h,y+1,z,0)
+        ];
+        if(y>0)limits.push(rowSpanForEllipsoid(w,d,h,y-1,z,0));
+        for(const limit of limits){
+          if(!limit){inner=null;break;}
+          inner={start:Math.max(inner.start,limit.start),end:Math.min(inner.end,limit.end)};
+          if(inner.start>inner.end){inner=null;break;}
+        }
+      }
       const spans = style === 'filled' ? (outer ? [outer] : []) : subtractSpan(outer, inner);
       const count = spans.reduce((sum, span) => sum + span.end - span.start + 1, 0);
       rows.push({ y: z, spans, count });

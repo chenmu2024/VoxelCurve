@@ -48,10 +48,10 @@ const cases:[string,ShapeResult][]=[];
 for(const diameter of [11,20,31])for(const style of ['thin','thick','filled'] as BuildStyle[]){
   cases.push([`Circle ${diameter} ${style}`,generateCircle(diameter,style,3)]);
 }
-for(const [width,height] of [[11,21],[21,11],[20,40],[31,15],[100,20]]){
+for(const [width,height] of [[11,21],[21,11],[20,40],[31,15],[100,20],[512,3],[3,512]]){
   cases.push([`Oval ${width}x${height}`,generateOval(width,height)]);
 }
-for(const [width,depth,height] of [[11,11,6],[20,20,10],[31,31,16],[31,31,10],[31,31,24]]){
+for(const [width,depth,height] of [[11,11,6],[20,20,10],[31,31,16],[31,31,10],[31,31,24],[3,3,16],[3,3,256],[3,31,16]]){
   for(const style of ['thin','thick','filled'] as BuildStyle[])cases.push([`Dome ${width}x${depth}x${height} ${style}`,generateDome(width,depth,height,style,2)]);
 }
 

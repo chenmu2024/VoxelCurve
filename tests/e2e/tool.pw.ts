@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import fs from 'node:fs/promises';
+import { GEOMETRY_VERSION } from '../../src/core/geometry';
 
 let errors:string[]=[];
 test.beforeEach(({page})=>{errors=[];page.on('pageerror',error=>errors.push(error.message))});
@@ -40,10 +41,11 @@ test('shape changes and geometry versions isolate stored progress',async({page})
   await openTool(page,'/#c-21-thin-1');await page.locator('[data-complete]').click();
   await openTool(page,'/#c-31-thin-1');
   await expect(page.locator('[data-progress-label]')).toContainText('0%');
-  await page.evaluate(()=>{
-    for(const key of Object.keys(localStorage))if(key.startsWith('vc-progress-v3'))localStorage.setItem(key.replace('v3','v2'),localStorage.getItem(key)!);
-    for(const key of Object.keys(localStorage))if(key.startsWith('vc-progress-v3'))localStorage.removeItem(key);
-  });
+  await page.evaluate((version)=>{
+    const prefix=`vc-progress-v${version}-`;
+    for(const key of Object.keys(localStorage))if(key.startsWith(prefix))localStorage.setItem(key.replace(prefix,`vc-progress-v${version-1}-`),localStorage.getItem(key)!);
+    for(const key of Object.keys(localStorage))if(key.startsWith(prefix))localStorage.removeItem(key);
+  },GEOMETRY_VERSION);
   await openTool(page,'/#c-21-thin-1');await expect(page.locator('[data-progress-label]')).toContainText('0%');
   await openTool(page,'/minecraft-oval-generator#o-21-11-thick-2');
   await expect(page.locator('[data-blueprint-title]')).toHaveText('21×11 Oval');

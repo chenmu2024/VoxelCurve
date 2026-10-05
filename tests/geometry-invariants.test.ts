@@ -41,6 +41,23 @@ function connectedCircle(result:ShapeResult){
   expect(seen.size).toBe(cells.size);
 }
 
+function connectedDome(result:ShapeResult){
+  const cells=new Set<string>();
+  for(const layer of result.layers)for(const row of layer.rows)for(const span of row.spans)for(let x=span.start;x<=span.end;x++)cells.add(`${x},${layer.index},${row.y}`);
+  const pending=[cells.values().next().value!],seen=new Set(pending);
+  while(pending.length){
+    const [x,y,z]=pending.pop()!.split(',').map(Number);
+    for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++)for(let dz=-1;dz<=1;dz++){
+      const key=`${x+dx},${y+dy},${z+dz}`;
+      if(cells.has(key)&&!seen.has(key)){seen.add(key);pending.push(key)}
+    }
+  }
+  expect(seen.size).toBe(cells.size);
+  // Checking only counts of retained layers would miss gaps filtered out by
+  // the engine. Occupied layers must start at zero and remain consecutive.
+  expect(result.layers.map(layer=>layer.index)).toEqual(Array.from({length:result.layers.length},(_,i)=>i));
+}
+
 describe('planned geometry QA matrix',()=>{
   for(const diameter of [5,7,9,11,15,21,31,41,51,64])it(`golden outline ${diameter}`,()=>{
     expect(generateCircle(diameter).rows.map(row=>row.spans)).toMatchSnapshot();
@@ -50,8 +67,15 @@ describe('planned geometry QA matrix',()=>{
       const result=generateCircle(diameter,style,2);checkRows(result);connectedCircle(result);
     });
   }
-  for(const [w,h] of [[11,21],[21,11],[20,40],[31,15],[100,20],[512,3],[3,512]]){
-    for(const style of ['thin','thick','filled'] as BuildStyle[])it(`Oval ${w}x${h} ${style}`,()=>checkRows(generateOval(w,h,style,2)));
+  for(const [w,h] of [[11,21],[21,11],[20,40],[31,15],[100,20],[20,100],[31,3],[3,31],[512,3],[3,512]]){
+    for(const style of ['thin','thick','filled'] as BuildStyle[])it(`Oval ${w}x${h} ${style}`,()=>{
+      const result=generateOval(w,h,style,2);checkRows(result);connectedCircle(result);
+    });
+  }
+  for(const [w,d,h] of [[3,3,16],[3,3,256],[3,31,16],[31,3,16],[4,4,64],[11,11,64]]){
+    for(const style of ['thin','thick','filled'] as BuildStyle[])it(`Dome ${w}x${d}x${h} ${style}: no floating components or missing middle layers`,()=>{
+      const result=generateDome(w,d,h,style,2);checkRows(result);connectedDome(result);
+    });
   }
   for(const [w,d,h] of [[11,11,6],[20,20,10],[31,31,16],[31,31,10],[31,31,24]]){
     for(const style of ['thin','thick','filled'] as BuildStyle[])it(`Dome ${w}x${d}x${h} ${style}`,()=>checkRows(generateDome(w,d,h,style,2)));

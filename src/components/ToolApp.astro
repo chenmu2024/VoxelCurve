@@ -348,13 +348,14 @@ if (root) {
     q<HTMLButtonElement>('[data-prev]').disabled=stepIndex===0;
     q<HTMLButtonElement>('[data-next]').disabled=stepIndex===steps.length-1;
     if(shape==='dome'){
-      setText('[data-layer]',`${currentLayer+1}/${result.layers.length}`);
+      const layerNumber=result.layers[currentLayer].index+1;
+      setText('[data-layer]',`${layerNumber}/${result.height}`);
       setText('[data-layer-blocks]',result.layers[currentLayer]?.count||0);
       const layerSteps=stepsByLayer.get(currentLayer)||[];
       const layerDone=layerSteps.filter(step=>completed.has(step.key)).length;
       const layerBuilt=layerSteps.reduce((count,step)=>count+(completed.has(step.key)?step.span.end-step.span.start+1:0),0);
       const layerPct=Math.round(layerBuilt/result.layers[currentLayer].count*100);
-      setText('[data-layer-progress]',`Layer ${currentLayer+1}: ${layerPct}% · ${layerDone}/${layerSteps.length} segments`);
+      setText('[data-layer-progress]',`Layer ${layerNumber}: ${layerPct}% · ${layerDone}/${layerSteps.length} segments`);
       const currentCount=result.layers[currentLayer]?.count||0;
       const previousCount=currentLayer>0?(result.layers[currentLayer-1]?.count||0):null;
       let deltaText=previousCount===null?'Base layer':`Layer total: ${currentCount-previousCount>=0?'+':''}${currentCount-previousCount} blocks`;
@@ -375,8 +376,8 @@ if (root) {
       if(prevLayerBtn) prevLayerBtn.disabled=currentLayer===0;
       if(nextLayerBtn) nextLayerBtn.disabled=currentLayer===result.layers.length-1;
       const jump=q<HTMLInputElement>('[data-layer-jump-input]');
-      if(jump){jump.max=String(result.layers.length);jump.value=String(currentLayer+1)}
-      setText('[data-layer-total]',result.layers.length);
+      if(jump){jump.max=String(result.height);jump.value=String(layerNumber)}
+      setText('[data-layer-total]',result.height);
     }
     const volume=result.type==='dome'?result.width*result.depth*result.height:result.width*result.height;
     const blocked=volume>20_000_000||result.blockCount>5_000_000;
@@ -664,8 +665,11 @@ if (root) {
   root.querySelector('[data-layer-next]')?.addEventListener('click',()=>goToLayer(currentLayer+1));
   root.querySelector('[data-layer-jump-input]')?.addEventListener('change',(event)=>{
     const value=Number((event.currentTarget as HTMLInputElement).value);
-    if(Number.isInteger(value)&&value>=1&&value<=result.layers.length)goToLayer(value-1);
-    else{showStatus(`Choose a layer from 1 to ${result.layers.length}.`,'neutral');renderInstruction()}
+    if(Number.isInteger(value)&&value>=1&&value<=result.height){
+      const target=result.layers.findIndex(layer=>layer.index===value-1);
+      if(target>=0)goToLayer(target);
+      else{showStatus(`Layer ${value} has no blocks for these dimensions.`,'neutral');renderInstruction()}
+    }else{showStatus(`Choose a layer from 1 to ${result.height}.`,'neutral');renderInstruction()}
   });
   q('[data-share]').addEventListener('click',async()=>{
     const url=updateFragment();
@@ -697,7 +701,7 @@ if (root) {
   q('[data-png]').addEventListener('click',()=>{
     try{
       const exportCanvas=createPngExportCanvas();
-      const suffix=shape==='dome'?'-layer-'+(currentLayer+1):'';
+      const suffix=shape==='dome'?'-layer-'+(result.layers[currentLayer].index+1):'';
       exportCanvas.toBlob(blob=>{
         if(!blob){showStatus('Could not create PNG.','error');return}
         downloadBlob(blob,`${blueprintSlug()}${suffix}.png`);

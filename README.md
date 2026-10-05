@@ -214,7 +214,7 @@ Blueprint parameters stay in URL fragments and are not separate crawlable pages.
 Current geometry version:
 
 ```
-GEOMETRY_VERSION = 3
+GEOMETRY_VERSION = 4
 ```
 
 If a geometry change alters occupied blocks for the same inputs, increment the geometry version so saved progress cannot be incorrectly applied to a new blueprint.
@@ -269,4 +269,4 @@ Material suggestions match the Litematic block palette. Custom TXT/print labels 
 
 Litematic generation runs in a cancellable Web Worker using a snapshot of the blueprint and material at export start. Navigation and subsequent input changes do not change that file. Limits remain 20,000,000 bounding cells and 5,000,000 occupied blocks. The download panel includes placement steps and axes; real-device and in-game validation are still required.
 
-Geometry v3 fixes the 3×3 thin outline center. Earlier-version saved progress is intentionally not reused.
+Geometry v4 preserves the digital outer boundary of oval outlines and dome shells, preventing disconnected runs and floating caps. Circle v3 fixtures remain unchanged. Earlier-version saved progress is intentionally not reused.

@@ -117,3 +117,35 @@ test('short portrait and landscape keep instructions above completion controls',
     await expect(page.locator('[data-progress-label]')).not.toContainText('0%');
   }
 });
+
+test('narrow dome layer labels, progress and PNG names use physical layer numbers',async({page})=>{
+  await setup(page,'/minecraft-dome-generator#d-3-3-16-thin-1');
+  await expect(page.locator('[data-blocks]')).toHaveText('76');
+  await page.locator('[data-layer-jump-input]').fill('13');await page.locator('[data-layer-jump-input]').blur();
+  await expect(page.locator('[data-instruction-title]')).toContainText('Layer 13 / 16');
+  await expect(page.locator('[data-layer]')).toHaveText('13/16');
+  await page.locator('[data-layer-jump-input]').fill('16');await page.locator('[data-layer-jump-input]').blur();
+  await expect(page.locator('[data-instruction-title]')).toContainText('Layer 16 / 16');
+  await expect(page.locator('[data-layer]')).toHaveText('16/16');
+  await expect(page.locator('[data-layer-progress]')).toContainText('Layer 16:');
+  const downloading=page.waitForEvent('download');await page.locator('[data-png]').click();
+  expect((await downloading).suggestedFilename()).toBe('voxelcurve-dome-3x3x16-thin-layer-16.png');
+  await setup(page,'/minecraft-dome-generator#d-4-4-64-thin-1');
+  const previous=await page.locator('[data-instruction-title]').textContent();
+  await page.locator('[data-layer-jump-input]').fill('64');await page.locator('[data-layer-jump-input]').blur();
+  await expect(page.locator('[data-action-status]')).toContainText('Layer 64 has no blocks');
+  await expect(page.locator('[data-instruction-title]')).toHaveText(previous!);
+});
+
+test('guide example tables have named focus regions and support keyboard scrolling',async({page})=>{
+  await page.setViewportSize({width:375,height:812});
+  await page.goto('/how-to-make-a-circle-in-minecraft');
+  for(const size of [11,21,31]){
+    const table=page.getByRole('region',{name:`${size}×${size} circle row instructions`,exact:true});
+    await expect(table).toHaveAttribute('tabindex','0');
+    await table.focus();await expect(table).toBeFocused();
+    await table.press('ArrowRight');
+    await expect.poll(()=>table.evaluate(element=>element.scrollLeft)).toBeGreaterThan(0);
+    expect(await table.evaluate(element=>getComputedStyle(element).outlineStyle)).not.toBe('none');
+  }
+});

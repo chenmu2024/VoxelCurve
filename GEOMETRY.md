@@ -1,6 +1,6 @@
 # VoxelCurve Geometry Specification
 
-Version: **Geometry v3**
+Version: **Geometry v4**
 
 This document is normative. The generator, chart, material counts, guided build instructions, TXT output, PNG output and Litematic export must all consume the same geometry result and must not implement independent shape formulas.
 
@@ -163,6 +163,8 @@ Inner Ry = Outer Ry - T
 
 If thickness reaches the center, the result naturally degrades toward a filled shape.
 
+Before subtraction, the inner shape is restricted to the digital interior of the outer shape: cells adjacent to air along either grid axis remain in the outline. This preserves an eight-connected boundary even for extreme oval proportions. Circle golden fixtures remain unchanged.
+
 The engine then converts occupied cells to deterministic row spans.
 
 ## 7. Dome
@@ -237,7 +239,9 @@ It must not be shifted upward.
 
 This creates a naturally solid cap near the pole instead of incorrectly carving a hole through the top.
 
-Empty layers are not stored.
+The inner ellipsoid is also intersected with the digital interior of the outer solid, preserving cells with an exposed X, Z or upper/lower Y neighbor. The base plane stays open; no lower-neighbor test is applied below layer zero. This prevents disconnected thin walls and floating caps on narrow, tall domes, while retaining the ellipsoid subtraction model and span representation.
+
+Empty layers are not stored. Retained layers preserve their actual vertical index. Labels, jumps, progress and PNG filenames use that index rather than the position in the retained-layer array. A jump to an empty layer reports it without moving the current instruction.
 
 ## 9. Symmetry
 
@@ -325,7 +329,7 @@ These limits are engineering limits, not SEO content claims, and may only be rai
 Current:
 
 ```
-GEOMETRY_VERSION = 3
+GEOMETRY_VERSION = 4
 ```
 
 Saved progress includes the geometry version.

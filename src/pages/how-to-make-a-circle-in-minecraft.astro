@@ -39,7 +39,7 @@ const schemas=[
     <div class="guide-example-grid">
       {examples.map(({size,result})=><div>
         <a class="guide-example" href={`/#c-${size}-thin-1`}><CircleMiniPreview size={size} /><div><h3>{size}×{size}</h3><p>{result.blockCount} outline blocks · {Math.floor(result.blockCount/64)} stacks + {result.blockCount%64} loose</p><span>Open blueprint →</span></div></a>
-        <div class="table-wrap"><table><caption>First three rows of the {size}×{size} thin outline</caption><thead><tr><th>Row</th><th>Place these segments</th><th>Empty gap</th></tr></thead><tbody>{result.rows.slice(0,3).map(row=><tr><td>{row.y+1}</td><td>{rowInstruction(row,size).map(instruction=><div>{instruction.center} (columns {instruction.span.start+1}–{instruction.span.end+1})</div>)}</td><td>{row.spans.length>1?row.spans[1].start-row.spans[0].end-1:'—'}</td></tr>)}</tbody></table></div>
+        <div class="table-wrap" tabindex="0" role="region" aria-label={`${size}×${size} circle row instructions`}><table><caption>First three rows of the {size}×{size} thin outline</caption><thead><tr><th>Row</th><th>Place these segments</th><th>Empty gap</th></tr></thead><tbody>{result.rows.slice(0,3).map(row=><tr><td>{row.y+1}</td><td>{rowInstruction(row,size).map(instruction=><div>{instruction.center} (columns {instruction.span.start+1}–{instruction.span.end+1})</div>)}</td><td>{row.spans.length>1?row.spans[1].start-row.spans[0].end-1:'—'}</td></tr>)}</tbody></table></div>
       </div>)}
     </div>
     <h2>How to make a large circle in Minecraft</h2>
